@@ -5,9 +5,6 @@ spring:
     password: ${DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
-  config:
-    import: classpath:env.properties # env.properties 파일을 읽어 환경 변수 주입
-
   jpa:
     hibernate:
       ddl-auto: create # 추후, none 변경

@@ -36,5 +36,6 @@ out/
 ### VS Code ###
 .vscode/
 
-### /src/main/resources 경로의 env 파일 ###
-/src/main/resources/env.properties
+
+### 루트 경로의 env 파일
+/.env
