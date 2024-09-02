@@ -1,5 +1,7 @@
 package com.market.core.security;
 
+import com.market.core.security.jwt.JwtFilter;
+import com.market.core.security.jwt.JwtProvider;
 import com.market.member.entity.RolesType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -15,6 +17,7 @@ import org.springframework.security.config.annotation.web.configurers.HeadersCon
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.ExceptionTranslationFilter;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -73,7 +76,7 @@ public class SecurityConfig {
      */
     @Bean
     @Order(2)
-    public SecurityFilterChain authenticatedFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain authenticatedFilterChain(HttpSecurity http, JwtProvider jwtProvider) throws Exception {
         defaultSecuritySetting(http);
         http
                 .securityMatchers(matcher -> matcher
@@ -81,11 +84,11 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(authenticatedRequestMatchers())
                         .hasAnyAuthority(RolesType.ROLE_ADMIN.name(), RolesType.ROLE_USER.name(), RolesType.ROLE_STORE_OWNER.name())
-                        .anyRequest().authenticated());
-//                  TODO: 예외 처리, JWT Filter 추가
+                        .anyRequest().authenticated())
+//                  TODO: 예외 처리
 //                .exceptionHandling(exception -> exception
 //                        .accessDeniedHandler())
-//                .addFilterBefore()
+                .addFilterBefore(new JwtFilter(jwtProvider), ExceptionTranslationFilter.class);
 
         return http.build();
     }
