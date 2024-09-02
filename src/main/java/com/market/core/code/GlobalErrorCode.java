@@ -5,15 +5,15 @@ import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
 @Getter
-public enum MemberErrorCode implements BaseErrorCode {
-    // 400 BAD_REQUEST
-    NOT_FOUND_MEMBER_EMAIL(400, "존재하지 않는 회원입니다.", HttpStatus.BAD_REQUEST);
+public enum GlobalErrorCode implements BaseErrorCode {
+    VALIDATION_FAILED(400, "입력 값이 유효하지 않습니다. 다시 확인해 주세요", HttpStatus.BAD_REQUEST),
+    INTERNAL_SERVER_ERROR(500, "서버 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.", HttpStatus.INTERNAL_SERVER_ERROR);
 
     private final int errorCode;
     private final String errorMessage;
     private final HttpStatus status;
 
-    MemberErrorCode(int errorCode, String errorMessage, HttpStatus status) {
+    GlobalErrorCode(int errorCode, String errorMessage, HttpStatus status) {
         this.errorCode = errorCode;
         this.errorMessage = errorMessage;
         this.status = status;

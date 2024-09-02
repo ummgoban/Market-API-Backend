@@ -5,15 +5,16 @@ import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
 @Getter
-public enum MemberErrorCode implements BaseErrorCode {
-    // 400 BAD_REQUEST
-    NOT_FOUND_MEMBER_EMAIL(400, "존재하지 않는 회원입니다.", HttpStatus.BAD_REQUEST);
+public enum JwtErrorCode implements BaseErrorCode {
+    VALIDATION_TOKEN_FAILED(400, "유효하지 않은 토큰입니다.", HttpStatus.BAD_REQUEST),
+    VALIDATION_TOKEN_EXPIRED(401, "토큰이 만료되었습니다.", HttpStatus.UNAUTHORIZED),
+    VALIDATION_TOKEN_NOT_AUTHORIZATION(401, "접근 권한이 없습니다.", HttpStatus.UNAUTHORIZED);
 
     private final int errorCode;
     private final String errorMessage;
     private final HttpStatus status;
 
-    MemberErrorCode(int errorCode, String errorMessage, HttpStatus status) {
+    JwtErrorCode(int errorCode, String errorMessage, HttpStatus status) {
         this.errorCode = errorCode;
         this.errorMessage = errorMessage;
         this.status = status;
