@@ -1,7 +1,7 @@
-package com.market.core.security;
+package com.market.core.security.config;
 
-import com.market.core.security.jwt.JwtFilter;
-import com.market.core.security.jwt.JwtProvider;
+import com.market.core.security.filter.JwtFilter;
+import com.market.core.security.service.JwtService;
 import com.market.member.entity.RolesType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -76,14 +76,14 @@ public class SecurityConfig {
      */
     @Bean
     @Order(2)
-    public SecurityFilterChain authenticatedFilterChain(HttpSecurity http, JwtProvider jwtProvider) throws Exception {
+    public SecurityFilterChain authenticatedFilterChain(HttpSecurity http, JwtService jwtProvider) throws Exception {
         defaultSecuritySetting(http);
         http
                 .securityMatchers(matcher -> matcher
                         .requestMatchers(authenticatedRequestMatchers()))
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(authenticatedRequestMatchers())
-                        .hasAnyAuthority(RolesType.ROLE_ADMIN.name(), RolesType.ROLE_USER.name(), RolesType.ROLE_STORE_OWNER.name())
+                        .hasAnyAuthority(RolesType.ROLE_USER.name(), RolesType.ROLE_STORE_OWNER.name())
                         .anyRequest().authenticated())
 //                  TODO: 예외 처리
 //                .exceptionHandling(exception -> exception
@@ -124,7 +124,7 @@ public class SecurityConfig {
         http
                 // JWT, OAuth 기반
                 .csrf(AbstractHttpConfigurer::disable) // CSRF 보호 비활성화
-                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // CORS 설정
                 .formLogin(AbstractHttpConfigurer::disable) // Form 기반 로그인 비활성화
                 .httpBasic(AbstractHttpConfigurer::disable) // HTTP Basic 인증 비활성화
                 .rememberMe(AbstractHttpConfigurer::disable) // 세션 기반의 인증 비활성화
