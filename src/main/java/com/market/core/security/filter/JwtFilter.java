@@ -1,8 +1,9 @@
-package com.market.core.security.jwt;
+package com.market.core.security.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.market.core.code.BaseErrorCode;
 import com.market.core.code.JwtErrorCode;
+import com.market.core.security.service.JwtService;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -11,6 +12,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -27,7 +29,7 @@ public class JwtFilter extends OncePerRequestFilter {
     private static final String APPLICATION_JSON = "application/json";
     private static final String UTF_8 = "UTF-8";
 
-    private final JwtProvider jwtProvider;
+    private final JwtService jwtService;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
@@ -35,17 +37,19 @@ public class JwtFilter extends OncePerRequestFilter {
         try {
             String token = extractToken(request);
             if (hasText(token)) {
-                Authentication authentication = jwtProvider.createAuthentication(token);
+                Authentication authentication = jwtService.createAuthentication(token);
 
                 // 1. 토큰 유효성 검증
-                jwtProvider.validateToken(token);
+                jwtService.validateToken(token);
 
                 // 2. 권한 비교
-                jwtProvider.compareAuthorities(authentication);
+                jwtService.compareAuthorities(authentication);
 
                 // SecurityContext 에 인증 객체 설정
-                SecurityContextHolder.getContext().setAuthentication(authentication);
-            }
+                SecurityContext context = SecurityContextHolder.createEmptyContext();
+                context.setAuthentication(authentication);
+
+                SecurityContextHolder.setContext(context);            }
             filterChain.doFilter(request, response);
         } catch (Exception e) {
             // 예외 처리
