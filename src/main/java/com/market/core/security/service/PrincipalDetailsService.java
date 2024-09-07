@@ -1,7 +1,8 @@
 package com.market.core.security.service;
 
 import com.market.core.code.MemberErrorCode;
-import com.market.core.error.exception.security.MemberEmailNotFoundException;
+import com.market.core.error.exception.security.MemberOAuthIdNotFoundException;
+import com.market.core.security.model.PrincipalDetails;
 import com.market.member.entity.Member;
 import com.market.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -17,9 +18,9 @@ public class PrincipalDetailsService implements UserDetailsService {
     private final MemberRepository memberRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        Member member = memberRepository.findByEmail(email)
-                .orElseThrow(() -> new MemberEmailNotFoundException(MemberErrorCode.NOT_FOUND_MEMBER_EMAIL));
+    public UserDetails loadUserByUsername(String oauthId) throws UsernameNotFoundException {
+        Member member = memberRepository.findByOauthId(oauthId)
+                .orElseThrow(() -> new MemberOAuthIdNotFoundException(MemberErrorCode.NOT_FOUND_MEMBER_OAUTH_ID));
 
         return new PrincipalDetails(member);
     }

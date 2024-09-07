@@ -1,6 +1,5 @@
-package com.market.core.security.service;
+package com.market.core.security.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.market.member.entity.Member;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,16 +18,17 @@ import java.util.Optional;
 public class PrincipalDetails implements UserDetails {
 
     private final long id;
-    private final String email;
-    @JsonIgnore
-    private final String password;
+    private final String oauthId;
+    private final String name;
+    private final String profileImageUrl;
     private final List<GrantedAuthority> authorities;
 
     // 생성자
     public PrincipalDetails(Member member) {
         this.id = member.getId();
-        this.email = member.getEmail();
-        this.password = member.getPassword();
+        this.oauthId = member.getOauthId();
+        this.name = member.getName();
+        this.profileImageUrl = member.getProfileImageUrl();
         this.authorities = Optional.ofNullable(member.getRoles())
                 .map(role -> List.<GrantedAuthority>of(new SimpleGrantedAuthority(role.name())))
                 .orElse(List.of());
@@ -41,12 +41,12 @@ public class PrincipalDetails implements UserDetails {
 
     @Override
     public String getPassword() {
-        return password; // 사용자 비밀번호 반환
+        return null; // 사용자 비밀번호 반환, 소셜 로그인이므로 null
     }
 
     @Override
     public String getUsername() {
-        return email; // 사용자 이메일 반환
+        return oauthId; // 사용자 소셜 고유 ID 반환
     }
 
     @Override

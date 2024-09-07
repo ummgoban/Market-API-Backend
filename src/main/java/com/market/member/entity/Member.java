@@ -9,11 +9,11 @@ public class Member {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private String oauthId; // 소셜 회원 고유 ID
+
     private String name; // 이름
 
-    private String email; // 이메일
-
-    private String password; // 비밀번호
+    private String profileImageUrl; // 프로필 이미지
 
     @Enumerated(EnumType.STRING)
     private RolesType roles = RolesType.ROLE_USER; // 권한

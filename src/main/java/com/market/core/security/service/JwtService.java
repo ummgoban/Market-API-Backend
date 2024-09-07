@@ -1,7 +1,6 @@
-package com.market.core.security.jwt;
+package com.market.core.security.service;
 
-import com.market.core.security.service.PrincipalDetails;
-import com.market.core.security.service.PrincipalDetailsService;
+import com.market.core.security.model.PrincipalDetails;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -26,7 +25,7 @@ import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
-public class JwtProvider {
+public class JwtService {
 
     @Value("${jwt.secret}")
     private String secretKey;
@@ -58,7 +57,7 @@ public class JwtProvider {
      */
     private String createToken(PrincipalDetails principalDetails, long expirationTime) {
         // 토큰 생성에 사용할 변수들 정의
-        String subject = principalDetails.getUsername();
+        String subject = principalDetails.getOauthId();
         Date issuedAt = Date.from(Instant.now());
         Date expiration = Date.from(Instant.now().plusSeconds(expirationTime));
         Long userId = principalDetails.getId(); // 사용자 ID
@@ -97,8 +96,7 @@ public class JwtProvider {
         // 사용자 정보를 담은 UserDetails 객체 생성
         UserDetails user = PrincipalDetails.builder()
                 .id(claims.get("id", Long.class))
-                .email(claims.getSubject())
-                .password(null)
+                .oauthId(claims.getSubject())
                 .authorities(authorities)
                 .build();
 

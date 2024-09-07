@@ -4,11 +4,11 @@ import com.market.core.code.BaseErrorCode;
 import lombok.Getter;
 
 @Getter
-public class MemberEmailNotFoundException extends RuntimeException {
+public class MemberOAuthIdNotFoundException extends RuntimeException {
 
     private final BaseErrorCode errorCode;
 
-    public MemberEmailNotFoundException(BaseErrorCode errorCode) {
+    public MemberOAuthIdNotFoundException(BaseErrorCode errorCode) {
         super(errorCode.getErrorMessage());
         this.errorCode = errorCode;
     }
