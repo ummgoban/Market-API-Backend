@@ -7,7 +7,7 @@ import org.springframework.http.HttpStatus;
 @Getter
 public enum MemberErrorCode implements BaseErrorCode {
     // 400 BAD_REQUEST
-    NOT_FOUND_MEMBER_EMAIL(400, "존재하지 않는 회원입니다.", HttpStatus.BAD_REQUEST);
+    NOT_FOUND_MEMBER_OAUTH_ID(400, "존재하지 않는 회원입니다.", HttpStatus.BAD_REQUEST);
 
     private final int errorCode;
     private final String errorMessage;
@@ -21,6 +21,6 @@ public enum MemberErrorCode implements BaseErrorCode {
 
     @Override
     public ErrorResponse getErrorResponse() {
-        return null;
+        return new ErrorResponse(this.errorCode, this.errorMessage);
     }
 }

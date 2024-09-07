@@ -22,6 +22,6 @@ public enum JwtErrorCode implements BaseErrorCode {
 
     @Override
     public ErrorResponse getErrorResponse() {
-        return null;
+        return new ErrorResponse(this.errorCode, this.errorMessage);
     }
 }
