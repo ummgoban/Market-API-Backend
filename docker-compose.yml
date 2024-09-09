@@ -1,0 +1,24 @@
+version: '3.2'
+services:
+  remind:
+    image: ${DOCKER_USERNAME}/market-image:latest
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - "8080:8080"
+    volumes:
+      - type: bind
+        source: /root/.env
+        target: /.env
+      - type: bind
+        source: /root/remind-fcm-key.json
+        target: /src/main/resources/remind-fcm-key.json
+    depends_on:
+      - redis
+
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    restart: always
