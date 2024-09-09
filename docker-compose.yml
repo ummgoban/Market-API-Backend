@@ -1,0 +1,13 @@
+version: '3.2'
+services:
+  remind:
+    image: ${DOCKER_USERNAME}/market-image:latest
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - "8080:8080"
+    volumes:
+      - type: bind
+        source: /root/.env
+        target: /.env
