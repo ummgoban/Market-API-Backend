@@ -11,14 +11,3 @@ services:
       - type: bind
         source: /root/.env
         target: /.env
-      - type: bind
-        source: /root/remind-fcm-key.json
-        target: /src/main/resources/remind-fcm-key.json
-    depends_on:
-      - redis
-
-  redis:
-    image: redis:latest
-    ports:
-      - "6379:6379"
-    restart: always
