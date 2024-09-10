@@ -1,9 +1,9 @@
 package com.market.core.security.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.market.core.code.BaseErrorCode;
-import com.market.core.code.JwtErrorCode;
-import com.market.core.security.service.JwtService;
+import com.market.core.code.error.BaseErrorCode;
+import com.market.core.code.error.JwtErrorCode;
+import com.market.core.security.service.jwt.JwtService;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -49,7 +49,8 @@ public class JwtFilter extends OncePerRequestFilter {
                 SecurityContext context = SecurityContextHolder.createEmptyContext();
                 context.setAuthentication(authentication);
 
-                SecurityContextHolder.setContext(context);            }
+                SecurityContextHolder.setContext(context);
+            }
             filterChain.doFilter(request, response);
         } catch (Exception e) {
             // 예외 처리
