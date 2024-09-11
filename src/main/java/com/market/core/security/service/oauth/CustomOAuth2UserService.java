@@ -38,7 +38,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         return switch (registrationId) {
             case "naver" -> new NaverUserInfo(attributes);
             case "kakao" -> new KakaoUserInfo(attributes);
-            case "apple" -> new AppleUserInfo(attributes);
+//            case "apple" -> new AppleUser/**/Info(attributes);
             default -> throw new IllegalArgumentException("Unknown registrationId: " + registrationId);
         };
     }
