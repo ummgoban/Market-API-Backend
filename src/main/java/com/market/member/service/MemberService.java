@@ -23,7 +23,7 @@ public class MemberService {
      */
     public JwtTokenDto login(MemberLoginDto memberLoginDto) {
         // 회원 정보 조회
-        Optional<Member> member = memberRepository.findByOauthId(memberLoginDto.getOauthId());
+        Optional<Member> member = memberRepository.findByOauthIdAndRoles(memberLoginDto.getOauthId(), memberLoginDto.getRole());
 
         // 회원 정보가 없을 경우 회원가입 처리
         if (member.isEmpty()) {

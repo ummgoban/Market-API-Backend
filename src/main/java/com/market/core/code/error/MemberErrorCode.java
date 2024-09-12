@@ -11,7 +11,7 @@ public enum MemberErrorCode implements BaseErrorCode {
 
     // 404 NOT_FOUND
     NOT_FOUND_MEMBER_ID(404, "존재하지 않는 회원입니다.", HttpStatus.NOT_FOUND),
-    NOT_FOUND_MEMBER_OAUTH_ID(404, "존재하지 않는 회원입니다.", HttpStatus.NOT_FOUND),
+    NOT_FOUND_MEMBER_OAUTH_ID_AND_ROLES(404, "존재하지 않는 회원입니다.", HttpStatus.NOT_FOUND),
     NOT_FOUND_MEMBER_ROLES(404, "회원의 권한이 존재하지 않습니다.", HttpStatus.NOT_FOUND);
 
     private final int errorCode;
