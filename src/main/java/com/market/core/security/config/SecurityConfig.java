@@ -2,6 +2,7 @@ package com.market.core.security.config;
 
 import com.market.core.security.filter.JwtFilter;
 import com.market.core.security.service.jwt.JwtService;
+import com.market.core.security.service.oauth.CustomAuthorizationRequestResolver;
 import com.market.member.entity.RolesType;
 import com.market.core.security.service.oauth.CustomOAuth2FailureHandler;
 import com.market.core.security.service.oauth.CustomOAuth2SuccessHandler;
@@ -18,6 +19,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.ExceptionTranslationFilter;
 import org.springframework.security.web.util.matcher.RequestMatcher;
@@ -40,6 +42,15 @@ public class SecurityConfig {
     private final CustomOAuth2UserService customOAuth2UserService;
     private final CustomOAuth2SuccessHandler customOAuth2SuccessHandler;
     private final CustomOAuth2FailureHandler customOAuth2FailureHandler;
+    private final ClientRegistrationRepository clientRegistrationRepository;
+
+    /**
+     * API 커스텀(쿼리 파라미터)을 위한 Resolver
+     */
+    @Bean
+    public CustomAuthorizationRequestResolver customAuthorizationRequestResolver() {
+        return new CustomAuthorizationRequestResolver(clientRegistrationRepository);
+    }
 
     /**
      * 로그인 인증 작업 처리
@@ -137,7 +148,10 @@ public class SecurityConfig {
                         .successHandler(customOAuth2SuccessHandler)
                         .failureHandler(customOAuth2FailureHandler)
                         .userInfoEndpoint(userinfo -> userinfo
-                                .userService(customOAuth2UserService))); // OAuth2 로그인 설정
+                                .userService(customOAuth2UserService))
+                        .authorizationEndpoint(endpoint -> endpoint
+                                .authorizationRequestResolver(customAuthorizationRequestResolver()))
+                ); // OAuth2 로그인 설정
     }
 
     /**
