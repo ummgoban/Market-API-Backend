@@ -24,5 +24,5 @@ public class Member {
     private String profileImageUrl; // 프로필 이미지 URL
 
     @Enumerated(EnumType.STRING)
-    private RolesType roles = RolesType.ROLE_USER; // 권한
+    private RolesType roles; // 권한
 }
