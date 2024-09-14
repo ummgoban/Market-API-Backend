@@ -73,6 +73,7 @@ jobs:
             echo "ACCESS_EXPIRATION_SECONDS=${{ secrets.ACCESS_EXPIRATION_SECONDS}}" >> ./.env
             echo "REFRESH_EXPIRATION_SECONDS=${{ secrets.REFRESH_EXPIRATION_SECONDS }}" >> ./.env
 
+
       # 권한 부여 후 gradle build
       - name: Set Gradle build Permission
         run: chmod +x gradlew
