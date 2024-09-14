@@ -70,8 +70,9 @@ jobs:
             echo "NAVER_CLIENT_ID=${{ secrets.NAVER_CLIENT_ID }}" >> ./.env
             echo "KAKAO_REDIRECT_URL=${{ secrets.KAKAO_REDIRECT_URL }}" >> ./.env
             echo "JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }}" >> ./.env
-            echo "ACCESS_EXPIRATION_SECONDS=${{ secret.ACCESS_EXPIRATION_SECONDS}}" >> ./.env
-            echo "REFRESH_EXPIRATION_SECONDS=${{ secret.REFRESH_EXPIRATION_SECONDS }}" >> ./.env
+            echo "ACCESS_EXPIRATION_SECONDS=${{ secrets.ACCESS_EXPIRATION_SECONDS}}" >> ./.env
+            echo "REFRESH_EXPIRATION_SECONDS=${{ secrets.REFRESH_EXPIRATION_SECONDS }}" >> ./.env
+
 
       # 권한 부여 후 gradle build
       - name: Set Gradle build Permission
