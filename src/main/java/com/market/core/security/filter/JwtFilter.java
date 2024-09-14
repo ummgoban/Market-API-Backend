@@ -1,9 +1,9 @@
 package com.market.core.security.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.market.core.code.BaseErrorCode;
-import com.market.core.code.JwtErrorCode;
-import com.market.core.security.service.JwtService;
+import com.market.core.code.error.BaseErrorCode;
+import com.market.core.code.error.JwtErrorCode;
+import com.market.core.security.service.jwt.JwtService;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -21,6 +21,9 @@ import java.nio.file.AccessDeniedException;
 
 import static org.springframework.util.StringUtils.hasText;
 
+/**
+ * 클라이언트 요청에서 JWT 토큰을 추출하고 검증하여 인증된 사용자의 접근을 허용하는 필터 클래스입니다.
+ */
 @RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
 
@@ -49,7 +52,8 @@ public class JwtFilter extends OncePerRequestFilter {
                 SecurityContext context = SecurityContextHolder.createEmptyContext();
                 context.setAuthentication(authentication);
 
-                SecurityContextHolder.setContext(context);            }
+                SecurityContextHolder.setContext(context);
+            }
             filterChain.doFilter(request, response);
         } catch (Exception e) {
             // 예외 처리

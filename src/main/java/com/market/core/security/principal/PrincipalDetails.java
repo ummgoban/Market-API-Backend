@@ -1,9 +1,8 @@
-package com.market.core.security.model;
+package com.market.core.security.principal;
 
 import com.market.member.entity.Member;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,23 +11,18 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * PrincipalDetailsService에서 사용되며, 사용자의 인증 정보를 담고 있는 UserDetails 구현 클래스입니다.
+ */
 @Getter
-@Builder
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class PrincipalDetails implements UserDetails {
 
-    private final long id;
-    private final String oauthId;
-    private final String name;
-    private final String profileImageUrl;
+    private final Long id;
     private final List<GrantedAuthority> authorities;
 
-    // 생성자
     public PrincipalDetails(Member member) {
         this.id = member.getId();
-        this.oauthId = member.getOauthId();
-        this.name = member.getName();
-        this.profileImageUrl = member.getProfileImageUrl();
         this.authorities = Optional.ofNullable(member.getRoles())
                 .map(role -> List.<GrantedAuthority>of(new SimpleGrantedAuthority(role.name())))
                 .orElse(List.of());
@@ -46,7 +40,7 @@ public class PrincipalDetails implements UserDetails {
 
     @Override
     public String getUsername() {
-        return oauthId; // 사용자 소셜 고유 ID 반환
+        return String.valueOf(id); // 사용자 ID 반환
     }
 
     @Override

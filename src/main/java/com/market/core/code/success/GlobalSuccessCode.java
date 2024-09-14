@@ -1,4 +1,4 @@
-package com.market.core.code;
+package com.market.core.code.success;
 
 import lombok.Getter;
 

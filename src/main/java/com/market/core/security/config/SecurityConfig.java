@@ -1,8 +1,12 @@
 package com.market.core.security.config;
 
 import com.market.core.security.filter.JwtFilter;
-import com.market.core.security.service.JwtService;
+import com.market.core.security.service.jwt.JwtService;
+import com.market.core.security.service.oauth.CustomAuthorizationRequestResolver;
 import com.market.member.entity.RolesType;
+import com.market.core.security.service.oauth.CustomOAuth2FailureHandler;
+import com.market.core.security.service.oauth.CustomOAuth2SuccessHandler;
+import com.market.core.security.service.oauth.CustomOAuth2UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,7 +19,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.ExceptionTranslationFilter;
 import org.springframework.security.web.util.matcher.RequestMatcher;
@@ -28,19 +32,26 @@ import java.util.List;
 
 import static org.springframework.security.web.util.matcher.AntPathRequestMatcher.antMatcher;
 
-
+/**
+ * JWT 및 OAuth2 관련 설정을 포함하고 있는 Spring Security 설정 클래스입니다.
+ */
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
 
+    private final CustomOAuth2UserService customOAuth2UserService;
+    private final CustomOAuth2SuccessHandler customOAuth2SuccessHandler;
+    private final CustomOAuth2FailureHandler customOAuth2FailureHandler;
+    private final ClientRegistrationRepository clientRegistrationRepository;
+
     /**
-     * 패스워드 인코더
+     * API 커스텀(쿼리 파라미터)을 위한 Resolver
      */
     @Bean
-    public BCryptPasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+    public CustomAuthorizationRequestResolver customAuthorizationRequestResolver() {
+        return new CustomAuthorizationRequestResolver(clientRegistrationRepository);
     }
 
     /**
@@ -134,7 +145,15 @@ public class SecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 세션 생성하지 않음
                 .headers(headers -> headers.frameOptions(
                         HeadersConfigurer.FrameOptionsConfig::disable) // X-Frame-Options 헤더 비활성화, 클릭재킹 공격 방지
-                );
+                )
+                .oauth2Login(oauth -> oauth
+                        .successHandler(customOAuth2SuccessHandler)
+                        .failureHandler(customOAuth2FailureHandler)
+                        .userInfoEndpoint(userinfo -> userinfo
+                                .userService(customOAuth2UserService))
+                        .authorizationEndpoint(endpoint -> endpoint
+                                .authorizationRequestResolver(customAuthorizationRequestResolver()))
+                ); // OAuth2 로그인 설정
     }
 
     /**
@@ -145,14 +164,17 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
 
         // 허용할 Origin(출처)
-        configuration.setAllowedOrigins(
-                Arrays.asList(
-                        "http://localhost:8080",
-                        "http://127.0.0.1:8080",
-                        "http://localhost:8080/swagger-ui.html",
-                        "http://127.0.0.1:8080/swagger-ui.html"
-                )
-        );
+//        TODO: 허용할 Origin 설정
+        configuration.setAllowedOriginPatterns(List.of("*"));
+//        configuration.setAllowedOrigins(
+//                Arrays.asList(
+//                        "http://localhost:8080",
+//                        "http://127.0.0.1:8080",
+//                        "http://localhost:8080/swagger-ui.html",
+//                        "http://127.0.0.1:8080/swagger-ui.html"
+//
+//                )
+//        );
 
         // 허용할 HTTP 메서드
         configuration.setAllowedMethods(
@@ -166,14 +188,16 @@ public class SecurityConfig {
         );
 
         // 허용할 헤더
-        configuration.setAllowedHeaders(
-                Arrays.asList(
-                        "Authorization",
-                        "Cache-Control",
-                        "Content-Type",
-                        "X-Requested-With"
-                )
-        );
+//        TODO: 허용할 헤더 추가
+        configuration.setAllowedHeaders(List.of("*"));
+//        configuration.setAllowedHeaders(
+//                Arrays.asList(
+//                        "Authorization",
+//                        "Cache-Control",
+//                        "Content-Type",
+//                        "X-Requested-With"
+//                )
+//        );
 
         // 인증 정보(쿠키, Authorization 헤더 등)를 포함한 요청 허용
         configuration.setAllowCredentials(true);

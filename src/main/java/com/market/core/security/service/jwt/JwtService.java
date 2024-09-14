@@ -1,11 +1,15 @@
-package com.market.core.security.service;
+package com.market.core.security.service.jwt;
 
-import com.market.core.security.model.PrincipalDetails;
+import com.market.core.security.config.JwtProperties;
+import com.market.core.security.principal.PrincipalDetails;
+import com.market.core.security.principal.PrincipalDetailsService;
+import com.market.member.dto.request.MemberJwtDto;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -23,6 +27,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * JWT 토큰 생성, 검증, 헤더 설정, 권한 비교 등의 JWT 관련 기능을 제공하는 서비스 클래스입니다.
+ */
 @Component
 @RequiredArgsConstructor
 public class JwtService {
@@ -41,40 +48,52 @@ public class JwtService {
     /**
      * Access 토큰 생성
      */
-    public String createAccessToken(PrincipalDetails principalDetails) {
-        return createToken(principalDetails, accessExpirationSeconds);
+    public String createAccessToken(MemberJwtDto memberJwtDto) {
+        return createToken(memberJwtDto, accessExpirationSeconds);
     }
 
     /**
      * Refresh 토큰 생성
      */
-    public String createRefreshToken(PrincipalDetails principalDetails) {
-        return createToken(principalDetails, refreshExpirationSeconds);
+    public String createRefreshToken(MemberJwtDto memberJwtDto) {
+        return createToken(memberJwtDto, refreshExpirationSeconds);
     }
 
     /**
      * JWT 토큰 생성 공통 로직
      */
-    private String createToken(PrincipalDetails principalDetails, long expirationTime) {
+    private String createToken(MemberJwtDto memberJwtDto, long expirationTime) {
         // 토큰 생성에 사용할 변수들 정의
-        String subject = principalDetails.getOauthId();
+        String memberId = String.valueOf(memberJwtDto.getId());
         Date issuedAt = Date.from(Instant.now());
         Date expiration = Date.from(Instant.now().plusSeconds(expirationTime));
-        Long userId = principalDetails.getId(); // 사용자 ID
-        String roles = (principalDetails.getAuthorities() == null || principalDetails.getAuthorities().isEmpty()) ? "" :
-                principalDetails.getAuthorities().stream()
+        String roles = (memberJwtDto.getAuthorities() == null || memberJwtDto.getAuthorities().isEmpty()) ? "" :
+                memberJwtDto.getAuthorities().stream()
                         .map(GrantedAuthority::getAuthority)
                         .collect(Collectors.joining(","));
 
         // JWT 토큰 생성
         return Jwts.builder()
-                .setSubject(subject)
+                .setSubject(memberId)
                 .setIssuedAt(issuedAt)
                 .setExpiration(expiration)
-                .claim("id", userId)
                 .claim("roles", roles)
                 .signWith(extractSecretKey(), SignatureAlgorithm.HS512) // 서명에 사용할 비밀 키
                 .compact(); // JWT 문자열로 생성
+    }
+
+    /**
+     * Access 토큰 Header 설정
+     */
+    public void setAccessTokenToHeader(HttpServletResponse response, String accessToken) {
+        response.setHeader(JwtProperties.ACCESS_TOKEN_HEADER, JwtProperties.TOKEN_PREFIX + accessToken);
+    }
+
+    /**
+     * Refresh 토큰 Header 설정
+     */
+    public void setRefreshTokenToHeader(HttpServletResponse response, String refreshToken) {
+        response.setHeader(JwtProperties.REFRESH_TOKEN_HEADER, JwtProperties.TOKEN_PREFIX + refreshToken);
     }
 
     /**
@@ -82,11 +101,10 @@ public class JwtService {
      */
     public Authentication createAuthentication(String token) {
         // JWT 토큰을 파싱하고 클레임(Claims) 추출
-        Claims claims = Jwts.parserBuilder()
-                .setSigningKey(extractSecretKey())
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
+        Claims claims = getClaims(token);
+
+        // ID 추출
+        Long memberId = Long.valueOf(claims.getSubject());
 
         // 권한 정보 추출
         String roles = claims.get("roles", String.class);
@@ -94,11 +112,7 @@ public class JwtService {
                 List.of(new SimpleGrantedAuthority(roles)) : List.of();
 
         // 사용자 정보를 담은 UserDetails 객체 생성
-        UserDetails user = PrincipalDetails.builder()
-                .id(claims.get("id", Long.class))
-                .oauthId(claims.getSubject())
-                .authorities(authorities)
-                .build();
+        UserDetails user = new PrincipalDetails(memberId, authorities);
 
         // Authentication 객체 생성하여 반환
         return new UsernamePasswordAuthenticationToken(user, token, authorities);
@@ -133,6 +147,17 @@ public class JwtService {
         if (!tokenAuthorities.containsAll(dbAuthorities)) {
             throw new AccessDeniedException("JWT 토큰의 권한과 데이터베이스 권한이 일치하지 않습니다.");
         }
+    }
+
+    /**
+     * JWT 토큰을 파싱하고 클레임(Claims) 추출
+     */
+    public Claims getClaims(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(extractSecretKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
     }
 
     /**
