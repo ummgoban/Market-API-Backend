@@ -59,12 +59,19 @@ jobs:
             touch ./.env
         
             echo "DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}" >> ./.env
-            echo "JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }}" >> ./.env
-            echo "DB_USERNAME=${{ secrets.DB_USERNAME }}" >> ./.env
-            echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> ./.env
             echo "DB_HOST=${{ secrets.DB_HOST }}" >> ./.env
             echo "DB_PORT=${{ secrets.DB_PORT }}" >> ./.env
             echo "DB_DATABASE=${{ secrets.DB_DATABASE }}" >> ./.env
+            echo "DB_USERNAME=${{ secrets.DB_USERNAME }}" >> ./.env
+            echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> ./.env
+            echo "NAVER_CLIENT_ID=${{ secrets.NAVER_CLIENT_ID }}" >> ./.env
+            echo "NAVER_CLIENT_SECRET=${{ secrets.NAVER_CLIENT_SECRET }}" >> ./.env
+            echo "NAVER_REDIRECT_URL=${{ secrets.NAVER_REDIRECT_URL }}" >> ./.env
+            echo "NAVER_CLIENT_ID=${{ secrets.NAVER_CLIENT_ID }}" >> ./.env
+            echo "KAKAO_REDIRECT_URL=${{ secrets.KAKAO_REDIRECT_URL }}" >> ./.env
+            echo "JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }}" >> ./.env
+            echo "ACCESS_EXPIRATION_SECONDS=${{ secret.ACCESS_EXPIRATION_SECONDS}}" >> ./.env
+            echo "REFRESH_EXPIRATION_SECONDS=${{ secret.REFRESH_EXPIRATION_SECONDS }}" >> ./.env
 
       # 권한 부여 후 gradle build
       - name: Set Gradle build Permission
