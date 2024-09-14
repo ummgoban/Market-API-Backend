@@ -4,6 +4,9 @@ import com.market.core.response.ErrorResponse;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
+/**
+ * JWT 관련 에러 코드를 관리하는 enum 클래스입니다.
+ */
 @Getter
 public enum JwtErrorCode implements BaseErrorCode {
     VALIDATION_TOKEN_FAILED(400, "유효하지 않은 토큰입니다.", HttpStatus.BAD_REQUEST),

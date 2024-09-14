@@ -3,6 +3,9 @@ package com.market.core.exception;
 import com.market.core.code.error.BaseErrorCode;
 import lombok.Getter;
 
+/**
+ * JWT 관련 예외를 처리하는 클래스입니다.
+ */
 @Getter
 public class JwtException extends RuntimeException {
 

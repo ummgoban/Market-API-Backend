@@ -10,7 +10,9 @@ import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequ
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-
+/**
+ * OAuth2 인증 요청에 대해 state 파라미터를 추가하고 커스터마이징하는 Resolver 클래스입니다.
+ */
 @Component
 public class CustomAuthorizationRequestResolver implements OAuth2AuthorizationRequestResolver {
 

@@ -27,6 +27,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * JWT 토큰 생성, 검증, 헤더 설정, 권한 비교 등의 JWT 관련 기능을 제공하는 서비스 클래스입니다.
+ */
 @Component
 @RequiredArgsConstructor
 public class JwtService {

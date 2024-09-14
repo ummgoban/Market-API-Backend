@@ -6,6 +6,10 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+/**
+ * 회원 정보를 관리하는 엔티티 클래스입니다.
+ * OAuth2 소셜 로그인 사용자 정보를 포함합니다.
+ */
 @Entity
 @Getter
 @Builder

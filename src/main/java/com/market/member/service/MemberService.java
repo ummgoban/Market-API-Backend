@@ -11,6 +11,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+/**
+ * 회원 관련 기능을 처리하는 서비스 클래스입니다.
+ */
 @Service
 @RequiredArgsConstructor
 public class MemberService {

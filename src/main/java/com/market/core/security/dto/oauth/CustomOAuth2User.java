@@ -7,6 +7,9 @@ import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import java.util.Collection;
 import java.util.Map;
 
+/**
+ * DefaultOAuth2UserService에서 사용자 정보를 받아와 OAuth2 인증 사용자 정보를 커스터마이징하기 위한 클래스입니다.
+ */
 @Getter
 public class CustomOAuth2User extends DefaultOAuth2User {
 

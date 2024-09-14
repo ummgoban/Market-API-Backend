@@ -32,7 +32,9 @@ import java.util.List;
 
 import static org.springframework.security.web.util.matcher.AntPathRequestMatcher.antMatcher;
 
-
+/**
+ * JWT 및 OAuth2 관련 설정을 포함하고 있는 Spring Security 설정 클래스입니다.
+ */
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity

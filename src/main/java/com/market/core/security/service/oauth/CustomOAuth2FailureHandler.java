@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * CustomOAuth2UserService 인증 실패 시 처리 핸들러
+ * CustomOAuth2UserService 인증 실패 시 처리하는 핸들러 클래스입니다.
  */
 @Component
 public class CustomOAuth2FailureHandler implements AuthenticationFailureHandler {

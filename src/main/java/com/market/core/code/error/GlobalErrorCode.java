@@ -4,6 +4,9 @@ import com.market.core.response.ErrorResponse;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
+/**
+ * 전역적으로 공통적으로 사용되는 에러 코드를 관리하는 enum 클래스입니다.
+ */
 @Getter
 public enum GlobalErrorCode implements BaseErrorCode {
     VALIDATION_FAILED(400, "입력 값이 유효하지 않습니다. 다시 확인해 주세요", HttpStatus.BAD_REQUEST),

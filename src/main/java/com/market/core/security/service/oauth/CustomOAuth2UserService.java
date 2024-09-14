@@ -19,6 +19,9 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * OAuth2 사용자 정보 로딩 및 권한 설정을 위한 커스텀 서비스 클래스입니다.
+ */
 @Service
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 

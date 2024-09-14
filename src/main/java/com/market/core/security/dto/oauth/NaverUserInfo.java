@@ -2,6 +2,9 @@ package com.market.core.security.dto.oauth;
 
 import java.util.Map;
 
+/**
+ * Naver의 OAuth2 인증을 통해 받아온 사용자 정보를 표준화된 형태로 제공하기 위한 클래스입니다.
+ */
 public class NaverUserInfo implements OAuth2UserInfo {
 
     private final Map<String, Object> response;

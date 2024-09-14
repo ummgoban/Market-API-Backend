@@ -4,6 +4,9 @@ import com.market.core.response.ErrorResponse;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
+/**
+ * 회원 관련 에러 코드를 관리하는 enum 클래스입니다.
+ */
 @Getter
 public enum MemberErrorCode implements BaseErrorCode {
     // 400 BAD REQUEST

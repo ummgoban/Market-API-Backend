@@ -21,6 +21,9 @@ import java.nio.file.AccessDeniedException;
 
 import static org.springframework.util.StringUtils.hasText;
 
+/**
+ * 클라이언트 요청에서 JWT 토큰을 추출하고 검증하여 인증된 사용자의 접근을 허용하는 필터 클래스입니다.
+ */
 @RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
 

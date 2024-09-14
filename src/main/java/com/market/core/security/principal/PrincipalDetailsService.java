@@ -10,6 +10,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+/**
+ * Spring Security의 UserDetailsService를 구현하여 사용자 ID로 사용자 정보를 조회하고, 인증에 필요한 PrincipalDetails 객체를 반환하는 서비스 클래스입니다.
+ */
 @Service
 @RequiredArgsConstructor
 public class PrincipalDetailsService implements UserDetailsService {
