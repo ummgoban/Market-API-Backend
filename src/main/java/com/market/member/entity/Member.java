@@ -19,14 +19,19 @@ public class Member {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "oauth_id")
     private String oauthId; // 소셜 회원 고유 ID
 
+    @Column(name = "provider")
     private String provider; // OAuth2 제공자 정보
 
+    @Column(name = "name")
     private String name; // 사용자 이름
 
+    @Column(name = "profile_image_url")
     private String profileImageUrl; // 프로필 이미지 URL
 
+    @Column(name = "roles")
     @Enumerated(EnumType.STRING)
     private RolesType roles; // 권한
 }
