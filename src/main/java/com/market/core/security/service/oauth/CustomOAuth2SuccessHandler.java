@@ -57,5 +57,7 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
         // JWT 토큰을 응답 헤더에 추가
         jwtService.setAccessTokenToHeader(response, jwtTokens.getAccessToken());
         jwtService.setRefreshTokenToHeader(response, jwtTokens.getRefreshToken());
+
+        response.sendRedirect("http://localhost:8081");
     }
 }

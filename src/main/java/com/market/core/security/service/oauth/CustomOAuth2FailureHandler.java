@@ -34,5 +34,7 @@ public class CustomOAuth2FailureHandler implements AuthenticationFailureHandler 
         errorResponse.put("message", exception.getMessage());
 
         response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
+
+        response.sendRedirect("http://localhost:8081");
     }
 }
