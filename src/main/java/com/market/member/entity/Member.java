@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 
 /**
  * 회원 정보를 관리하는 엔티티 클래스입니다.
- * OAuth2 소셜 로그인 사용자 정보를 포함합니다.
+ * OAuth 소셜 로그인 사용자 정보를 포함합니다.
  */
 @Entity
 @Getter
@@ -23,7 +23,8 @@ public class Member {
     private String oauthId; // 소셜 회원 고유 ID
 
     @Column(name = "provider")
-    private String provider; // OAuth2 제공자 정보
+    @Enumerated(EnumType.STRING)
+    private ProviderType provider; // OAuth 제공자 정보
 
     @Column(name = "name")
     private String name; // 사용자 이름
