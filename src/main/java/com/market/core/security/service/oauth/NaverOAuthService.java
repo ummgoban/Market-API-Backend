@@ -63,6 +63,10 @@ public class NaverOAuthService implements OAuthService {
                 .bodyToMono(NaverResponseDto.class)
                 .block();
 
+        if (response == null || response.getAccessToken() == null) {
+            throw new OAuthException(OAuthErrorCode.INVALID_ACCESS_TOKEN);
+        }
+
         return response.getAccessToken();
     }
 
@@ -85,6 +89,10 @@ public class NaverOAuthService implements OAuthService {
                 .onStatus(HttpStatusCode::is5xxServerError, response -> Mono.error(new OAuthException(OAuthErrorCode.OAUTH_PROVIDER_SERVER_ERROR)))
                 .bodyToMono(NaverUserInfoDto.class)
                 .block();
+
+        if (userinfo == null || userinfo.getResponse() == null) {
+            throw new OAuthException(OAuthErrorCode.INVALID_USER_INFO);
+        }
 
         return MemberLoginDto.builder()
                 .oauthId(userinfo.getResponse().getOauthId())

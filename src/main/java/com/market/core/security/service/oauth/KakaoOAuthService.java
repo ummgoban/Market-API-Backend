@@ -62,6 +62,10 @@ public class KakaoOAuthService implements OAuthService {
                 .bodyToMono(KakaoResponseDto.class)
                 .block();
 
+        if (response == null || response.getAccessToken() == null) {
+            throw new OAuthException(OAuthErrorCode.INVALID_ACCESS_TOKEN);
+        }
+
         return response.getAccessToken();
     }
 
@@ -83,6 +87,10 @@ public class KakaoOAuthService implements OAuthService {
                 .onStatus(HttpStatusCode::is5xxServerError, response -> Mono.error(new OAuthException(OAuthErrorCode.OAUTH_PROVIDER_SERVER_ERROR)))
                 .bodyToMono(KakaoUserInfoDto.class)
                 .block();
+
+        if (userinfo == null || userinfo.getKakaoAccount() == null || userinfo.getKakaoAccount().getProfile() == null) {
+            throw new OAuthException(OAuthErrorCode.INVALID_USER_INFO);
+        }
 
         return MemberLoginDto.builder()
                 .oauthId(String.valueOf(userinfo.getOauthId()))
