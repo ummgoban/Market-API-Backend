@@ -1,6 +1,5 @@
 package com.market.core.security.service.jwt;
 
-import com.market.core.security.config.JwtProperties;
 import com.market.core.security.principal.PrincipalDetails;
 import com.market.core.security.principal.PrincipalDetailsService;
 import com.market.member.dto.request.MemberJwtDto;
@@ -9,7 +8,6 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
