@@ -15,6 +15,7 @@ public enum OAuthErrorCode implements BaseErrorCode {
     BAD_REQUEST_OAUTH_TOKEN(400, "OAuth 토큰을 요청하는 과정에서 오류가 발생했습니다.", HttpStatus.BAD_REQUEST),
     INVALID_ACCESS_TOKEN(400, "유효하지 않은 AccessToken입니다.", HttpStatus.BAD_REQUEST),
     INVALID_USER_INFO(400, "유효하지 않은 사용자 정보입니다.", HttpStatus.BAD_REQUEST),
+    INVALID_OAUTH_REQUEST(400, "유효하지 않은 OAuth 요청입니다.", HttpStatus.BAD_REQUEST),
 
     // 500 INTERNAL_SERVER_ERROR
     OAUTH_PROVIDER_SERVER_ERROR(500, "외부 OAuth 서버에서 오류가 발생했습니다.", HttpStatus.INTERNAL_SERVER_ERROR);

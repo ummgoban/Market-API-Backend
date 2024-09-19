@@ -64,7 +64,7 @@ public class NaverOAuthService implements OAuthService {
                 .block();
 
         if (response == null || response.getAccessToken() == null) {
-            throw new OAuthException(OAuthErrorCode.INVALID_ACCESS_TOKEN);
+            throw new OAuthException(OAuthErrorCode.INVALID_OAUTH_REQUEST);
         }
 
         return response.getAccessToken();
