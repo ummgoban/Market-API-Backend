@@ -7,6 +7,8 @@ import com.market.member.dto.request.OAuthAuthorizationDto;
 import com.market.member.dto.request.OAuthLoginDto;
 import com.market.member.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +26,9 @@ public class AuthController {
             summary = "OAuth AccessToken 발급",
             description = "OAuth 제공자 서버로부터 AccessToken을 발급받습니다. (백엔드 테스트 용도입니다.)"
     )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OAuth AccessToken 발급 성공", useReturnTypeSchema = true),
+    })
     @PostMapping("/accessToken")
     public ResponseEntity<BfResponse<AccessTokenDto>> getAccessToken(@RequestBody OAuthAuthorizationDto oAuthAuthorizationDto) {
         AccessTokenDto accessToken = authService.getAccessToken(oAuthAuthorizationDto);
@@ -34,6 +39,9 @@ public class AuthController {
             summary = "OAuth 로그인",
             description = "OAuth 제공자의 자격 증명을 사용하여 로그인하고 JWT 토큰을 발급합니다."
     )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "JWT 토큰 발급 성공", useReturnTypeSchema = true),
+    })
     @PostMapping("/login")
     public ResponseEntity<BfResponse<JwtTokenDto>> oAuthLogin(@RequestBody OAuthLoginDto oAuthLoginDto) {
         JwtTokenDto jwtTokenDto = authService.login(oAuthLoginDto);
