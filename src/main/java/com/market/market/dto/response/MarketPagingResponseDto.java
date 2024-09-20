@@ -13,8 +13,29 @@ import java.util.List;
 @Builder
 public class MarketPagingResponseDto {
 
-    @Schema(description = "가게 정보")
-    MarketPagingInfoDto marketPagingInfoDto;
+    @Schema(description = "가게 id 값입니다.")
+    private Long id;
+
+    @Schema(description = "가게 이름입니다.")
+    private String marketName;
+
+    @Schema(description = "가게 주소입니다.")
+    private String address;
+
+    @Schema(description = "가게 상세 주소입니다.")
+    private String specificAddress;
+
+    @Schema(description = "가게 오픈 시간입니다.")
+    private String openAt;
+
+    @Schema(description = "가게 마감 시간입니다.")
+    private String closeAt;
+
+    @Schema(description = "가게 픽업 시작 시간입니다.")
+    private String pickupStartAt;
+
+    @Schema(description = "가게 픽업 마감 시간입니다.")
+    private String pickupEndAt;
 
     @Schema(description = "가게 이미지")
     List<String> images;

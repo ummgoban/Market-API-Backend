@@ -40,7 +40,14 @@ public class MarketPagingService {
             List<String> images = marketImages.stream().map(MarketImage::getImageUrl).toList();
 
             MarketPagingResponseDto marketPagingResponseDto = MarketPagingResponseDto.builder()
-                    .marketPagingInfoDto(infoDto)
+                    .id(infoDto.getId())
+                    .marketName(infoDto.getMarketName())
+                    .address(infoDto.getAddress())
+                    .specificAddress(infoDto.getSpecificAddress())
+                    .openAt(infoDto.getOpenAt())
+                    .closeAt(infoDto.getCloseAt())
+                    .pickupStartAt(infoDto.getPickupStartAt())
+                    .pickupEndAt(infoDto.getPickupEndAt())
                     .images(images)
                     .build();
 
