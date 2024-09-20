@@ -110,7 +110,8 @@ public class SecurityConfig {
     private RequestMatcher[] publicRequestMatchers() {
         List<RequestMatcher> requestMatchers = List.of(
 //                TODO: endpoint 추가
-                antMatcher("/**")
+                antMatcher("/market/paging"),
+                antMatcher("/swagger/**")
         );
 
         return requestMatchers.toArray(RequestMatcher[]::new);
