@@ -5,6 +5,8 @@ import com.market.market.dto.response.MarketPagingResponse;
 import com.market.market.service.MarketPagingService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +29,9 @@ public class MarketPagingController {
 
     @Operation(summary = "가게 목록", description = "커서 기반 페이지네이션으로 가게 목록을 조회합니다.")
     @SecurityRequirements(value = {}) // no security
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "가게 목록 조회 성공")
+    })
     @GetMapping("/paging")
     public ResponseEntity<BfResponse<MarketPagingResponse>> findMarketByCursorId(
             @Parameter(description = "마지막으로 조회한 커서 ID 입니다. 가게 ID 입니다.") @RequestParam("cursorId") Long cursorId,
