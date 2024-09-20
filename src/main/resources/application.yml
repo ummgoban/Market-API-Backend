@@ -66,7 +66,10 @@ jwt:
   refresh-expiration-seconds: ${REFRESH_EXPIRATION_SECONDS} # refresh token 만료 시간
 
 springdoc:
-    path: /swagger-ui/index.html
+  path: /swagger-ui/index.html
+  swagger-ui:
+    tags-sorter: alpha
+    operations-sorter: alpha
 
 # TODO: 삭제 후 배포
 logging:

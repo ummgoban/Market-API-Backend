@@ -1,6 +1,5 @@
 package com.market.core.security.service.jwt;
 
-import com.market.core.security.config.JwtProperties;
 import com.market.core.security.principal.PrincipalDetails;
 import com.market.core.security.principal.PrincipalDetailsService;
 import com.market.member.dto.request.MemberJwtDto;
@@ -9,7 +8,6 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -83,20 +81,6 @@ public class JwtService {
     }
 
     /**
-     * Access 토큰 Header 설정
-     */
-    public void setAccessTokenToHeader(HttpServletResponse response, String accessToken) {
-        response.setHeader(JwtProperties.ACCESS_TOKEN_HEADER, JwtProperties.TOKEN_PREFIX + accessToken);
-    }
-
-    /**
-     * Refresh 토큰 Header 설정
-     */
-    public void setRefreshTokenToHeader(HttpServletResponse response, String refreshToken) {
-        response.setHeader(JwtProperties.REFRESH_TOKEN_HEADER, JwtProperties.TOKEN_PREFIX + refreshToken);
-    }
-
-    /**
      * JWT 토큰을 기반으로 사용자 인증 객체를 생성
      */
     public Authentication createAuthentication(String token) {
@@ -112,10 +96,10 @@ public class JwtService {
                 List.of(new SimpleGrantedAuthority(roles)) : List.of();
 
         // 사용자 정보를 담은 UserDetails 객체 생성
-        UserDetails user = new PrincipalDetails(memberId, authorities);
+        UserDetails userDetails = new PrincipalDetails(memberId, authorities);
 
         // Authentication 객체 생성하여 반환
-        return new UsernamePasswordAuthenticationToken(user, token, authorities);
+        return new UsernamePasswordAuthenticationToken(userDetails.getUsername(), token, userDetails.getAuthorities());
     }
 
     /**
