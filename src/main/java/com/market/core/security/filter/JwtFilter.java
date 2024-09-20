@@ -5,11 +5,15 @@ import com.market.core.code.error.BaseErrorCode;
 import com.market.core.code.error.JwtErrorCode;
 import com.market.core.security.service.jwt.JwtService;
 import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.UnsupportedJwtException;
+import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -29,7 +33,6 @@ public class JwtFilter extends OncePerRequestFilter {
 
     private static final String AUTHENTICATION_HEADER = "Authorization";
     private static final String AUTHENTICATION_SCHEME = "Bearer ";
-    private static final String APPLICATION_JSON = "application/json";
     private static final String UTF_8 = "UTF-8";
 
     private final JwtService jwtService;
@@ -60,8 +63,7 @@ public class JwtFilter extends OncePerRequestFilter {
             BaseErrorCode errorCode = determineErrorCode(e);
 
             response.setStatus(errorCode.getStatus().value()); // 상태 코드 설정
-            response.setContentType(APPLICATION_JSON); // 응답의 Content-Type 설정
-            response.setCharacterEncoding(UTF_8); // 문자 인코딩 설정
+            response.setContentType(MediaType.APPLICATION_JSON_VALUE); // 응답의 Content-Type 설정
 
             // JSON 직렬화
             String responseMessage = objectMapper.writeValueAsString(errorCode.getErrorResponse());
@@ -73,18 +75,30 @@ public class JwtFilter extends OncePerRequestFilter {
      * 예외에 따른 오류 코드 설정
      */
     private BaseErrorCode determineErrorCode(Exception e) {
-        if (e instanceof ExpiredJwtException) {
+        if (e instanceof MalformedJwtException) {
+            // 잘못된 토큰 형식
+            return JwtErrorCode.INVALID_TOKEN_FORMAT;
+        } else if (e instanceof ExpiredJwtException) {
             // 토큰 만료
-            return JwtErrorCode.VALIDATION_TOKEN_EXPIRED;
+            return JwtErrorCode.EXPIRED_TOKEN;
+        } else if (e instanceof UnsupportedJwtException) {
+            // 지원하지 않는 토큰
+            return JwtErrorCode.UNSUPPORTED_TOKEN;
+        } else if (e instanceof SignatureException) {
+            // 서명이 유효하지 않은 토큰
+            return JwtErrorCode.INVALID_TOKEN_SIGNATURE;
+        } else if (e instanceof IllegalArgumentException) {
+            // 예상치 못한 인수가 전달됨
+            return JwtErrorCode.INVALID_TOKEN_ARGUMENT;
         } else if (e instanceof AuthenticationCredentialsNotFoundException) {
             // 유효하지 않은 토큰
-            return JwtErrorCode.VALIDATION_TOKEN_FAILED;
+            return JwtErrorCode.INVALID_TOKEN;
         } else if (e instanceof AccessDeniedException) {
             // 접근 권한이 없음
-            return JwtErrorCode.VALIDATION_TOKEN_NOT_AUTHORIZATION;
+            return JwtErrorCode.INSUFFICIENT_TOKEN_PERMISSIONS;
         } else {
             // 그 외의 에러
-            return JwtErrorCode.VALIDATION_TOKEN_FAILED;
+            return JwtErrorCode.TOKEN_PROCESSING_ERROR;
         }
     }
 
