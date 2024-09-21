@@ -9,11 +9,22 @@ import org.springframework.http.HttpStatus;
  */
 @Getter
 public enum JwtErrorCode implements BaseErrorCode {
-    VALIDATION_TOKEN_FAILED(400, "유효하지 않은 토큰입니다.", HttpStatus.BAD_REQUEST),
-    VALIDATION_TOKEN_EXPIRED(401, "토큰이 만료되었습니다.", HttpStatus.UNAUTHORIZED),
-    VALIDATION_TOKEN_NOT_AUTHORIZATION(401, "접근 권한이 없습니다.", HttpStatus.UNAUTHORIZED),
+    // 400 BAD_REQUEST
+    INVALID_TOKEN(400, "유효하지 않은 토큰입니다.", HttpStatus.BAD_REQUEST),
+    INVALID_TOKEN_FORMAT(400, "잘못된 토큰 형식입니다.", HttpStatus.BAD_REQUEST),
+    UNSUPPORTED_TOKEN(400, "지원되지 않는 토큰입니다.", HttpStatus.BAD_REQUEST),
+    INVALID_TOKEN_ARGUMENT(400, "잘못된 토큰 인수입니다.", HttpStatus.BAD_REQUEST),
 
-    NOT_FOUND_REFRESH_TOKEN(404, "refresh token이 존재하지 않습니다.", HttpStatus.NOT_FOUND);
+    // 401 UNAUTHORIZED
+    EXPIRED_TOKEN(401, "토큰이 만료되었습니다.", HttpStatus.UNAUTHORIZED),
+    INSUFFICIENT_TOKEN_PERMISSIONS(401, "접근 권한이 없습니다.", HttpStatus.UNAUTHORIZED),
+    INVALID_TOKEN_SIGNATURE(401, "유효하지 않은 토큰 서명입니다.", HttpStatus.UNAUTHORIZED),
+
+    // 404 NOT_FOUND
+    NOT_FOUND_REFRESH_TOKEN(404, "refresh token이 존재하지 않습니다.", HttpStatus.NOT_FOUND),
+
+    // 500 INTERNAL_SERVER_ERROR
+    TOKEN_PROCESSING_ERROR(500, "토큰 처리 중 서버 오류가 발생했습니다. 관리자에게 문의하세요.", HttpStatus.INTERNAL_SERVER_ERROR);
 
     private final int errorCode;
     private final String errorMessage;

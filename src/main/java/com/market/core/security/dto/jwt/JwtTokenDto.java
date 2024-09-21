@@ -1,5 +1,6 @@
 package com.market.core.security.dto.jwt;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +13,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class JwtTokenDto {
 
+    @Schema(description = "JWT 액세스 토큰", example = "eyJ...")
     private final String accessToken;
+
+    @Schema(description = "JWT 리프레시 토큰", example = "eyJ...")
     private final String refreshToken;
 }

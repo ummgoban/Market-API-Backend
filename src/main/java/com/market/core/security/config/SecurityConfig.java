@@ -2,11 +2,7 @@ package com.market.core.security.config;
 
 import com.market.core.security.filter.JwtFilter;
 import com.market.core.security.service.jwt.JwtService;
-import com.market.core.security.service.oauth.CustomAuthorizationRequestResolver;
 import com.market.member.entity.RolesType;
-import com.market.core.security.service.oauth.CustomOAuth2FailureHandler;
-import com.market.core.security.service.oauth.CustomOAuth2SuccessHandler;
-import com.market.core.security.service.oauth.CustomOAuth2UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,7 +15,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.ExceptionTranslationFilter;
 import org.springframework.security.web.util.matcher.RequestMatcher;
@@ -33,26 +28,13 @@ import java.util.List;
 import static org.springframework.security.web.util.matcher.AntPathRequestMatcher.antMatcher;
 
 /**
- * JWT 및 OAuth2 관련 설정을 포함하고 있는 Spring Security 설정 클래스입니다.
+ * JWT 및 OAuth 관련 설정을 포함하고 있는 Spring Security 설정 클래스입니다.
  */
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-
-    private final CustomOAuth2UserService customOAuth2UserService;
-    private final CustomOAuth2SuccessHandler customOAuth2SuccessHandler;
-    private final CustomOAuth2FailureHandler customOAuth2FailureHandler;
-    private final ClientRegistrationRepository clientRegistrationRepository;
-
-    /**
-     * API 커스텀(쿼리 파라미터)을 위한 Resolver
-     */
-    @Bean
-    public CustomAuthorizationRequestResolver customAuthorizationRequestResolver() {
-        return new CustomAuthorizationRequestResolver(clientRegistrationRepository);
-    }
 
     /**
      * 로그인 인증 작업 처리
@@ -87,7 +69,7 @@ public class SecurityConfig {
      */
     @Bean
     @Order(2)
-    public SecurityFilterChain authenticatedFilterChain(HttpSecurity http, JwtService jwtProvider) throws Exception {
+    public SecurityFilterChain authenticatedFilterChain(HttpSecurity http, JwtService jwtService) throws Exception {
         defaultSecuritySetting(http);
         http
                 .securityMatchers(matcher -> matcher
@@ -99,7 +81,7 @@ public class SecurityConfig {
 //                  TODO: 예외 처리
 //                .exceptionHandling(exception -> exception
 //                        .accessDeniedHandler())
-                .addFilterBefore(new JwtFilter(jwtProvider), ExceptionTranslationFilter.class);
+                .addFilterBefore(new JwtFilter(jwtService), ExceptionTranslationFilter.class);
 
         return http.build();
     }
@@ -147,15 +129,7 @@ public class SecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 세션 생성하지 않음
                 .headers(headers -> headers.frameOptions(
                         HeadersConfigurer.FrameOptionsConfig::disable) // X-Frame-Options 헤더 비활성화, 클릭재킹 공격 방지
-                )
-                .oauth2Login(oauth -> oauth
-                        .successHandler(customOAuth2SuccessHandler)
-                        .failureHandler(customOAuth2FailureHandler)
-                        .userInfoEndpoint(userinfo -> userinfo
-                                .userService(customOAuth2UserService))
-                        .authorizationEndpoint(endpoint -> endpoint
-                                .authorizationRequestResolver(customAuthorizationRequestResolver()))
-                ); // OAuth2 로그인 설정
+                );
     }
 
     /**
