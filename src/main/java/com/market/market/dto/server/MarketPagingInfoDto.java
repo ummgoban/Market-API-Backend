@@ -1,4 +1,4 @@
-package com.market.market.dto.response;
+package com.market.market.dto.server;
 
 import lombok.Builder;
 import lombok.Getter;

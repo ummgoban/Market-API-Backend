@@ -1,6 +1,6 @@
 package com.market.market.repository;
 
-import com.market.market.dto.response.MarketPagingInfoDto;
+import com.market.market.dto.server.MarketPagingInfoDto;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -26,7 +26,7 @@ public class MarketPagingRepositoryImpl implements MarketPagingRepository {
         List<MarketPagingInfoDto> content =
                 // market 엔티티와 businessInfo 엔티티 조인 후, 데이터 조회
                 em.createQuery("select " +
-                                "new com.market.market.dto.response.MarketPagingInfoDto" +
+                                "new com.market.market.dto.server.MarketPagingInfoDto" +
                                 "(m.id," +
                                 "b.marketName," +
                                 "b.address," +

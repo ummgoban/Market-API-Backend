@@ -1,6 +1,6 @@
 package com.market.market.repository;
 
-import com.market.market.dto.response.MarketPagingInfoDto;
+import com.market.market.dto.server.MarketPagingInfoDto;
 import org.springframework.data.domain.Slice;
 
 /**

@@ -11,7 +11,7 @@ import java.util.List;
  */
 @Getter
 @Builder
-public class MarketPagingResponseDto {
+public class MarketPagingInfoResponse {
 
     @Schema(description = "가게 id 값입니다.")
     private Long id;

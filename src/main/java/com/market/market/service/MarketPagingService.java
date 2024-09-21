@@ -1,8 +1,8 @@
 package com.market.market.service;
 
-import com.market.market.dto.response.MarketPagingInfoDto;
+import com.market.market.dto.server.MarketPagingInfoDto;
 import com.market.market.dto.response.MarketPagingResponse;
-import com.market.market.dto.response.MarketPagingResponseDto;
+import com.market.market.dto.response.MarketPagingInfoResponse;
 import com.market.market.entity.MarketImage;
 import com.market.market.repository.MarketImageRepository;
 import com.market.market.repository.MarketRepository;
@@ -28,7 +28,7 @@ public class MarketPagingService {
     @Transactional(readOnly = true)
     public MarketPagingResponse findMarketByCursorId(Long cursorId, Integer size) {
 
-        List<MarketPagingResponseDto> response = new ArrayList<>();
+        List<MarketPagingInfoResponse> response = new ArrayList<>();
 
         // market 엔티티와 businessInfo 엔티티 조인 후, 데이터 조회
         Slice<MarketPagingInfoDto> marketList = marketRepository.findMarketByCursorId(cursorId, size);
@@ -39,7 +39,7 @@ public class MarketPagingService {
             List<MarketImage> marketImages = marketImageRepository.findAllByMarketId(infoDto.getId());
             List<String> images = marketImages.stream().map(MarketImage::getImageUrl).toList();
 
-            MarketPagingResponseDto marketPagingResponseDto = MarketPagingResponseDto.builder()
+            MarketPagingInfoResponse marketPagingInfoResponse = MarketPagingInfoResponse.builder()
                     .id(infoDto.getId())
                     .marketName(infoDto.getMarketName())
                     .address(infoDto.getAddress())
@@ -51,7 +51,7 @@ public class MarketPagingService {
                     .images(images)
                     .build();
 
-            response.add(marketPagingResponseDto);
+            response.add(marketPagingInfoResponse);
         });
 
         return MarketPagingResponse.

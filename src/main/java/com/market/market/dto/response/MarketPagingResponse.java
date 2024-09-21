@@ -15,7 +15,7 @@ import java.util.List;
 public class MarketPagingResponse {
 
     @Schema(description = "가게 목록입니다.")
-    List<MarketPagingResponseDto> markets;
+    List<MarketPagingInfoResponse> markets;
 
     @Schema(description = "다음 페이지 여부입니다.")
     boolean hasNext;
