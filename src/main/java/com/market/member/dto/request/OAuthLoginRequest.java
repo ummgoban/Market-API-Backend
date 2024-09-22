@@ -11,7 +11,7 @@ import lombok.RequiredArgsConstructor;
  */
 @Getter
 @RequiredArgsConstructor
-public class OAuthLoginDto {
+public class OAuthLoginRequest {
 
     @Schema(description = "OAuth 제공자 타입 (예: NAVER, KAKAO, APPLE)", example = "NAVER", required = true)
     private final ProviderType provider;

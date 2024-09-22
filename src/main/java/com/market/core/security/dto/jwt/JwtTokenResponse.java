@@ -11,7 +11,7 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @Builder
 @RequiredArgsConstructor
-public class JwtTokenDto {
+public class JwtTokenResponse {
 
     @Schema(description = "JWT 액세스 토큰", example = "eyJ...")
     private final String accessToken;

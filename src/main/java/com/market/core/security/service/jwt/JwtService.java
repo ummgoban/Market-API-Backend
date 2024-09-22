@@ -2,7 +2,7 @@ package com.market.core.security.service.jwt;
 
 import com.market.core.security.principal.PrincipalDetails;
 import com.market.core.security.principal.PrincipalDetailsService;
-import com.market.member.dto.request.MemberJwtDto;
+import com.market.member.dto.server.MemberJwtDto;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
