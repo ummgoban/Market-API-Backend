@@ -11,7 +11,7 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @Builder
 @RequiredArgsConstructor
-public class AccessTokenDto {
+public class AccessTokenResponse {
 
     @Schema(description = "발급된 OAuth Provider의 Access Token", example = "AAA...")
     private final String accessToken;

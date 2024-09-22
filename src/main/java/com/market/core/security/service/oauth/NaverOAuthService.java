@@ -3,9 +3,9 @@ package com.market.core.security.service.oauth;
 import com.market.core.code.error.OAuthErrorCode;
 import com.market.core.exception.OAuthException;
 import com.market.core.security.dto.oauth.NaverUserInfoDto;
-import com.market.member.dto.request.MemberLoginDto;
-import com.market.member.dto.request.OAuthAuthorizationDto;
-import com.market.member.dto.request.OAuthLoginDto;
+import com.market.member.dto.server.MemberLoginDto;
+import com.market.member.dto.request.OAuthAuthorizationRequest;
+import com.market.member.dto.request.OAuthLoginRequest;
 import com.market.core.security.dto.oauth.NaverResponseDto;
 import com.market.member.entity.ProviderType;
 import lombok.RequiredArgsConstructor;
@@ -42,7 +42,7 @@ public class NaverOAuthService implements OAuthService {
      * OAuth 인증 코드로 액세스 토큰을 발급받는 메서드 (백엔드 테스트 용도)
      */
     @Override
-    public String getAccessToken(OAuthAuthorizationDto oAuth2AuthorizationDto) {
+    public String getAccessToken(OAuthAuthorizationRequest oAuthAuthorizationRequest) {
 
         WebClient webClient = WebClient.builder()
                 .baseUrl(tokenUri)
@@ -54,8 +54,8 @@ public class NaverOAuthService implements OAuthService {
                         .queryParam("grant_type", "authorization_code")
                         .queryParam("client_id", clientId)
                         .queryParam("client_secret", clientSecret)
-                        .queryParam("code", oAuth2AuthorizationDto.getCode())
-                        .queryParam("state", oAuth2AuthorizationDto.getState())
+                        .queryParam("code", oAuthAuthorizationRequest.getCode())
+                        .queryParam("state", oAuthAuthorizationRequest.getState())
                         .build())
                 .retrieve()
                 .onStatus(HttpStatusCode::is4xxClientError, responseEntity -> Mono.error(new OAuthException(OAuthErrorCode.BAD_REQUEST_OAUTH_TOKEN)))
@@ -74,12 +74,12 @@ public class NaverOAuthService implements OAuthService {
      * OAuth 제공자에서 사용자 정보를 가져와 MemberLoginDto로 변환
      */
     @Override
-    public MemberLoginDto getUserInfo(OAuthLoginDto oAuthLoginDto) {
+    public MemberLoginDto getUserInfo(OAuthLoginRequest oAuthLoginRequest) {
 
         WebClient webClient = WebClient.builder()
                 .baseUrl(baseUri)
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                .defaultHeader(HttpHeaders.AUTHORIZATION, "Bearer " + oAuthLoginDto.getAccessToken())
+                .defaultHeader(HttpHeaders.AUTHORIZATION, "Bearer " + oAuthLoginRequest.getAccessToken())
                 .build();
 
         NaverUserInfoDto userinfo = webClient.get()
@@ -99,7 +99,7 @@ public class NaverOAuthService implements OAuthService {
                 .provider(ProviderType.NAVER)
                 .name(userinfo.getResponse().getName())
                 .profileImageUrl(userinfo.getResponse().getProfileImageUrl())
-                .roles(oAuthLoginDto.getRoles())
+                .roles(oAuthLoginRequest.getRoles())
                 .build();
     }
 }

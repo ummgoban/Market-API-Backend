@@ -2,16 +2,16 @@ package com.market.member.service;
 
 import com.market.core.code.error.OAuthErrorCode;
 import com.market.core.exception.OAuthException;
-import com.market.core.security.dto.jwt.AccessTokenDto;
-import com.market.core.security.dto.jwt.JwtTokenDto;
+import com.market.core.security.dto.jwt.AccessTokenResponse;
+import com.market.core.security.dto.jwt.JwtTokenResponse;
 import com.market.core.security.service.jwt.JwtService;
 import com.market.core.security.service.oauth.KakaoOAuthService;
 import com.market.core.security.service.oauth.NaverOAuthService;
 import com.market.core.security.service.oauth.OAuthService;
-import com.market.member.dto.request.MemberJwtDto;
-import com.market.member.dto.request.MemberLoginDto;
-import com.market.member.dto.request.OAuthAuthorizationDto;
-import com.market.member.dto.request.OAuthLoginDto;
+import com.market.member.dto.server.MemberJwtDto;
+import com.market.member.dto.server.MemberLoginDto;
+import com.market.member.dto.request.OAuthAuthorizationRequest;
+import com.market.member.dto.request.OAuthLoginRequest;
 import com.market.member.entity.Member;
 import com.market.member.entity.ProviderType;
 import com.market.member.repository.MemberRepository;
@@ -31,15 +31,15 @@ public class AuthService {
      * Provider 서버에서 AccessToken 발급
      * (백엔드 테스트 용도)
      */
-    public AccessTokenDto getAccessToken(OAuthAuthorizationDto oAuthAuthorizationDto) {
-        OAuthService oAuthService = getOAuthService(oAuthAuthorizationDto.getProvider());
-        String accessToken = oAuthService.getAccessToken(oAuthAuthorizationDto);
+    public AccessTokenResponse getAccessToken(OAuthAuthorizationRequest oAuthAuthorizationRequest) {
+        OAuthService oAuthService = getOAuthService(oAuthAuthorizationRequest.getProvider());
+        String accessToken = oAuthService.getAccessToken(oAuthAuthorizationRequest);
 
         if (accessToken == null) {
             throw new OAuthException(OAuthErrorCode.INVALID_ACCESS_TOKEN);
         }
 
-        return AccessTokenDto.builder()
+        return AccessTokenResponse.builder()
                 .accessToken(accessToken)
                 .build();
     }
@@ -47,11 +47,11 @@ public class AuthService {
     /**
      * OAuth 로그인
      */
-    public JwtTokenDto login(OAuthLoginDto oAuthLoginDto) {
-        OAuthService oAuthService = getOAuthService(oAuthLoginDto.getProvider());
+    public JwtTokenResponse login(OAuthLoginRequest oAuthLoginRequest) {
+        OAuthService oAuthService = getOAuthService(oAuthLoginRequest.getProvider());
 
         // OAuth 제공자로부터 회원 정보 조회
-        MemberLoginDto memberLoginDto = oAuthService.getUserInfo(oAuthLoginDto);
+        MemberLoginDto memberLoginDto = oAuthService.getUserInfo(oAuthLoginRequest);
 
         // DB 회원 정보 조회
         Member member = memberRepository.findByOauthIdAndRoles(memberLoginDto.getOauthId(), memberLoginDto.getRoles())
@@ -81,11 +81,11 @@ public class AuthService {
     /**
      * Access Token 및 Refresh Token 발급
      */
-    private JwtTokenDto createAccessTokenAndRefreshToken(MemberJwtDto memberJwtDto) {
+    private JwtTokenResponse createAccessTokenAndRefreshToken(MemberJwtDto memberJwtDto) {
         String accessToken = jwtService.createAccessToken(memberJwtDto);
         String refreshToken = jwtService.createRefreshToken(memberJwtDto);
 
-        return JwtTokenDto.builder()
+        return JwtTokenResponse.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .build();

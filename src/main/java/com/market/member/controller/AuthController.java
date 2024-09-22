@@ -1,10 +1,10 @@
 package com.market.member.controller;
 
 import com.market.core.response.BfResponse;
-import com.market.core.security.dto.jwt.AccessTokenDto;
-import com.market.core.security.dto.jwt.JwtTokenDto;
-import com.market.member.dto.request.OAuthAuthorizationDto;
-import com.market.member.dto.request.OAuthLoginDto;
+import com.market.core.security.dto.jwt.AccessTokenResponse;
+import com.market.core.security.dto.jwt.JwtTokenResponse;
+import com.market.member.dto.request.OAuthAuthorizationRequest;
+import com.market.member.dto.request.OAuthLoginRequest;
 import com.market.member.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -30,8 +30,8 @@ public class AuthController {
             @ApiResponse(responseCode = "200", description = "OAuth AccessToken 발급 성공", useReturnTypeSchema = true),
     })
     @PostMapping("/accessToken")
-    public ResponseEntity<BfResponse<AccessTokenDto>> getAccessToken(@RequestBody OAuthAuthorizationDto oAuthAuthorizationDto) {
-        AccessTokenDto accessToken = authService.getAccessToken(oAuthAuthorizationDto);
+    public ResponseEntity<BfResponse<AccessTokenResponse>> getAccessToken(@RequestBody OAuthAuthorizationRequest oAuthAuthorizationRequest) {
+        AccessTokenResponse accessToken = authService.getAccessToken(oAuthAuthorizationRequest);
         return ResponseEntity.ok(new BfResponse<>(accessToken));
     }
 
@@ -43,8 +43,8 @@ public class AuthController {
             @ApiResponse(responseCode = "200", description = "JWT 토큰 발급 성공", useReturnTypeSchema = true),
     })
     @PostMapping("/login")
-    public ResponseEntity<BfResponse<JwtTokenDto>> oAuthLogin(@RequestBody OAuthLoginDto oAuthLoginDto) {
-        JwtTokenDto jwtTokenDto = authService.login(oAuthLoginDto);
-        return ResponseEntity.ok(new BfResponse<>(jwtTokenDto));
+    public ResponseEntity<BfResponse<JwtTokenResponse>> oAuthLogin(@RequestBody OAuthLoginRequest oAuthLoginRequest) {
+        JwtTokenResponse jwtToken = authService.login(oAuthLoginRequest);
+        return ResponseEntity.ok(new BfResponse<>(jwtToken));
     }
 }

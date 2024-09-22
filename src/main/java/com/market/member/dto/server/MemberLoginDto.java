@@ -1,4 +1,4 @@
-package com.market.member.dto.request;
+package com.market.member.dto.server;
 
 import com.market.member.entity.ProviderType;
 import com.market.member.entity.RolesType;
