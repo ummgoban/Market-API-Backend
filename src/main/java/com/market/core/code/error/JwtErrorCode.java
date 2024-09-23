@@ -20,9 +20,6 @@ public enum JwtErrorCode implements BaseErrorCode {
     INSUFFICIENT_TOKEN_PERMISSIONS(401, "접근 권한이 없습니다.", HttpStatus.UNAUTHORIZED),
     INVALID_TOKEN_SIGNATURE(401, "유효하지 않은 토큰 서명입니다.", HttpStatus.UNAUTHORIZED),
 
-    // 404 NOT_FOUND
-    NOT_FOUND_REFRESH_TOKEN(404, "refresh token이 존재하지 않습니다.", HttpStatus.NOT_FOUND),
-
     // 500 INTERNAL_SERVER_ERROR
     TOKEN_PROCESSING_ERROR(500, "토큰 처리 중 서버 오류가 발생했습니다. 관리자에게 문의하세요.", HttpStatus.INTERNAL_SERVER_ERROR);
 

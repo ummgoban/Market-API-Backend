@@ -1,8 +1,9 @@
 package com.market.member.controller;
 
 import com.market.core.response.BfResponse;
-import com.market.core.security.dto.jwt.AccessTokenResponse;
-import com.market.core.security.dto.jwt.JwtTokenResponse;
+import com.market.core.security.dto.jwt.request.RefreshTokenRequest;
+import com.market.core.security.dto.jwt.response.AccessTokenResponse;
+import com.market.core.security.dto.jwt.response.JwtTokenResponse;
 import com.market.member.dto.request.OAuthAuthorizationRequest;
 import com.market.member.dto.request.OAuthLoginRequest;
 import com.market.member.service.AuthService;
@@ -46,5 +47,15 @@ public class AuthController {
     public ResponseEntity<BfResponse<JwtTokenResponse>> oAuthLogin(@RequestBody OAuthLoginRequest oAuthLoginRequest) {
         JwtTokenResponse jwtToken = authService.login(oAuthLoginRequest);
         return ResponseEntity.ok(new BfResponse<>(jwtToken));
+    }
+
+    @Operation(
+            summary = "토큰 갱신",
+            description = "기존 Refresh Token을 사용하여 새로운 Access Token과 Refresh Token을 발급받습니다."
+    )
+    @PostMapping("/refresh")
+    public ResponseEntity<BfResponse<JwtTokenResponse>> refreshTokens(@RequestBody RefreshTokenRequest refreshTokenRequest) {
+        JwtTokenResponse jwtTokenDto = authService.refreshTokens(refreshTokenRequest);
+        return ResponseEntity.ok(new BfResponse<>(jwtTokenDto));
     }
 }

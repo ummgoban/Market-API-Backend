@@ -1,9 +1,14 @@
 package com.market.member.service;
 
+import com.market.core.code.error.JwtErrorCode;
+import com.market.core.code.error.MemberErrorCode;
 import com.market.core.code.error.OAuthErrorCode;
+import com.market.core.exception.JwtException;
+import com.market.core.exception.MemberException;
 import com.market.core.exception.OAuthException;
-import com.market.core.security.dto.jwt.AccessTokenResponse;
-import com.market.core.security.dto.jwt.JwtTokenResponse;
+import com.market.core.security.dto.jwt.request.RefreshTokenRequest;
+import com.market.core.security.dto.jwt.response.AccessTokenResponse;
+import com.market.core.security.dto.jwt.response.JwtTokenResponse;
 import com.market.core.security.service.jwt.JwtService;
 import com.market.core.security.service.oauth.KakaoOAuthService;
 import com.market.core.security.service.oauth.NaverOAuthService;
@@ -15,6 +20,8 @@ import com.market.member.dto.request.OAuthLoginRequest;
 import com.market.member.entity.Member;
 import com.market.member.entity.ProviderType;
 import com.market.member.repository.MemberRepository;
+import io.jsonwebtoken.Claims;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -60,6 +67,32 @@ public class AuthService {
         MemberJwtDto memberJwtDto = new MemberJwtDto(member);
 
         // JWT 토큰 생성 및 반환
+        return createAccessTokenAndRefreshToken(memberJwtDto);
+    }
+
+    /**
+     * 기존 Refresh token 으로 신규 Access token 및 Refresh token 발급
+     */
+    @Transactional
+    public JwtTokenResponse refreshTokens(RefreshTokenRequest refreshTokenRequest) {
+        // 유효성 검증
+        try {
+            jwtService.validateToken(refreshTokenRequest.getRefreshToken());
+        } catch (Exception e) {
+            throw new JwtException(JwtErrorCode.INVALID_TOKEN);
+        }
+
+        // ID로 회원 조회
+        Claims claims = jwtService.getClaims(refreshTokenRequest.getRefreshToken());
+        Long memberId = Long.valueOf(claims.getSubject());
+
+        // DB 조회
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new MemberException(MemberErrorCode.NOT_FOUND_MEMBER_ID));
+
+        // MemberJwtDto 변환
+        MemberJwtDto memberJwtDto = new MemberJwtDto(member);
+
         return createAccessTokenAndRefreshToken(memberJwtDto);
     }
 
