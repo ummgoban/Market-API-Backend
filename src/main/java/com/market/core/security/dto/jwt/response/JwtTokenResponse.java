@@ -1,4 +1,4 @@
-package com.market.core.security.dto.jwt;
+package com.market.core.security.dto.jwt.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
