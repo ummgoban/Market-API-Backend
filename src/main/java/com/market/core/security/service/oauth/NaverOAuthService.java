@@ -2,6 +2,7 @@ package com.market.core.security.service.oauth;
 
 import com.market.core.code.error.OAuthErrorCode;
 import com.market.core.exception.OAuthException;
+import com.market.core.security.dto.jwt.server.NaverErrorResponseDto;
 import com.market.core.security.dto.oauth.NaverUserInfoDto;
 import com.market.member.dto.server.MemberLoginDto;
 import com.market.member.dto.request.OAuthAuthorizationRequest;
@@ -14,6 +15,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
@@ -58,14 +60,10 @@ public class NaverOAuthService implements OAuthService {
                         .queryParam("state", oAuthAuthorizationRequest.getState())
                         .build())
                 .retrieve()
-                .onStatus(HttpStatusCode::is4xxClientError, responseEntity -> Mono.error(new OAuthException(OAuthErrorCode.BAD_REQUEST_OAUTH_TOKEN)))
+                .onStatus(HttpStatusCode::is4xxClientError, responseEntity -> Mono.error(new OAuthException(OAuthErrorCode.BAD_REQUEST_OAUTH_USER_INFO)))
                 .onStatus(HttpStatusCode::is5xxServerError, responseEntity -> Mono.error(new OAuthException(OAuthErrorCode.OAUTH_PROVIDER_SERVER_ERROR)))
                 .bodyToMono(NaverResponseDto.class)
                 .block();
-
-        if (response == null || response.getAccessToken() == null) {
-            throw new OAuthException(OAuthErrorCode.INVALID_OAUTH_REQUEST);
-        }
 
         return response.getAccessToken();
     }
@@ -85,14 +83,10 @@ public class NaverOAuthService implements OAuthService {
         NaverUserInfoDto userinfo = webClient.get()
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
-                .onStatus(HttpStatusCode::is4xxClientError, response -> Mono.error(new OAuthException(OAuthErrorCode.BAD_REQUEST_OAUTH_USER_INFO)))
+                .onStatus(HttpStatusCode::is4xxClientError, clientResponse -> handleClientError(clientResponse))
                 .onStatus(HttpStatusCode::is5xxServerError, response -> Mono.error(new OAuthException(OAuthErrorCode.OAUTH_PROVIDER_SERVER_ERROR)))
                 .bodyToMono(NaverUserInfoDto.class)
                 .block();
-
-        if (userinfo == null || userinfo.getResponse() == null) {
-            throw new OAuthException(OAuthErrorCode.INVALID_USER_INFO);
-        }
 
         return MemberLoginDto.builder()
                 .oauthId(userinfo.getResponse().getOauthId())
@@ -101,5 +95,22 @@ public class NaverOAuthService implements OAuthService {
                 .profileImageUrl(userinfo.getResponse().getProfileImageUrl())
                 .roles(oAuthLoginRequest.getRoles())
                 .build();
+    }
+
+    /**
+     * OAuth 클라이언트 오류 처리 메서드
+     */
+    private Mono<? extends Throwable> handleClientError(ClientResponse clientResponse) {
+        return clientResponse.bodyToMono(NaverErrorResponseDto.class)
+                .flatMap(errorResponse -> {
+                    String errorCode = errorResponse.getErrorCode();
+                    return switch (errorCode) {
+                        case "024" -> Mono.error(new OAuthException(OAuthErrorCode.AUTHENTICATION_FAILED));
+                        case "028" -> Mono.error(new OAuthException(OAuthErrorCode.OAUTH_HEADER_NOT_EXISTS));
+                        case "403" -> Mono.error(new OAuthException(OAuthErrorCode.FORBIDDEN));
+                        case "404" -> Mono.error(new OAuthException(OAuthErrorCode.NOT_FOUND));
+                        default -> Mono.error(new OAuthException(OAuthErrorCode.BAD_REQUEST_OAUTH_USER_INFO));
+                    };
+                });
     }
 }
