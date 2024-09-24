@@ -94,7 +94,8 @@ public class SecurityConfig {
 //                TODO: endpoint 추가
                 antMatcher("/market/paging"),
                 antMatcher("/swagger-ui/**"),
-                antMatcher("/v3/api-docs/**")
+                antMatcher("/v3/api-docs/**"),
+                antMatcher("/market/{marketId}")
         );
 
         return requestMatchers.toArray(RequestMatcher[]::new);
