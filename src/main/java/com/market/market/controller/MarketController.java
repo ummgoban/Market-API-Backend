@@ -17,12 +17,12 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * 매장 관련 API controller 입니다.
+ * 가게 관련 API controller 입니다.
  */
 @RestController
 @RequestMapping("market")
 @RequiredArgsConstructor
-@Tag(name = "매장", description = "매장 관련 API")
+@Tag(name = "가게", description = "가게 관련 API")
 public class MarketController {
 
     private final MarketService marketService;
@@ -40,17 +40,16 @@ public class MarketController {
 
     @PostMapping()
     @Operation(
-            summary = "매장 등록",
-            description = "새로운 매장을 등록합니다."
+            summary = "가게 등록",
+            description = "새로운 가게를 등록합니다."
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "매장 등록 성공", useReturnTypeSchema = true),
+            @ApiResponse(responseCode = "200", description = "가게 등록 성공", useReturnTypeSchema = true),
     })
     public ResponseEntity<BfResponse<Long>> registerMarket(
             @AuthenticationPrincipal PrincipalDetails principalDetails,
             @RequestBody MarketRegisterRequest marketRegisterRequest) {
         Long marketId = marketService.registerMarket(principalDetails, marketRegisterRequest);
-        System.out.println("principalDetails = " + principalDetails.getUsername());
         return ResponseEntity.ok(new BfResponse<>(marketId));
     }
 

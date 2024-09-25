@@ -4,7 +4,7 @@ import com.market.core.code.error.BaseErrorCode;
 import lombok.Getter;
 
 /**
- * 매장 관련 예외를 처리하는 클래스입니다.
+ * 가게 관련 예외를 처리하는 클래스입니다.
  */
 @Getter
 public class MarketException extends RuntimeException {

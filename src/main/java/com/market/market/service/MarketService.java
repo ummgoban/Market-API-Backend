@@ -81,14 +81,14 @@ public class MarketService {
     }
 
     /**
-     * 매장 등록
+     * 가게 등록
      */
     public Long registerMarket(PrincipalDetails principalDetails, MarketRegisterRequest marketRegisterRequest) {
         // 회원 조회
         Member member = memberRepository.findById(Long.parseLong(principalDetails.getUsername()))
                 .orElseThrow(() -> new MemberException(MemberErrorCode.NOT_FOUND_MEMBER_ID));
 
-        // 매장 이름 중복 체크
+        // 가게 이름 중복 체크
         if (marketRepository.existsByMarketName(marketRegisterRequest.getMarketName())) {
             throw new MarketException(MarketErrorCode.DUPLICATE_MARKET_NAME);
         }
