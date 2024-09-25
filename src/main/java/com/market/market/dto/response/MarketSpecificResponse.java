@@ -56,10 +56,9 @@ public class MarketSpecificResponse {
     List<ProductResponse> products;
 
     public static MarketSpecificResponse from(Market market, BusinessInfo businessInfo,
-                                              List<MarketImage> marketImages, List<Product> marketProducts) {
+                                              List<MarketImage> marketImages, List<ProductResponse> productResponses) {
 
         List<String> images = marketImages.stream().map(MarketImage::getImageUrl).toList();
-        List<ProductResponse> products = marketProducts.stream().map(ProductResponse::from).toList();
 
         return MarketSpecificResponse.builder()
                 .id(market.getId())
@@ -73,7 +72,7 @@ public class MarketSpecificResponse {
                 .pickupStartAt(market.getPickupStartAt())
                 .pickupEndAt(market.getPickupEndAt())
                 .images(images)
-                .products(products)
+                .products(productResponses)
                 .build();
     }
 }
