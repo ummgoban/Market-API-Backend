@@ -1,10 +1,8 @@
 package com.market.market.dto.response;
 
-import com.market.market.entity.BusinessInfo;
 import com.market.market.entity.Market;
 import com.market.market.entity.MarketImage;
 import com.market.product.dto.response.ProductResponse;
-import com.market.product.entity.Product;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
@@ -55,18 +53,17 @@ public class MarketSpecificResponse {
     @Schema(description = "가게 상품 목록")
     List<ProductResponse> products;
 
-    public static MarketSpecificResponse from(Market market, BusinessInfo businessInfo,
-                                              List<MarketImage> marketImages, List<ProductResponse> productResponses) {
+    public static MarketSpecificResponse from(Market market, List<MarketImage> marketImages, List<ProductResponse> productResponses) {
 
         List<String> images = marketImages.stream().map(MarketImage::getImageUrl).toList();
 
         return MarketSpecificResponse.builder()
                 .id(market.getId())
-                .name(businessInfo.getMarketName())
-                .number(businessInfo.getNumber())
-                .address(businessInfo.getAddress())
-                .specificAddress(businessInfo.getSpecificAddress())
-                .contactNumber(businessInfo.getContactNumber())
+                .name(market.getMarketName())
+                .number(market.getBusinessNumber())
+                .address(market.getAddress())
+                .specificAddress(market.getSpecificAddress())
+                .contactNumber(market.getContactNumber())
                 .openAt(market.getOpenAt())
                 .closeAt(market.getCloseAt())
                 .pickupStartAt(market.getPickupStartAt())
