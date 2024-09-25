@@ -1,7 +1,6 @@
 package com.market.core.security.principal;
 
 import com.market.member.entity.Member;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -14,7 +13,6 @@ import java.util.Optional;
 /**
  * PrincipalDetailsService에서 사용되며, 사용자의 인증 정보를 담고 있는 UserDetails 구현 클래스입니다.
  */
-@Getter
 @RequiredArgsConstructor
 public class PrincipalDetails implements UserDetails {
 
