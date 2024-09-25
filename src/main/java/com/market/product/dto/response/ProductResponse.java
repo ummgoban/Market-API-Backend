@@ -5,6 +5,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.util.List;
+
 
 /**
  * 상품 조회 응답 클래스입니다.
@@ -35,7 +37,10 @@ public class ProductResponse {
     @Schema(description = "상품 재고")
     private Integer stock;
 
-    public static ProductResponse from(Product product) {
+    @Schema(description = "상품 태그")
+    private List<String> tags;
+
+    public static ProductResponse from(Product product, List<String> tagNames) {
         return ProductResponse.builder()
                 .id(product.getId())
                 .image(product.getProductImage())
@@ -44,6 +49,7 @@ public class ProductResponse {
                 .discountPrice(product.getDiscountPrice())
                 .discountRate(product.getDiscountRate())
                 .stock(product.getStock())
+                .tags(tagNames)
                 .build();
     }
 }
