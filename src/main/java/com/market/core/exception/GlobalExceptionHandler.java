@@ -13,15 +13,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class GlobalExceptionHandler {
 
     /**
-     * Member 관련 예외 Handler
-     */
-    @ExceptionHandler(MemberException.class)
-    protected ResponseEntity<ErrorResponse> handleMemberException(MemberException exception) {
-        BaseErrorCode errorCode = exception.getErrorCode();
-        return ResponseEntity.status(errorCode.getStatus()).body(errorCode.getErrorResponse());
-    }
-
-    /**
      * Jwt 관련 예외 Handler
      */
     @ExceptionHandler(JwtException.class)
@@ -35,6 +26,24 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(OAuthException.class)
     protected ResponseEntity<ErrorResponse> handleMemberException(OAuthException exception) {
+        BaseErrorCode errorCode = exception.getErrorCode();
+        return ResponseEntity.status(errorCode.getStatus()).body(errorCode.getErrorResponse());
+    }
+
+    /**
+     * Member 관련 예외 Handler
+     */
+    @ExceptionHandler(MemberException.class)
+    protected ResponseEntity<ErrorResponse> handleMemberException(MemberException exception) {
+        BaseErrorCode errorCode = exception.getErrorCode();
+        return ResponseEntity.status(errorCode.getStatus()).body(errorCode.getErrorResponse());
+    }
+
+    /**
+     * Market 관련 예외 Handler
+     */
+    @ExceptionHandler(MarketException.class)
+    protected ResponseEntity<ErrorResponse> handleMarketException(MarketException exception) {
         BaseErrorCode errorCode = exception.getErrorCode();
         return ResponseEntity.status(errorCode.getStatus()).body(errorCode.getErrorResponse());
     }
