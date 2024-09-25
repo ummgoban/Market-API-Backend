@@ -19,17 +19,9 @@ import com.market.product.dto.response.ProductResponse;
 import com.market.product.entity.Product;
 import com.market.product.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.util.UriComponentsBuilder;
-import reactor.core.publisher.Mono;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.net.URI;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,12 +37,7 @@ public class MarketService {
     private final MarketImageRepository marketImageRepository;
     private final ProductRepository productRepository;
     private final TagRepository tagRepository;
-
-    @Value("${external.api.business-status.url}")
-    private String baseUrl;
-
-    @Value("${external.api.business-status.service-key}")
-    private String serviceKey;
+    private final BusinessStatusService businessStatusService;
 
     /**
      * 가게 상세 조회 트랜잭션입니다.
@@ -94,7 +81,7 @@ public class MarketService {
         }
 
         // 사업자 등록 번호 유효성 검증
-        BusinessStatusResponseDto businessStatusResponseDto = getBusinessStatus(marketRegisterRequest.getBusinessNumber());
+        BusinessStatusResponseDto businessStatusResponseDto = businessStatusService.getBusinessStatus(marketRegisterRequest.getBusinessNumber());
         String taxType = businessStatusResponseDto.getData().get(0).getTaxType();
         if (!isValidBusinessNumber(taxType)) {
             throw new MarketException(MarketErrorCode.INVALID_BUSINESS_NUMBER);
@@ -116,44 +103,10 @@ public class MarketService {
      * 사업자 등록 번호 유효성 검증
      */
     public boolean validateBusinessStatus(String businessNumber) {
-        BusinessStatusResponseDto businessStatusResponseDto = getBusinessStatus(businessNumber);
+        BusinessStatusResponseDto businessStatusResponseDto = businessStatusService.getBusinessStatus(businessNumber);
         String taxType = businessStatusResponseDto.getData().get(0).getTaxType();
 
         return isValidBusinessNumber(taxType);
-    }
-
-    /**
-     * 사업자 번호를 사용하여 외부 API를 통해 사업자 상태 정보를 조회
-     */
-    private BusinessStatusResponseDto getBusinessStatus(String businessNumber) {
-
-        WebClient webClient = WebClient.builder()
-                .baseUrl(baseUrl)
-                .build();
-
-        // URI 생성 (serviceKey는 이미 인코딩되어 있으므로 다시 인코딩하지 않음)
-        URI uri = URI.create(
-                UriComponentsBuilder.fromHttpUrl(baseUrl)
-                        .queryParam("serviceKey", "{serviceKey}")
-                        .build(false) // 인코딩하지 않음
-                        .expand(serviceKey)
-                        .toUriString()
-        );
-
-        // 요청 본문 설정 (사업자 번호 배열로 전달)
-        Map<String, Object> requestBody = new HashMap<>();
-        requestBody.put("b_no", new String[]{businessNumber});
-
-        BusinessStatusResponseDto response = webClient.post()
-                .uri(uri)
-                .bodyValue(requestBody)
-                .retrieve()
-                .onStatus(HttpStatusCode::is4xxClientError, responseEntity -> Mono.error(new MarketException(MarketErrorCode.BAD_REQUEST_BUSINESS_STATUS)))
-                .onStatus(HttpStatusCode::is5xxServerError, responseEntity -> Mono.error(new MarketException(MarketErrorCode.BUSINESS_STATUS_SERVER_ERROR)))
-                .bodyToMono(BusinessStatusResponseDto.class)
-                .block();
-
-        return response;
     }
 
     /**
