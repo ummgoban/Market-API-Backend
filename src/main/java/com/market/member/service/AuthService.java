@@ -42,10 +42,6 @@ public class AuthService {
         OAuthService oAuthService = getOAuthService(oAuthAuthorizationRequest.getProvider());
         String accessToken = oAuthService.getAccessToken(oAuthAuthorizationRequest);
 
-        if (accessToken == null) {
-            throw new OAuthException(OAuthErrorCode.INVALID_ACCESS_TOKEN);
-        }
-
         return AccessTokenResponse.builder()
                 .accessToken(accessToken)
                 .build();

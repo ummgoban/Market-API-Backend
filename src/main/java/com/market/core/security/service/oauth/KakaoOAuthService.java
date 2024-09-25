@@ -2,6 +2,7 @@ package com.market.core.security.service.oauth;
 
 import com.market.core.code.error.OAuthErrorCode;
 import com.market.core.exception.OAuthException;
+import com.market.core.security.dto.jwt.server.KakaoErrorResponseDto;
 import com.market.core.security.dto.oauth.KakaoUserInfoDto;
 import com.market.member.dto.server.MemberLoginDto;
 import com.market.member.dto.request.OAuthAuthorizationRequest;
@@ -14,6 +15,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
@@ -57,14 +59,10 @@ public class KakaoOAuthService implements OAuthService {
                         .queryParam("code", oAuthAuthorizationRequest.getCode())
                         .build())
                 .retrieve()
-                .onStatus(HttpStatusCode::is4xxClientError, responseEntity -> Mono.error(new OAuthException(OAuthErrorCode.BAD_REQUEST_OAUTH_TOKEN)))
+                .onStatus(HttpStatusCode::is4xxClientError, responseEntity -> Mono.error(new OAuthException(OAuthErrorCode.BAD_REQUEST_OAUTH_USER_INFO)))
                 .onStatus(HttpStatusCode::is5xxServerError, responseEntity -> Mono.error(new OAuthException(OAuthErrorCode.OAUTH_PROVIDER_SERVER_ERROR)))
                 .bodyToMono(KakaoResponseDto.class)
                 .block();
-
-        if (response == null || response.getAccessToken() == null) {
-            throw new OAuthException(OAuthErrorCode.INVALID_OAUTH_REQUEST);
-        }
 
         return response.getAccessToken();
     }
@@ -83,14 +81,10 @@ public class KakaoOAuthService implements OAuthService {
         KakaoUserInfoDto userinfo = webClient.post()
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
-                .onStatus(HttpStatusCode::is4xxClientError, response -> Mono.error(new OAuthException(OAuthErrorCode.BAD_REQUEST_OAUTH_USER_INFO)))
+                .onStatus(HttpStatusCode::is4xxClientError, clientResponse -> handleClientError(clientResponse))
                 .onStatus(HttpStatusCode::is5xxServerError, response -> Mono.error(new OAuthException(OAuthErrorCode.OAUTH_PROVIDER_SERVER_ERROR)))
                 .bodyToMono(KakaoUserInfoDto.class)
                 .block();
-
-        if (userinfo == null || userinfo.getKakaoAccount() == null || userinfo.getKakaoAccount().getProfile() == null) {
-            throw new OAuthException(OAuthErrorCode.INVALID_USER_INFO);
-        }
 
         return MemberLoginDto.builder()
                 .oauthId(String.valueOf(userinfo.getOauthId()))
@@ -99,5 +93,21 @@ public class KakaoOAuthService implements OAuthService {
                 .profileImageUrl(userinfo.getKakaoAccount().getProfile().getProfileImageUrl())
                 .roles(oAuthLoginRequest.getRoles())
                 .build();
+    }
+
+    /**
+     * OAuth 클라이언트 오류 처리 메서드
+     */
+    private Mono<? extends Throwable> handleClientError(ClientResponse clientResponse) {
+        return clientResponse.bodyToMono(KakaoErrorResponseDto.class)
+                .flatMap(errorResponse -> {
+                    String errorCode = errorResponse.getErrorCode();
+                    return switch (errorCode) {
+                        case "KOE101" -> Mono.error(new OAuthException(OAuthErrorCode.INVALID_CLIENT));
+                        case "KOE320" -> Mono.error(new OAuthException(OAuthErrorCode.INVALID_TOKEN));
+                        case "KOE401" -> Mono.error(new OAuthException(OAuthErrorCode.UNAUTHORIZED));
+                        default -> Mono.error(new OAuthException(OAuthErrorCode.BAD_REQUEST_OAUTH_USER_INFO));
+                    };
+                });
     }
 }

@@ -75,3 +75,4 @@ springdoc:
 logging:
   level:
     org.springframework.security: DEBUG
+    org.hibernate.orm.jdbc.bind: trace
