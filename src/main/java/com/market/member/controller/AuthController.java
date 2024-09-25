@@ -1,12 +1,15 @@
 package com.market.member.controller;
 
 import com.market.core.response.BfResponse;
+import com.market.core.response.ErrorResponse;
 import com.market.core.security.dto.jwt.AccessTokenResponse;
 import com.market.core.security.dto.jwt.JwtTokenResponse;
 import com.market.member.dto.request.OAuthAuthorizationRequest;
 import com.market.member.dto.request.OAuthLoginRequest;
 import com.market.member.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -41,6 +44,7 @@ public class AuthController {
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "JWT 토큰 발급 성공", useReturnTypeSchema = true),
+            @ApiResponse(responseCode = "400", description = "JWT 토큰 발급 시 잘못된 요청으로 인해 반환되는 에러 메시지입니다.", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
     })
     @PostMapping("/login")
     public ResponseEntity<BfResponse<JwtTokenResponse>> oAuthLogin(@RequestBody OAuthLoginRequest oAuthLoginRequest) {
