@@ -95,7 +95,8 @@ public class SecurityConfig {
                 antMatcher("/market/paging"),
                 antMatcher("/swagger-ui/**"),
                 antMatcher("/v3/api-docs/**"),
-                antMatcher("/market/{marketId}")
+                antMatcher("/market/{marketId}"),
+                antMatcher("/auth/login")
         );
 
         return requestMatchers.toArray(RequestMatcher[]::new);
