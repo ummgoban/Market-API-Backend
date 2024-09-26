@@ -83,7 +83,8 @@ public class MarketService {
         // 사업자 등록 번호 유효성 검증
         BusinessStatusResponseDto businessStatusResponseDto = businessStatusService.getBusinessStatus(marketRegisterRequest.getBusinessNumber());
         String taxType = businessStatusResponseDto.getData().get(0).getTaxType();
-        if (!isValidBusinessNumber(taxType)) {
+        String businessStatus = businessStatusResponseDto.getData().get(0).getBusinessStatus();
+        if (!isValidBusinessNumber(taxType, businessStatus)) {
             throw new MarketException(MarketErrorCode.INVALID_BUSINESS_NUMBER);
         }
 
@@ -105,14 +106,19 @@ public class MarketService {
     public boolean validateBusinessStatus(String businessNumber) {
         BusinessStatusResponseDto businessStatusResponseDto = businessStatusService.getBusinessStatus(businessNumber);
         String taxType = businessStatusResponseDto.getData().get(0).getTaxType();
+        String businessStatus = businessStatusResponseDto.getData().get(0).getBusinessStatus();
 
-        return isValidBusinessNumber(taxType);
+        return isValidBusinessNumber(taxType, businessStatus);
     }
 
     /**
      * 세금 유형을 기반으로 사업자 등록 번호가 유효한지 여부를 확인
      */
-    private boolean isValidBusinessNumber(String taxType) {
-        return !"국세청에 등록되지 않은 사업자등록번호입니다.".equals(taxType);
+    private boolean isValidBusinessNumber(String taxType, String businessStatus) {
+        System.out.println("businessStatus = " + businessStatus);
+
+        return !"국세청에 등록되지 않은 사업자등록번호입니다.".equals(taxType) &&
+                !"휴업자".equals(businessStatus) &&
+                !"폐업자".equals(businessStatus);
     }
 }

@@ -20,6 +20,9 @@ public class BusinessStatusResponseDto {
         @JsonProperty("b_no")
         private String businessNumber;
 
+        @JsonProperty("b_stt")
+        private String businessStatus;
+
         @JsonProperty("tax_type")
         private String taxType;
     }
