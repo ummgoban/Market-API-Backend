@@ -3,7 +3,9 @@ package com.market.market.controller;
 import com.market.core.response.BfResponse;
 import com.market.core.security.principal.PrincipalDetails;
 import com.market.market.dto.request.MarketRegisterRequest;
+import com.market.market.dto.response.BusinessNumberValidationResponse;
 import com.market.market.dto.response.MarketSpecificResponse;
+import com.market.market.dto.response.RegisterMarketResponse;
 import com.market.market.service.MarketService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -46,11 +48,11 @@ public class MarketController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "가게 등록 성공", useReturnTypeSchema = true),
     })
-    public ResponseEntity<BfResponse<Long>> registerMarket(
+    public ResponseEntity<BfResponse<RegisterMarketResponse>> registerMarket(
             @AuthenticationPrincipal PrincipalDetails principalDetails,
             @RequestBody MarketRegisterRequest marketRegisterRequest) {
-        Long marketId = marketService.registerMarket(principalDetails, marketRegisterRequest);
-        return ResponseEntity.ok(new BfResponse<>(marketId));
+        RegisterMarketResponse registerMarketResponse = marketService.registerMarket(principalDetails, marketRegisterRequest);
+        return ResponseEntity.ok(new BfResponse<>(registerMarketResponse));
     }
 
     @GetMapping("/business/validate")
@@ -61,8 +63,8 @@ public class MarketController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "사업자 번호가 유효하면 true, 그렇지 않으면 false 반환", useReturnTypeSchema = true)
     })
-    public ResponseEntity<BfResponse<Boolean>> getBusinessStatus(@RequestParam String businessNumber) {
-        boolean isValidBusinessNumber = marketService.validateBusinessStatus(businessNumber);
-        return ResponseEntity.ok(new BfResponse<>(isValidBusinessNumber));
+    public ResponseEntity<BfResponse<BusinessNumberValidationResponse>> getBusinessStatus(@RequestParam String businessNumber) {
+        BusinessNumberValidationResponse businessNumberValidationResponse = marketService.validateBusinessStatus(businessNumber);
+        return ResponseEntity.ok(new BfResponse<>(businessNumberValidationResponse));
     }
 }

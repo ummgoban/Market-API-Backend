@@ -6,6 +6,8 @@ import com.market.core.exception.MarketException;
 import com.market.core.exception.MemberException;
 import com.market.core.security.principal.PrincipalDetails;
 import com.market.market.dto.request.MarketRegisterRequest;
+import com.market.market.dto.response.BusinessNumberValidationResponse;
+import com.market.market.dto.response.RegisterMarketResponse;
 import com.market.market.dto.server.BusinessStatusResponseDto;
 import com.market.market.dto.response.MarketSpecificResponse;
 import com.market.market.entity.Market;
@@ -70,7 +72,7 @@ public class MarketService {
     /**
      * 가게 등록
      */
-    public Long registerMarket(PrincipalDetails principalDetails, MarketRegisterRequest marketRegisterRequest) {
+    public RegisterMarketResponse registerMarket(PrincipalDetails principalDetails, MarketRegisterRequest marketRegisterRequest) {
         // 회원 조회
         Member member = memberRepository.findById(Long.parseLong(principalDetails.getUsername()))
                 .orElseThrow(() -> new MemberException(MemberErrorCode.NOT_FOUND_MEMBER_ID));
@@ -97,18 +99,22 @@ public class MarketService {
                 .contactNumber(marketRegisterRequest.getContactNumber())
                 .build();
 
-        return marketRepository.save(market).getId();
+        return RegisterMarketResponse.builder()
+                .marketId(marketRepository.save(market).getId())
+                .build();
     }
 
     /**
      * 사업자 등록 번호 유효성 검증
      */
-    public boolean validateBusinessStatus(String businessNumber) {
+    public BusinessNumberValidationResponse validateBusinessStatus(String businessNumber) {
         BusinessStatusResponseDto businessStatusResponseDto = businessStatusService.getBusinessStatus(businessNumber);
         String taxType = businessStatusResponseDto.getData().get(0).getTaxType();
         String businessStatus = businessStatusResponseDto.getData().get(0).getBusinessStatus();
 
-        return isValidBusinessNumber(taxType, businessStatus);
+        return BusinessNumberValidationResponse.builder()
+                .validBusinessNumber(isValidBusinessNumber(taxType, businessStatus))
+                .build();
     }
 
     /**
