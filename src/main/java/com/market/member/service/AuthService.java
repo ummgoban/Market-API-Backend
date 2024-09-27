@@ -25,6 +25,9 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+/**
+ * OAuth 인증과 JWT 토큰 생성을 관리하는 서비스 클래스입니다.
+ */
 @Service
 @RequiredArgsConstructor
 public class AuthService {

@@ -33,7 +33,6 @@ public class JwtFilter extends OncePerRequestFilter {
 
     private static final String AUTHENTICATION_HEADER = "Authorization";
     private static final String AUTHENTICATION_SCHEME = "Bearer ";
-    private static final String UTF_8 = "UTF-8";
 
     private final JwtService jwtService;
     private final ObjectMapper objectMapper = new ObjectMapper();

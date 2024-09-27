@@ -20,5 +20,4 @@ public class MarketImage {
 
     @Column(name = "image_url")
     private String imageUrl;
-
 }

@@ -58,7 +58,7 @@ public class SecurityConfig {
                         .requestMatchers(publicRequestMatchers()).permitAll()
 //                        TODO: endpoint 추가 후 주석 풀기
 //                        .anyRequest().authenticated()
-                        .anyRequest().permitAll()
+                        .anyRequest().authenticated()
                 );
 
         return http.build();
@@ -91,7 +91,6 @@ public class SecurityConfig {
      */
     private RequestMatcher[] publicRequestMatchers() {
         List<RequestMatcher> requestMatchers = List.of(
-//                TODO: endpoint 추가
                 antMatcher("/market/paging"),
                 antMatcher("/swagger-ui/**"),
                 antMatcher("/v3/api-docs/**"),
@@ -107,8 +106,7 @@ public class SecurityConfig {
      */
     private RequestMatcher[] authenticatedRequestMatchers() {
         List<RequestMatcher> requestMatchers = List.of(
-//                TODO: endpoint 추가
-                antMatcher("/**")
+                antMatcher("/market")
         );
 
         return requestMatchers.toArray(RequestMatcher[]::new);

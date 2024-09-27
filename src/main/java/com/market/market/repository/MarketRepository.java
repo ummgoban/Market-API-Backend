@@ -6,5 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 /**
  * 가게 도메인의 Repository 입니다.
  */
-public interface MarketRepository extends JpaRepository<Market,Long>, MarketPagingRepository {
+public interface MarketRepository extends JpaRepository<Market, Long>, MarketPagingRepository {
+    boolean existsByMarketName(String marketName);
 }

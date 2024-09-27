@@ -99,7 +99,7 @@ public class JwtService {
         UserDetails userDetails = new PrincipalDetails(memberId, authorities);
 
         // Authentication 객체 생성하여 반환
-        return new UsernamePasswordAuthenticationToken(userDetails.getUsername(), token, userDetails.getAuthorities());
+        return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
     }
 
     /**
