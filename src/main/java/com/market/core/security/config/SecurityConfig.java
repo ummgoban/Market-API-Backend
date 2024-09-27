@@ -106,7 +106,9 @@ public class SecurityConfig {
      */
     private RequestMatcher[] authenticatedRequestMatchers() {
         List<RequestMatcher> requestMatchers = List.of(
-                antMatcher("/market")
+                antMatcher("/market"),
+                antMatcher("/bucket/**")
+
         );
 
         return requestMatchers.toArray(RequestMatcher[]::new);
