@@ -121,7 +121,6 @@ public class MarketService {
      * 세금 유형을 기반으로 사업자 등록 번호가 유효한지 여부를 확인
      */
     private boolean isValidBusinessNumber(String taxType, String businessStatus) {
-        System.out.println("businessStatus = " + businessStatus);
 
         return !"국세청에 등록되지 않은 사업자등록번호입니다.".equals(taxType) &&
                 !"휴업자".equals(businessStatus) &&

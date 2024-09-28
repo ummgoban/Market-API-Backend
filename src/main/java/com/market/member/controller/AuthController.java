@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -30,6 +31,7 @@ public class AuthController {
             summary = "OAuth AccessToken 발급",
             description = "OAuth 제공자 서버로부터 AccessToken을 발급받습니다. (백엔드 테스트 용도입니다.)"
     )
+    @SecurityRequirements(value = {})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "OAuth AccessToken 발급 성공", useReturnTypeSchema = true),
     })
@@ -43,6 +45,7 @@ public class AuthController {
             summary = "OAuth 로그인",
             description = "OAuth 제공자의 자격 증명을 사용하여 로그인하고 JWT 토큰을 발급합니다."
     )
+    @SecurityRequirements(value = {})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "JWT 토큰 발급 성공", useReturnTypeSchema = true),
             @ApiResponse(responseCode = "400", description = "JWT 토큰 발급 시 잘못된 요청으로 인해 반환되는 에러 메시지입니다.", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
@@ -57,6 +60,10 @@ public class AuthController {
             summary = "토큰 갱신",
             description = "기존 Refresh Token을 사용하여 새로운 Access Token과 Refresh Token을 발급받습니다."
     )
+    @SecurityRequirements(value = {})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "JWT 토큰 갱신 성공", useReturnTypeSchema = true),
+    })
     @PostMapping("/refresh")
     public ResponseEntity<BfResponse<JwtTokenResponse>> refreshTokens(@RequestBody RefreshTokenRequest refreshTokenRequest) {
         JwtTokenResponse jwtTokenDto = authService.refreshTokens(refreshTokenRequest);

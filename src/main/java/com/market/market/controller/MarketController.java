@@ -29,8 +29,11 @@ public class MarketController {
 
     private final MarketService marketService;
 
-    @Operation(summary = "가게 상세 조회", description = "가게 상세 조회입니다.")
-    @SecurityRequirements(value = {}) // no security
+    @Operation(
+            summary = "가게 상세 조회",
+            description = "가게 상세 조회입니다."
+    )
+    @SecurityRequirements(value = {})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "가게 상세 조회 성공")
     })
@@ -40,7 +43,6 @@ public class MarketController {
         return ResponseEntity.ok(new BfResponse<>(marketService.findSpecificMarket(marketId)));
     }
 
-    @PostMapping()
     @Operation(
             summary = "가게 등록",
             description = "새로운 가게를 등록합니다."
@@ -48,6 +50,7 @@ public class MarketController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "가게 등록 성공", useReturnTypeSchema = true),
     })
+    @PostMapping()
     public ResponseEntity<BfResponse<RegisterMarketResponse>> registerMarket(
             @AuthenticationPrincipal PrincipalDetails principalDetails,
             @RequestBody MarketRegisterRequest marketRegisterRequest) {
@@ -55,14 +58,16 @@ public class MarketController {
         return ResponseEntity.ok(new BfResponse<>(registerMarketResponse));
     }
 
-    @GetMapping("/business/validate")
+
     @Operation(
             summary = "사업자 등록 번호 유효성 검증",
             description = "사업자 등록 번호가 유효한지 확인합니다."
     )
+    @SecurityRequirements(value = {})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "사업자 번호가 유효하면 true, 그렇지 않으면 false 반환", useReturnTypeSchema = true)
     })
+    @GetMapping("/business/validate")
     public ResponseEntity<BfResponse<BusinessNumberValidationResponse>> getBusinessStatus(@RequestParam String businessNumber) {
         BusinessNumberValidationResponse businessNumberValidationResponse = marketService.validateBusinessStatus(businessNumber);
         return ResponseEntity.ok(new BfResponse<>(businessNumberValidationResponse));

@@ -18,13 +18,10 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.ExceptionTranslationFilter;
 import org.springframework.security.web.util.matcher.RequestMatcher;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import java.util.Arrays;
 import java.util.List;
 
+import static org.springframework.http.HttpMethod.*;
 import static org.springframework.security.web.util.matcher.AntPathRequestMatcher.antMatcher;
 
 /**
@@ -56,8 +53,6 @@ public class SecurityConfig {
                         .requestMatchers(publicRequestMatchers()))
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(publicRequestMatchers()).permitAll()
-//                        TODO: endpoint 추가 후 주석 풀기
-//                        .anyRequest().authenticated()
                         .anyRequest().authenticated()
                 );
 
@@ -91,11 +86,14 @@ public class SecurityConfig {
      */
     private RequestMatcher[] publicRequestMatchers() {
         List<RequestMatcher> requestMatchers = List.of(
-                antMatcher("/market/paging"),
-                antMatcher("/swagger-ui/**"),
-                antMatcher("/v3/api-docs/**"),
-                antMatcher("/market/{marketId}"),
-                antMatcher("/auth/login")
+                antMatcher(GET, "/swagger-ui/**"), // Swagger UI 웹 인터페이스를 제공하는 경로
+                antMatcher(GET, "/v3/api-docs/**"), // Swagger의 API 문서 데이터를 JSON 형식으로 제공하는 경로
+                antMatcher(POST, "/auth/accessToken"), // OAuth AccessToken 발급
+                antMatcher(POST, "/auth/login"), // OAuth 로그인
+                antMatcher(POST, "/auth/refresh"), // 토큰 갱신
+                antMatcher(GET, "/market/{marketId}"), // 가게 상세 조회
+                antMatcher(GET, "/market/business/validate"), // 사업자 등록 번호 유효성 검증
+                antMatcher(GET, "/market/paging") // 가게 목록
         );
 
         return requestMatchers.toArray(RequestMatcher[]::new);
@@ -106,7 +104,7 @@ public class SecurityConfig {
      */
     private RequestMatcher[] authenticatedRequestMatchers() {
         List<RequestMatcher> requestMatchers = List.of(
-                antMatcher("/market")
+                antMatcher(POST, "/market") // 가게 등록
         );
 
         return requestMatchers.toArray(RequestMatcher[]::new);
@@ -119,7 +117,7 @@ public class SecurityConfig {
         http
                 // JWT, OAuth 기반
                 .csrf(AbstractHttpConfigurer::disable) // CSRF 보호 비활성화
-                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // CORS 설정
+                .cors(AbstractHttpConfigurer::disable) // CORS 설정 비활성화 (React Native)
                 .formLogin(AbstractHttpConfigurer::disable) // Form 기반 로그인 비활성화
                 .httpBasic(AbstractHttpConfigurer::disable) // HTTP Basic 인증 비활성화
                 .rememberMe(AbstractHttpConfigurer::disable) // 세션 기반의 인증 비활성화
@@ -130,57 +128,5 @@ public class SecurityConfig {
                 .headers(headers -> headers.frameOptions(
                         HeadersConfigurer.FrameOptionsConfig::disable) // X-Frame-Options 헤더 비활성화, 클릭재킹 공격 방지
                 );
-    }
-
-    /**
-     * CORS 설정
-     */
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-
-        // 허용할 Origin(출처)
-//        TODO: 허용할 Origin 설정
-        configuration.setAllowedOriginPatterns(List.of("*"));
-//        configuration.setAllowedOrigins(
-//                Arrays.asList(
-//                        "http://localhost:8080",
-//                        "http://127.0.0.1:8080",
-//                        "http://localhost:8080/swagger-ui.html",
-//                        "http://127.0.0.1:8080/swagger-ui.html"
-//
-//                )
-//        );
-
-        // 허용할 HTTP 메서드
-        configuration.setAllowedMethods(
-                Arrays.asList(
-                        "GET",
-                        "POST",
-                        "PUT",
-                        "PATCH",
-                        "DELETE"
-                )
-        );
-
-        // 허용할 헤더
-//        TODO: 허용할 헤더 추가
-        configuration.setAllowedHeaders(List.of("*"));
-//        configuration.setAllowedHeaders(
-//                Arrays.asList(
-//                        "Authorization",
-//                        "Cache-Control",
-//                        "Content-Type",
-//                        "X-Requested-With"
-//                )
-//        );
-
-        // 인증 정보(쿠키, Authorization 헤더 등)를 포함한 요청 허용
-        configuration.setAllowCredentials(true);
-
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration); // 모든 경로에 대해 CORS 설정 적용
-
-        return source;
     }
 }
