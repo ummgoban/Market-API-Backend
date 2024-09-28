@@ -17,4 +17,16 @@ public class BucketSaveDto {
 
     @Schema(description = "장바구니 속 상품 갯수")
     private Integer count;
+
+    @Schema(description = "상품 이름")
+    private String name;
+
+    @Schema(description = "상품 이미지")
+    private String image;
+
+    @Schema(description = "상품 원가")
+    private Integer originPrice;
+
+    @Schema(description = "상품 할인가")
+    private Integer discountPrice;
 }
