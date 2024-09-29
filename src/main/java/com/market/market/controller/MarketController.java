@@ -66,7 +66,6 @@ public class MarketController {
             summary = "사업자 등록 번호 유효성 검증",
             description = "사업자 등록 번호가 유효한지 확인합니다."
     )
-    @SecurityRequirements(value = {})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "사업자 번호가 유효하면 true, 그렇지 않으면 false 반환", useReturnTypeSchema = true)
     })
