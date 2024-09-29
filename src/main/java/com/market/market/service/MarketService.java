@@ -5,6 +5,7 @@ import com.market.core.code.error.MemberErrorCode;
 import com.market.core.exception.MarketException;
 import com.market.core.exception.MemberException;
 import com.market.core.security.principal.PrincipalDetails;
+import com.market.market.dto.request.MarketHoursRequest;
 import com.market.market.dto.request.MarketRegisterRequest;
 import com.market.market.dto.response.BusinessNumberValidationResponse;
 import com.market.market.dto.response.RegisterMarketResponse;
@@ -72,6 +73,7 @@ public class MarketService {
     /**
      * 가게 등록
      */
+    @Transactional
     public RegisterMarketResponse registerMarket(PrincipalDetails principalDetails, MarketRegisterRequest marketRegisterRequest) {
         // 회원 조회
         Member member = memberRepository.findById(Long.parseLong(principalDetails.getUsername()))
@@ -125,5 +127,31 @@ public class MarketService {
         return !"국세청에 등록되지 않은 사업자등록번호입니다.".equals(taxType) &&
                 !"휴업자".equals(businessStatus) &&
                 !"폐업자".equals(businessStatus);
+    }
+
+    /**
+     * 영업 시간 및 픽업 시간을 설정합니다.
+     */
+    @Transactional
+    public void setBusinessAndPickupHours(PrincipalDetails principalDetails, Long marketId, MarketHoursRequest marketHoursRequest) {
+        // 회원 조회
+        Member member = memberRepository.findById(Long.parseLong(principalDetails.getUsername()))
+                .orElseThrow(() -> new MemberException(MemberErrorCode.NOT_FOUND_MEMBER_ID));
+
+        // 가게 조회
+        Market market = marketRepository.findById(marketId)
+                .orElseThrow(() -> new MemberException(MarketErrorCode.NOT_FOUND_MARKET_ID));
+
+        // 영업 시간 설정
+        if (marketHoursRequest.getOpenAt() == null || marketHoursRequest.getCloseAt() == null) {
+            throw new MarketException(MarketErrorCode.INVALID_BUSINESS_HOURS);
+        }
+        market.setBusinessHours(marketHoursRequest.getOpenAt(), marketHoursRequest.getCloseAt());
+
+        // 픽업 시간 설정
+        if (marketHoursRequest.getPickupStartAt() == null || marketHoursRequest.getPickupEndAt() == null) {
+            throw new MarketException(MarketErrorCode.INVALID_PICKUP_HOURS);
+        }
+        market.setPickUpHours(marketHoursRequest.getPickupStartAt(), marketHoursRequest.getPickupEndAt());
     }
 }

@@ -104,7 +104,8 @@ public class SecurityConfig {
      */
     private RequestMatcher[] authenticatedRequestMatchers() {
         List<RequestMatcher> requestMatchers = List.of(
-                antMatcher(POST, "/market") // 가게 등록
+                antMatcher(POST, "/market"), // 가게 등록
+                antMatcher(PATCH, "/market/{marketId}/hours") // 가게 영업 시간 및 픽업 시간 설정
         );
 
         return requestMatchers.toArray(RequestMatcher[]::new);
