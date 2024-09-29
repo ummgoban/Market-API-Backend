@@ -27,8 +27,11 @@ public class MarketPagingController {
 
     private final MarketPagingService marketPagingService;
 
-    @Operation(summary = "가게 목록", description = "커서 기반 페이지네이션으로 가게 목록을 조회합니다.")
-    @SecurityRequirements(value = {}) // no security
+    @Operation(
+            summary = "가게 목록",
+            description = "커서 기반 페이지네이션으로 가게 목록을 조회합니다."
+    )
+    @SecurityRequirements(value = {})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "가게 목록 조회 성공")
     })
