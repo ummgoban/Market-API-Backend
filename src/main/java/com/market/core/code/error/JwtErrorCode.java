@@ -10,12 +10,12 @@ import org.springframework.http.HttpStatus;
 @Getter
 public enum JwtErrorCode implements BaseErrorCode {
     // 400 BAD_REQUEST
-    INVALID_TOKEN(400, "유효하지 않은 토큰입니다.", HttpStatus.BAD_REQUEST),
     INVALID_TOKEN_FORMAT(400, "잘못된 토큰 형식입니다.", HttpStatus.BAD_REQUEST),
     UNSUPPORTED_TOKEN(400, "지원되지 않는 토큰입니다.", HttpStatus.BAD_REQUEST),
     INVALID_TOKEN_ARGUMENT(400, "잘못된 토큰 인수입니다.", HttpStatus.BAD_REQUEST),
 
-    // 401 UNAUTHORIZED
+    // 401 UNAUTHORIZED,
+    INVALID_TOKEN(401, "Bearer 토큰이 누락되었거나 잘못되었습니다.", HttpStatus.UNAUTHORIZED),
     EXPIRED_TOKEN(401, "토큰이 만료되었습니다.", HttpStatus.UNAUTHORIZED),
     INSUFFICIENT_TOKEN_PERMISSIONS(401, "접근 권한이 없습니다.", HttpStatus.UNAUTHORIZED),
     INVALID_TOKEN_SIGNATURE(401, "유효하지 않은 토큰 서명입니다.", HttpStatus.UNAUTHORIZED),

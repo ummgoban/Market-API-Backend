@@ -164,15 +164,9 @@ public class MarketService {
                 .orElseThrow(() -> new MemberException(MarketErrorCode.NOT_FOUND_MARKET_ID));
 
         // 영업 시간 설정
-        if (marketHoursRequest.getOpenAt() == null || marketHoursRequest.getCloseAt() == null) {
-            throw new MarketException(MarketErrorCode.INVALID_BUSINESS_HOURS);
-        }
         market.setBusinessHours(marketHoursRequest.getOpenAt(), marketHoursRequest.getCloseAt());
 
         // 픽업 시간 설정
-        if (marketHoursRequest.getPickupStartAt() == null || marketHoursRequest.getPickupEndAt() == null) {
-            throw new MarketException(MarketErrorCode.INVALID_PICKUP_HOURS);
-        }
         market.setPickUpHours(marketHoursRequest.getPickupStartAt(), marketHoursRequest.getPickupEndAt());
     }
 }

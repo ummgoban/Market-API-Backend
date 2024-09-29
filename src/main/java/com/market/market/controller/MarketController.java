@@ -18,6 +18,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -104,7 +105,7 @@ public class MarketController {
     public ResponseEntity<BfResponse> setBusinessAndPickupHours(
             @AuthenticationPrincipal PrincipalDetails principalDetails,
             @PathVariable("marketId") Long marketId,
-            @RequestBody MarketHoursRequest marketHoursRequest
+            @Valid @RequestBody MarketHoursRequest marketHoursRequest
     ) {
         marketService.setBusinessAndPickupHours(principalDetails, marketId, marketHoursRequest);
         return ResponseEntity.ok(new BfResponse<>(GlobalSuccessCode.SUCCESS));
