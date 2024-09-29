@@ -36,7 +36,7 @@ public class MarketCreateController {
     public ResponseEntity<BfResponse<RegisterMarketResponse>> registerMarket(
             @AuthenticationPrincipal PrincipalDetails principalDetails,
             @RequestBody MarketRegisterRequest marketRegisterRequest) {
-        RegisterMarketResponse registerMarketResponse = marketCreateService.registerMarket(principalDetails, marketRegisterRequest);
+        RegisterMarketResponse registerMarketResponse = marketCreateService.registerMarket(Long.parseLong(principalDetails.getUsername()), marketRegisterRequest);
         return ResponseEntity.ok(new BfResponse<>(registerMarketResponse));
     }
 }

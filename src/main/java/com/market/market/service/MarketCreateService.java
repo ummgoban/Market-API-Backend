@@ -4,7 +4,6 @@ import com.market.core.code.error.MarketErrorCode;
 import com.market.core.code.error.MemberErrorCode;
 import com.market.core.exception.MarketException;
 import com.market.core.exception.MemberException;
-import com.market.core.security.principal.PrincipalDetails;
 import com.market.market.dto.request.MarketRegisterRequest;
 import com.market.market.dto.response.RegisterMarketResponse;
 import com.market.market.dto.server.BusinessStatusResponseDto;
@@ -31,9 +30,9 @@ public class MarketCreateService {
      * 가게 등록
      */
     @Transactional
-    public RegisterMarketResponse registerMarket(PrincipalDetails principalDetails, MarketRegisterRequest marketRegisterRequest) {
+    public RegisterMarketResponse registerMarket(Long memberId, MarketRegisterRequest marketRegisterRequest) {
         // 회원 조회
-        Member member = memberRepository.findById(Long.parseLong(principalDetails.getUsername()))
+        Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberException(MemberErrorCode.NOT_FOUND_MEMBER_ID));
 
         // 가게 이름 중복 체크

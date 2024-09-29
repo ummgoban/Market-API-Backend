@@ -42,7 +42,7 @@ public class MarketUpdateController {
             @PathVariable("marketId") Long marketId,
             @Valid @RequestBody MarketHoursRequest marketHoursRequest
     ) {
-        marketUpdateService.setBusinessAndPickupHours(principalDetails, marketId, marketHoursRequest);
+        marketUpdateService.setBusinessAndPickupHours(Long.parseLong(principalDetails.getUsername()), marketId, marketHoursRequest);
         return ResponseEntity.ok(new BfResponse<>(GlobalSuccessCode.SUCCESS));
     }
 }

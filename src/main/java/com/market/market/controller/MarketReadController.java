@@ -50,7 +50,7 @@ public class MarketReadController {
     })
     @GetMapping()
     public ResponseEntity<BfResponse<List<MarketListResponse>>> getMarketList(@AuthenticationPrincipal PrincipalDetails principalDetails) {
-        List<MarketListResponse> marketListResponses = marketReadService.getMarketList(principalDetails);
+        List<MarketListResponse> marketListResponses = marketReadService.getMarketList(Long.parseLong(principalDetails.getUsername()));
         return ResponseEntity.ok(new BfResponse<>(marketListResponses));
     }
 

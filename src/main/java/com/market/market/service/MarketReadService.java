@@ -4,7 +4,6 @@ import com.market.core.code.error.MarketErrorCode;
 import com.market.core.code.error.MemberErrorCode;
 import com.market.core.exception.MarketException;
 import com.market.core.exception.MemberException;
-import com.market.core.security.principal.PrincipalDetails;
 import com.market.market.dto.response.*;
 import com.market.market.dto.server.BusinessStatusResponseDto;
 import com.market.market.dto.server.MarketPagingInfoDto;
@@ -72,9 +71,9 @@ public class MarketReadService {
     /**
      * 사용자의 가게 목록을 조회합니다.
      */
-    public List<MarketListResponse> getMarketList(PrincipalDetails principalDetails) {
+    public List<MarketListResponse> getMarketList(Long memberId) {
         // 회원 조회
-        Member member = memberRepository.findById(Long.parseLong(principalDetails.getUsername()))
+        Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberException(MemberErrorCode.NOT_FOUND_MEMBER_ID));
 
         // 마켓 리스트 조회
