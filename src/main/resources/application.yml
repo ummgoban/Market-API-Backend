@@ -78,11 +78,12 @@ external:
 springdoc:
   path: /swagger-ui/index.html
   swagger-ui:
-    tags-sorter: alpha
-    operations-sorter: alpha
+    tags-sorter: default
+    operations-sorter: method
+
 
 # TODO: 삭제 후 배포
 logging:
   level:
-    org.springframework.security: DEBUG
+    org.springframework.security: debug
     org.hibernate.orm.jdbc.bind: trace
