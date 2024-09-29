@@ -44,4 +44,14 @@ public class Market {
 
     @Column(name = "pickup_end_at")
     private String pickupEndAt;
+
+    public void setBusinessHours(String openAt, String closeAt) {
+        this.openAt = openAt;
+        this.closeAt = closeAt;
+    }
+
+    public void setPickUpHours(String pickupStartAt, String pickupEndAt) {
+        this.pickupStartAt = pickupStartAt;
+        this.pickupEndAt = pickupEndAt;
+    }
 }

@@ -58,6 +58,9 @@ public class JwtFilter extends OncePerRequestFilter {
             }
             filterChain.doFilter(request, response);
         } catch (Exception e) {
+            // TODO: Prod 에서는 삭제
+            e.printStackTrace();
+
             // 예외 처리
             BaseErrorCode errorCode = determineErrorCode(e);
 
