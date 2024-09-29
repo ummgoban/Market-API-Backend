@@ -26,4 +26,9 @@ public class Bucket {
 
     @Column(name = "count")
     private Integer count;
+
+    public void plusCount(Integer count) {
+        this.count += count;
+    }
+
 }

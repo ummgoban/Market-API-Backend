@@ -8,6 +8,7 @@ import com.market.core.security.principal.PrincipalDetails;
 import com.market.market.dto.request.MarketHoursRequest;
 import com.market.market.dto.request.MarketRegisterRequest;
 import com.market.market.dto.response.BusinessNumberValidationResponse;
+import com.market.market.dto.response.MarketListResponse;
 import com.market.market.dto.response.RegisterMarketResponse;
 import com.market.market.dto.server.BusinessStatusResponseDto;
 import com.market.market.dto.response.MarketSpecificResponse;
@@ -27,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 가게 관련 서비스 클래스입니다.
@@ -128,7 +130,26 @@ public class MarketService {
                 !"휴업자".equals(businessStatus) &&
                 !"폐업자".equals(businessStatus);
     }
+  
+    /**
+     * 사용자의 가게 목록을 조회합니다.
+     */
+    public List<MarketListResponse> getMarketList(PrincipalDetails principalDetails) {
+        // 회원 조회
+        Member member = memberRepository.findById(Long.parseLong(principalDetails.getUsername()))
+                .orElseThrow(() -> new MemberException(MemberErrorCode.NOT_FOUND_MEMBER_ID));
 
+        // 마켓 리스트 조회
+        List<Market> marketList = marketRepository.findAllByMemberId(member.getId());
+
+        return marketList.stream()
+                .map(market -> MarketListResponse.builder()
+                        .marketId(market.getId())
+                        .marketName(market.getMarketName())
+                        .build())
+                .collect(Collectors.toList());
+    }
+  
     /**
      * 영업 시간 및 픽업 시간을 설정합니다.
      */

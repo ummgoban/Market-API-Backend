@@ -18,7 +18,8 @@ public enum MarketErrorCode implements BaseErrorCode {
     INVALID_PICKUP_HOURS(400, "유효하지 않은 픽업 시간입니다.", HttpStatus.BAD_REQUEST),
 
     // 500 INTERNAL_SERVER_ERROR
-    BUSINESS_STATUS_SERVER_ERROR(500, "사업자 등록 번호 조회 서버에서 문제가 발생했습니다.", HttpStatus.INTERNAL_SERVER_ERROR);
+    BUSINESS_STATUS_SERVER_ERROR(500, "사업자 등록 번호 조회 서버에서 문제가 발생했습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
+    NOT_FOUND_MARKET_BY_PRODUCT_ID(500, "주어진 상품 ID 값으로 가게를 찾을 수 없습니다.", HttpStatus.INTERNAL_SERVER_ERROR);
 
     private final int errorCode;
     private final String errorMessage;
