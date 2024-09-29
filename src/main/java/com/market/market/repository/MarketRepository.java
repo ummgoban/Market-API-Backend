@@ -7,12 +7,17 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.Optional;
 
+import java.util.List;
+
 /**
  * 가게 도메인의 Repository 입니다.
  */
 public interface MarketRepository extends JpaRepository<Market, Long>, MarketPagingRepository {
+
     boolean existsByMarketName(String marketName);
 
+    List<Market> findAllByMemberId(Long memberId);
+  
     @Query("select m from Product p inner join Market m on p.market.id = m.id where p.id = :productId")
     Optional<Market> findMarketByProductId(@Param("productId") Long productId);
 }
