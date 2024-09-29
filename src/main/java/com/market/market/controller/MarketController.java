@@ -4,6 +4,7 @@ import com.market.core.response.BfResponse;
 import com.market.core.security.principal.PrincipalDetails;
 import com.market.market.dto.request.MarketRegisterRequest;
 import com.market.market.dto.response.BusinessNumberValidationResponse;
+import com.market.market.dto.response.MarketListResponse;
 import com.market.market.dto.response.MarketSpecificResponse;
 import com.market.market.dto.response.RegisterMarketResponse;
 import com.market.market.service.MarketService;
@@ -17,6 +18,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * 가게 관련 API controller 입니다.
@@ -71,5 +74,18 @@ public class MarketController {
     public ResponseEntity<BfResponse<BusinessNumberValidationResponse>> getBusinessStatus(@RequestParam String businessNumber) {
         BusinessNumberValidationResponse businessNumberValidationResponse = marketService.validateBusinessStatus(businessNumber);
         return ResponseEntity.ok(new BfResponse<>(businessNumberValidationResponse));
+    }
+
+    @Operation(
+            summary = "가게 목록 조회",
+            description = "사용자의 가게 목록을 조회합니다."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "가게 목록이 없을 경우 data 필드가 생략", useReturnTypeSchema = true)
+    })
+    @GetMapping()
+    public ResponseEntity<BfResponse<List<MarketListResponse>>> getMarketList(@AuthenticationPrincipal PrincipalDetails principalDetails) {
+        List<MarketListResponse> marketListResponses = marketService.getMarketList(principalDetails);
+        return ResponseEntity.ok(new BfResponse<>(marketListResponses));
     }
 }

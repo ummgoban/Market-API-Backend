@@ -12,7 +12,7 @@ import static com.market.core.code.success.GlobalSuccessCode.SUCCESS;
  * @param <T>
  */
 @Getter
-@JsonInclude(value = JsonInclude.Include.NON_EMPTY)
+@JsonInclude(value = JsonInclude.Include.NON_NULL)
 public class BfResponse<T> {
 
     @Schema(description = "응답 코드", example = "200")
