@@ -104,7 +104,11 @@ public class SecurityConfig {
      */
     private RequestMatcher[] authenticatedRequestMatchers() {
         List<RequestMatcher> requestMatchers = List.of(
+                antMatcher(GET, "/bucket"),
+                antMatcher(GET, "/bucket/discrimination/{marketId}"),
+                antMatcher(POST, "/bucket/{marketId}"),
                 antMatcher(POST, "/market") // 가게 등록
+
         );
 
         return requestMatchers.toArray(RequestMatcher[]::new);
