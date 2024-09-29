@@ -59,7 +59,7 @@ public class BucketService {
         }
 
         // 빈 장바구니가 아니라면, 상품의 가게 정보 조회
-        Market market = marketRepository.findByProductId(bucketProducts.get(FIRST_INDEX).getId())
+        Market market = marketRepository.findMarketByProductId(bucketProducts.get(FIRST_INDEX).getId())
                 .orElseThrow(() -> new MarketException(NOT_FOUND_MARKET_BY_PRODUCT_ID));
 
         // 가게의 이미지 정보 조회
@@ -88,7 +88,7 @@ public class BucketService {
         }
 
         // 빈 장바구니가 아니라면, 상품의 가게 정보 조회
-        Market market = marketRepository.findByProductId(bucketProducts.get(FIRST_INDEX).getId())
+        Market market = marketRepository.findMarketByProductId(bucketProducts.get(FIRST_INDEX).getId())
                 .orElseThrow(() -> new MarketException(NOT_FOUND_MARKET_BY_PRODUCT_ID));
 
         return Objects.equals(marketId, market.getId());
@@ -110,8 +110,7 @@ public class BucketService {
         Member member = memberRepository.findById(memberId).orElseThrow(() -> new MemberException(NOT_FOUND_MEMBER_ID));
 
         // 1. 장바구니에 담고자 하는 상품의 가게와 다른 가게의 기존 장바구니 상품 >> 삭제할 튜플
-        List<Long> deleteBucketId = bucketRepository.findAllIdByMarketIdAndMemberId(memberId, marketId);
-        bucketRepository.deleteByIdIn(deleteBucketId);
+        deleteBucketProduct(memberId, marketId);
 
         // 2-1. 장바구니에 담고자 하는 상품들의 id 값을 추출
         List<Long> productsId = products.stream().map(BucketSaveDto::getId).toList();
@@ -152,5 +151,10 @@ public class BucketService {
                     .build());
 
         }
+    }
+
+    private void deleteBucketProduct(Long memberId, Long marketId) {
+        List<Long> deleteBucketId = bucketRepository.findAllIdByMarketIdAndMemberId(memberId, marketId);
+        bucketRepository.deleteByIdIn(deleteBucketId);
     }
 }
