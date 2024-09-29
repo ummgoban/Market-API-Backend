@@ -105,7 +105,10 @@ public class SecurityConfig {
                 antMatcher(POST, "/auth/refresh"), // 토큰 갱신
                 antMatcher(POST, "/market"), // 가게 등록
                 antMatcher(GET, "/market"), // 나의 가게 목록 조회
-                antMatcher(GET, "/market/business/validate") // 사업자 등록 번호 유효성 검증
+                antMatcher(GET, "/market/business/validate"), // 사업자 등록 번호 유효성 검증
+                antMatcher(GET, "/bucket"),
+                antMatcher(GET, "/bucket/discrimination/{marketId}"),
+                antMatcher(POST, "/bucket/{marketId}")
         );
 
         return requestMatchers.toArray(RequestMatcher[]::new);

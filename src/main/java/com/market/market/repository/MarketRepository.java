@@ -2,6 +2,10 @@ package com.market.market.repository;
 
 import com.market.market.entity.Market;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
+import java.util.Optional;
 
 import java.util.List;
 
@@ -13,4 +17,7 @@ public interface MarketRepository extends JpaRepository<Market, Long>, MarketPag
     boolean existsByMarketName(String marketName);
 
     List<Market> findAllByMemberId(Long memberId);
+  
+    @Query("select m from Product p inner join Market m on p.market.id = m.id where p.id = :productId")
+    Optional<Market> findMarketByProductId(@Param("productId") Long productId);
 }
