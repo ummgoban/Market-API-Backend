@@ -2,8 +2,7 @@ package com.market.market.controller;
 
 import com.market.core.code.success.GlobalSuccessCode;
 import com.market.core.response.BfResponse;
-import com.market.core.security.principal.PrincipalDetails;
-import com.market.market.dto.request.MarketHoursRequest;
+import com.market.market.dto.request.MarketUpdateRequest;
 import com.market.market.service.MarketUpdateService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -13,9 +12,12 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 /**
  * 가게 Update 관련 API controller 입니다.
@@ -29,20 +31,36 @@ public class MarketUpdateController {
     private final MarketUpdateService marketUpdateService;
 
     @Operation(
-            summary = "가게 영업 시간 및 픽업 시간 설정",
-            description = "특정 가게의 영업 시간 및 픽업 시간을 설정합니다."
+            summary = "가게 정보 업데이트",
+            description = "특정 가게의 정보를 업데이트합니다."
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "가게 영업 시간 및 픽업 시간 설정 성공",
+            @ApiResponse(responseCode = "200", description = "가게 정보 업데이트 성공",
                     content = @Content(examples = @ExampleObject(value = "{ \"code\": 200, \"message\": \"정상 처리되었습니다.\" }")))
     })
-    @PatchMapping("/{marketId}/hours")
-    public ResponseEntity<BfResponse> setBusinessAndPickupHours(
-            @AuthenticationPrincipal PrincipalDetails principalDetails,
+    @PatchMapping(value = "/{marketId}")
+    public ResponseEntity<BfResponse> updateMarket(
             @PathVariable("marketId") Long marketId,
-            @Valid @RequestBody MarketHoursRequest marketHoursRequest
+            @RequestBody @Valid MarketUpdateRequest marketUpdateRequest
     ) {
-        marketUpdateService.setBusinessAndPickupHours(Long.parseLong(principalDetails.getUsername()), marketId, marketHoursRequest);
+        marketUpdateService.updateMarket(marketId, marketUpdateRequest);
+        return ResponseEntity.ok(new BfResponse<>(GlobalSuccessCode.SUCCESS));
+    }
+
+    @Operation(
+            summary = "가게 사진 업데이트",
+            description = "특정 가게의 사진을 업데이트합니다."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "가게 사진 업데이트 성공",
+                    content = @Content(examples = @ExampleObject(value = "{ \"code\": 200, \"message\": \"정상 처리되었습니다.\" }")))
+    })
+    @PutMapping(value = "/{marketId}/images", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<BfResponse> updateMarketImages(
+            @PathVariable("marketId") Long marketId,
+            @RequestPart("updateImages") List<MultipartFile> updateImages
+    ) {
+        marketUpdateService.updateMarketImages(marketId, updateImages);
         return ResponseEntity.ok(new BfResponse<>(GlobalSuccessCode.SUCCESS));
     }
 }

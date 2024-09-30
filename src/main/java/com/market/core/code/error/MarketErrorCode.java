@@ -16,6 +16,7 @@ public enum MarketErrorCode implements BaseErrorCode {
     INVALID_BUSINESS_NUMBER(400, "유효하지 않은 사업자 등록번호입니다.", HttpStatus.BAD_REQUEST),
     INVALID_BUSINESS_HOURS(400, "유효하지 않은 영업 시간입니다.", HttpStatus.BAD_REQUEST),
     INVALID_PICKUP_HOURS(400, "유효하지 않은 픽업 시간입니다.", HttpStatus.BAD_REQUEST),
+    IMAGE_UPLOAD_MINIMUM_ERROR(400, "최소 3개의 이미지를 업로드해야 합니다.", HttpStatus.BAD_REQUEST),
 
     // 500 INTERNAL_SERVER_ERROR
     BUSINESS_STATUS_SERVER_ERROR(500, "사업자 등록 번호 조회 서버에서 문제가 발생했습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
