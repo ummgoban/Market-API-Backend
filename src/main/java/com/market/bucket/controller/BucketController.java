@@ -40,7 +40,7 @@ public class BucketController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "가게 상품 여부 확인 성공")
     })
-    @GetMapping("/{marketId}/check-product")
+    @GetMapping("/{marketId}/verification/product")
     public ResponseEntity<BfResponse<BucketDiscriminationResponse>> discriminateBucket(
             @AuthenticationPrincipal PrincipalDetails principalDetails,
             @Parameter(description = "현재 장바구니에 담고자 하는 상품의 가게 ID 입니다.") @PathVariable("marketId") Long marketId) {

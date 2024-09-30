@@ -105,10 +105,10 @@ public class SecurityConfig {
                 antMatcher(POST, "/market"), // 가게 등록
                 antMatcher(GET, "/market"), // 가게 목록 조회
                 antMatcher(GET, "/market/{marketId}"), // 가게 상세 조회
-                antMatcher(GET, "/market/verify-business-number"), // 사업자 등록 번호 유효성 검증
+                antMatcher(GET, "/market/verification/business-number"), // 사업자 등록 번호 유효성 검증
                 antMatcher(PATCH, "/market/{marketId}/hours"), // 가게 영업 시간 및 픽업 시간 설정
                 antMatcher(GET, "/bucket"), // 장바구니 조회
-                antMatcher(GET, "/bucket/{marketId}/check-product"), //  장바구니 다른 가게 상품 여부 확인
+                antMatcher(GET, "/bucket/{marketId}/verification/product"), //  장바구니 다른 가게 상품 여부 확인
                 antMatcher(POST, "/bucket/{marketId}") // 장바구니 상품 추가
         );
 
