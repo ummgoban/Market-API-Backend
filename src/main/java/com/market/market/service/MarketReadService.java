@@ -44,7 +44,7 @@ public class MarketReadService {
      * 가게 상세 조회 트랜잭션입니다.
      */
     @Transactional(readOnly = true)
-    public MarketSpecificResponse findSpecificMarket(Long marketId) {
+    public MarketSpecificResponse getSpecificMarket(Long marketId) {
         // dev 머지 후, exception handler 구현
         Market market = marketRepository.findById(marketId).orElseThrow(() -> new MarketException(MarketErrorCode.NOT_FOUND_MARKET_ID));
 
@@ -91,7 +91,7 @@ public class MarketReadService {
      * 커서 기반 페이지네이션을 사용하여 전체 가게 목록을 조회합니다.
      */
     @Transactional(readOnly = true)
-    public MarketPagingResponse findMarketByCursorId(Long cursorId, Integer size) {
+    public MarketPagingResponse getMarketByCursorId(Long cursorId, Integer size) {
 
         List<MarketPagingInfoResponse> response = new ArrayList<>();
 
