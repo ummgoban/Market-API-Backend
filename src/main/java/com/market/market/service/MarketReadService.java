@@ -4,14 +4,9 @@ import com.market.core.code.error.MarketErrorCode;
 import com.market.core.code.error.MemberErrorCode;
 import com.market.core.exception.MarketException;
 import com.market.core.exception.MemberException;
-import com.market.core.security.principal.PrincipalDetails;
-import com.market.market.dto.request.MarketHoursRequest;
-import com.market.market.dto.request.MarketRegisterRequest;
-import com.market.market.dto.response.BusinessNumberValidationResponse;
-import com.market.market.dto.response.MarketListResponse;
-import com.market.market.dto.response.RegisterMarketResponse;
+import com.market.market.dto.response.*;
 import com.market.market.dto.server.BusinessStatusResponseDto;
-import com.market.market.dto.response.MarketSpecificResponse;
+import com.market.market.dto.server.MarketPagingInfoDto;
 import com.market.market.entity.Market;
 import com.market.market.entity.MarketImage;
 import com.market.market.repository.MarketImageRepository;
@@ -23,6 +18,7 @@ import com.market.product.dto.response.ProductResponse;
 import com.market.product.entity.Product;
 import com.market.product.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,11 +27,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * 가게 관련 서비스 클래스입니다.
+ * 가게 Read 관련 서비스 클래스입니다.
  */
 @Service
 @RequiredArgsConstructor
-public class MarketService {
+public class MarketReadService {
 
     private final MemberRepository memberRepository;
     private final MarketRepository marketRepository;
@@ -73,39 +69,61 @@ public class MarketService {
     }
 
     /**
-     * 가게 등록
+     * 사용자의 가게 목록을 조회합니다.
      */
-    @Transactional
-    public RegisterMarketResponse registerMarket(PrincipalDetails principalDetails, MarketRegisterRequest marketRegisterRequest) {
+    public List<MarketListResponse> getMarketList(Long memberId) {
         // 회원 조회
-        Member member = memberRepository.findById(Long.parseLong(principalDetails.getUsername()))
+        Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberException(MemberErrorCode.NOT_FOUND_MEMBER_ID));
 
-        // 가게 이름 중복 체크
-        if (marketRepository.existsByMarketName(marketRegisterRequest.getMarketName())) {
-            throw new MarketException(MarketErrorCode.DUPLICATE_MARKET_NAME);
-        }
+        // 마켓 리스트 조회
+        List<Market> marketList = marketRepository.findAllByMemberId(member.getId());
 
-        // 사업자 등록 번호 유효성 검증
-        BusinessStatusResponseDto businessStatusResponseDto = businessStatusService.getBusinessStatus(marketRegisterRequest.getBusinessNumber());
-        String taxType = businessStatusResponseDto.getData().get(0).getTaxType();
-        String businessStatus = businessStatusResponseDto.getData().get(0).getBusinessStatus();
-        if (!isValidBusinessNumber(taxType, businessStatus)) {
-            throw new MarketException(MarketErrorCode.INVALID_BUSINESS_NUMBER);
-        }
+        return marketList.stream()
+                .map(market -> MarketListResponse.builder()
+                        .marketId(market.getId())
+                        .marketName(market.getMarketName())
+                        .build())
+                .collect(Collectors.toList());
+    }
 
-        Market market = Market.builder()
-                .member(member)
-                .marketName(marketRegisterRequest.getMarketName())
-                .businessNumber(businessStatusResponseDto.getData().get(0).getBusinessNumber())
-                .address(marketRegisterRequest.getAddress())
-                .specificAddress(marketRegisterRequest.getSpecificAddress())
-                .contactNumber(marketRegisterRequest.getContactNumber())
-                .build();
+    /**
+     * 커서 기반 페이지네이션을 사용하여 전체 가게 목록을 조회합니다.
+     */
+    @Transactional(readOnly = true)
+    public MarketPagingResponse findMarketByCursorId(Long cursorId, Integer size) {
 
-        return RegisterMarketResponse.builder()
-                .marketId(marketRepository.save(market).getId())
-                .build();
+        List<MarketPagingInfoResponse> response = new ArrayList<>();
+
+        // market 엔티티와 businessInfo 엔티티 조인 후, 데이터 조회
+        Slice<MarketPagingInfoDto> marketList = marketRepository.findMarketByCursorId(cursorId, size);
+
+        marketList.getContent().forEach(infoDto -> {
+
+            // 가게에 대해 가게의 이미지 데이터 조회 로직
+            List<MarketImage> marketImages = marketImageRepository.findAllByMarketId(infoDto.getId());
+            List<String> images = marketImages.stream().map(MarketImage::getImageUrl).toList();
+
+            MarketPagingInfoResponse marketPagingInfoResponse = MarketPagingInfoResponse.builder()
+                    .id(infoDto.getId())
+                    .marketName(infoDto.getMarketName())
+                    .address(infoDto.getAddress())
+                    .specificAddress(infoDto.getSpecificAddress())
+                    .openAt(infoDto.getOpenAt())
+                    .closeAt(infoDto.getCloseAt())
+                    .pickupStartAt(infoDto.getPickupStartAt())
+                    .pickupEndAt(infoDto.getPickupEndAt())
+                    .images(images)
+                    .build();
+
+            response.add(marketPagingInfoResponse);
+        });
+
+        return MarketPagingResponse.
+                builder().
+                markets(response).
+                hasNext(marketList.hasNext()).
+                build();
     }
 
     /**
@@ -129,44 +147,5 @@ public class MarketService {
         return !"국세청에 등록되지 않은 사업자등록번호입니다.".equals(taxType) &&
                 !"휴업자".equals(businessStatus) &&
                 !"폐업자".equals(businessStatus);
-    }
-  
-    /**
-     * 사용자의 가게 목록을 조회합니다.
-     */
-    public List<MarketListResponse> getMarketList(PrincipalDetails principalDetails) {
-        // 회원 조회
-        Member member = memberRepository.findById(Long.parseLong(principalDetails.getUsername()))
-                .orElseThrow(() -> new MemberException(MemberErrorCode.NOT_FOUND_MEMBER_ID));
-
-        // 마켓 리스트 조회
-        List<Market> marketList = marketRepository.findAllByMemberId(member.getId());
-
-        return marketList.stream()
-                .map(market -> MarketListResponse.builder()
-                        .marketId(market.getId())
-                        .marketName(market.getMarketName())
-                        .build())
-                .collect(Collectors.toList());
-    }
-  
-    /**
-     * 영업 시간 및 픽업 시간을 설정합니다.
-     */
-    @Transactional
-    public void setBusinessAndPickupHours(PrincipalDetails principalDetails, Long marketId, MarketHoursRequest marketHoursRequest) {
-        // 회원 조회
-        Member member = memberRepository.findById(Long.parseLong(principalDetails.getUsername()))
-                .orElseThrow(() -> new MemberException(MemberErrorCode.NOT_FOUND_MEMBER_ID));
-
-        // 가게 조회
-        Market market = marketRepository.findById(marketId)
-                .orElseThrow(() -> new MemberException(MarketErrorCode.NOT_FOUND_MARKET_ID));
-
-        // 영업 시간 설정
-        market.setBusinessHours(marketHoursRequest.getOpenAt(), marketHoursRequest.getCloseAt());
-
-        // 픽업 시간 설정
-        market.setPickUpHours(marketHoursRequest.getPickupStartAt(), marketHoursRequest.getPickupEndAt());
     }
 }

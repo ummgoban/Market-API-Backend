@@ -90,8 +90,7 @@ public class SecurityConfig {
                 antMatcher(GET, "/v3/api-docs/**"), // Swagger의 API 문서 데이터를 JSON 형식으로 제공하는 경로
                 antMatcher(POST, "/auth/accessToken"), // OAuth AccessToken 발급
                 antMatcher(POST, "/auth/login"), // OAuth 로그인
-                antMatcher(GET, "/market/{marketId}"), // 가게 상세 조회
-                antMatcher(GET, "/market/paging") // 가게 목록
+                antMatcher(GET, "/market/paging") // 전체 가게 목록 페이징 조회
         );
 
         return requestMatchers.toArray(RequestMatcher[]::new);
@@ -104,12 +103,13 @@ public class SecurityConfig {
         List<RequestMatcher> requestMatchers = List.of(
                 antMatcher(POST, "/auth/refresh"), // 토큰 갱신
                 antMatcher(POST, "/market"), // 가게 등록
-                antMatcher(GET, "/market"), // 나의 가게 목록 조회
+                antMatcher(GET, "/market"), // 가게 목록 조회
+                antMatcher(GET, "/market/{marketId}"), // 가게 상세 조회
+                antMatcher(GET, "/market/verification/business-number"), // 사업자 등록 번호 유효성 검증
                 antMatcher(PATCH, "/market/{marketId}/hours"), // 가게 영업 시간 및 픽업 시간 설정
-                antMatcher(GET, "/market/business/validate"), // 사업자 등록 번호 유효성 검증
-                antMatcher(GET, "/bucket"),
-                antMatcher(GET, "/bucket/discrimination/{marketId}"),
-                antMatcher(POST, "/bucket/{marketId}")
+                antMatcher(GET, "/bucket"), // 장바구니 조회
+                antMatcher(GET, "/bucket/{marketId}/verification/product"), //  장바구니 다른 가게 상품 여부 확인
+                antMatcher(POST, "/bucket/{marketId}") // 장바구니 상품 추가
         );
 
         return requestMatchers.toArray(RequestMatcher[]::new);
