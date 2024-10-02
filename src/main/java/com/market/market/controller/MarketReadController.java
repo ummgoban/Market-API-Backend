@@ -38,7 +38,7 @@ public class MarketReadController {
     @GetMapping("/{marketId}")
     public ResponseEntity<BfResponse<MarketSpecificResponse>> findSpecificMarket(
             @Parameter(description = "가게 ID 입니다.") @PathVariable("marketId") Long marketId) {
-        return ResponseEntity.ok(new BfResponse<>(marketReadService.findSpecificMarket(marketId)));
+        return ResponseEntity.ok(new BfResponse<>(marketReadService.getSpecificMarket(marketId)));
     }
   
     @Operation(
@@ -68,7 +68,7 @@ public class MarketReadController {
             @Parameter(description = "페이지의 크기 입니다.") @RequestParam("size") Integer size) {
 
         return ResponseEntity.ok(
-                new BfResponse<>(marketReadService.findMarketByCursorId(cursorId, size)));
+                new BfResponse<>(marketReadService.getMarketByCursorId(cursorId, size)));
     }
 
     @Operation(

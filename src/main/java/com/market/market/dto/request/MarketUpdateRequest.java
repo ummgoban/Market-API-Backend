@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public class MarketHoursRequest {
+public class MarketUpdateRequest {
 
     @NotBlank(message = "영업 시작 시간은 필수 항목입니다.")
     @Schema(description = "영업 시작 시간", example = "09:00", required = true)
