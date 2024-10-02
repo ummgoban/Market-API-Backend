@@ -4,7 +4,9 @@ import com.market.core.code.error.MarketErrorCode;
 import com.market.core.code.error.MemberErrorCode;
 import com.market.core.exception.MarketException;
 import com.market.core.exception.MemberException;
+import com.market.core.s3.service.S3ImageService;
 import com.market.market.dto.request.MarketRegisterRequest;
+import com.market.market.dto.response.MarketImageUrlResponse;
 import com.market.market.dto.response.RegisterMarketResponse;
 import com.market.market.dto.server.BusinessStatusResponseDto;
 import com.market.market.entity.Market;
@@ -14,6 +16,7 @@ import com.market.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * 가게 Create 관련 서비스 클래스입니다.
@@ -25,6 +28,7 @@ public class MarketCreateService {
     private final MemberRepository memberRepository;
     private final MarketRepository marketRepository;
     private final BusinessStatusService businessStatusService;
+    private final S3ImageService s3ImageService;
 
     /**
      * 가게 등록
@@ -70,5 +74,14 @@ public class MarketCreateService {
         return !"국세청에 등록되지 않은 사업자등록번호입니다.".equals(taxType) &&
                 !"휴업자".equals(businessStatus) &&
                 !"폐업자".equals(businessStatus);
+    }
+
+    /**
+     * S3에 가기 사진을 업로드합니다.
+     */
+    public MarketImageUrlResponse uploadMarketImage(MultipartFile uploadImage) {
+        return MarketImageUrlResponse.builder()
+                .imageUrl(s3ImageService.uploadImage(uploadImage))
+                .build();
     }
 }

@@ -18,6 +18,6 @@ public class MarketImage {
     @JoinColumn(name = "market_id")
     private Market market;
 
-    @Column(name = "image_url")
+    @Column(name = "image_url", length = 1024)
     private String imageUrl;
 }

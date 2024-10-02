@@ -2,8 +2,7 @@ package com.market.market.controller;
 
 import com.market.core.code.success.GlobalSuccessCode;
 import com.market.core.response.BfResponse;
-import com.market.market.dto.request.MarketUpdateRequest;
-import com.market.market.service.MarketUpdateService;
+import com.market.market.service.MarketDeleteService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -11,37 +10,35 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * 가게 Update 관련 API controller 입니다.
+ * 가게 Delete 관련 API controller 입니다.
  */
 @RestController
 @RequestMapping("market")
 @RequiredArgsConstructor
-@Tag(name = "가게 UPDATE", description = "가게 UPDATE 관련 API")
-public class MarketUpdateController {
+@Tag(name = "가게 DELETE", description = "가게 DELETE 관련 API")
+public class MarketDeleteController {
 
-    private final MarketUpdateService marketUpdateService;
+    private final MarketDeleteService marketDeleteService;
 
     @Operation(
-            summary = "가게 정보 업데이트",
-            description = "특정 가게의 정보를 업데이트합니다."
+            summary = "S3 Bucket에서 가게 사진 삭제",
+            description = "S3 Bucket에서 가게의 사진을 삭제합니다."
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "가게 정보 업데이트 성공",
+            @ApiResponse(responseCode = "200", description = "S3 가게 사진 삭제 성공",
                     content = @Content(examples = @ExampleObject(value = "{ \"code\": 200, \"message\": \"정상 처리되었습니다.\" }")))
     })
-    @PatchMapping(value = "/{marketId}")
-    public ResponseEntity<BfResponse<GlobalSuccessCode>> updateMarket(
-            @Parameter(description = "가게 ID 입니다.")
-            @PathVariable("marketId") Long marketId,
-            @RequestBody @Valid MarketUpdateRequest marketUpdateRequest
+    @DeleteMapping( "/images")
+    public ResponseEntity<BfResponse<GlobalSuccessCode>> deleteMarketImage(
+            @Parameter(description = "사진 URL입니다.", example = "https://.../ecc84...203.png")
+            @RequestParam("imageUrl") String imageUrl
     ) {
-        marketUpdateService.updateMarket(marketId, marketUpdateRequest);
+        marketDeleteService.deleteMarketImage(imageUrl);
         return ResponseEntity.ok(new BfResponse<>(GlobalSuccessCode.SUCCESS));
     }
 }

@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
 /**
@@ -47,7 +49,32 @@ public class S3ImageService {
      * S3에서 이미지 삭제
      */
     public void deleteImage(String imageUrl) {
-        String fileName = imageUrl.substring(imageUrl.lastIndexOf("/") + 1);
+        // 파일이 존재하는지 확인
+        if (!doesImageExist(imageUrl)) {
+            throw new S3Exception(S3ErrorCode.IMAGE_NOT_FOUND_ERROR);
+        }
+
+        String fileName = getDecodedFileName(imageUrl);
+
         amazonS3.deleteObject(bucketName, fileName);
+    }
+
+    /**
+     * S3에 URL이 있는지 확인
+     */
+    public boolean doesImageExist(String imageUrl) {
+        String fileName = getDecodedFileName(imageUrl);
+
+        return amazonS3.doesObjectExist(bucketName, fileName);
+    }
+
+    /**
+     * 디코딩된 파일 이름 반환
+     */
+    private String getDecodedFileName(String imageUrl) {
+        String encodedFileName = imageUrl.substring(imageUrl.lastIndexOf("/") + 1);
+        String fileName = URLDecoder.decode(encodedFileName, StandardCharsets.UTF_8);
+
+        return fileName;
     }
 }

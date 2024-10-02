@@ -10,7 +10,8 @@ import org.springframework.http.HttpStatus;
 @Getter
 public enum S3ErrorCode implements BaseErrorCode {
 
-    FILE_UPLOAD_ERROR(500, "파일 업로드 중 오류가 발생했습니다. 다시 시도해주세요.", HttpStatus.INTERNAL_SERVER_ERROR);
+    FILE_UPLOAD_ERROR(500, "파일 업로드 중 오류가 발생했습니다. 다시 시도해주세요.", HttpStatus.INTERNAL_SERVER_ERROR),
+    IMAGE_NOT_FOUND_ERROR(404, "S3 Bucket에 사진 파일이 존재하지 않습니다. URL을 확인해주세요.", HttpStatus.NOT_FOUND);
 
     private final int errorCode;
     private final String errorMessage;

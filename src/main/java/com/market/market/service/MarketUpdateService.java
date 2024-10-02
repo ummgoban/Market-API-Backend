@@ -1,16 +1,20 @@
 package com.market.market.service;
 
 import com.market.core.code.error.MarketErrorCode;
-import com.market.core.code.error.MemberErrorCode;
+import com.market.core.code.error.S3ErrorCode;
 import com.market.core.exception.MemberException;
-import com.market.market.dto.request.MarketHoursRequest;
+import com.market.core.exception.S3Exception;
+import com.market.core.s3.service.S3ImageService;
+import com.market.market.dto.request.MarketUpdateRequest;
 import com.market.market.entity.Market;
+import com.market.market.entity.MarketImage;
+import com.market.market.repository.MarketImageRepository;
 import com.market.market.repository.MarketRepository;
-import com.market.member.entity.Member;
-import com.market.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 /**
  * 가게 Update 관련 서비스 클래스입니다.
@@ -19,26 +23,61 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class MarketUpdateService {
 
-    private final MemberRepository memberRepository;
     private final MarketRepository marketRepository;
+    private final MarketImageRepository marketImageRepository;
+    private final S3ImageService s3ImageService;
 
     /**
-     * 영업 시간 및 픽업 시간을 설정합니다.
+     * 가게 정보를 업데이트합니다.
      */
     @Transactional
-    public void setBusinessAndPickupHours(Long memberId, Long marketId, MarketHoursRequest marketHoursRequest) {
-        // 회원 조회
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new MemberException(MemberErrorCode.NOT_FOUND_MEMBER_ID));
-
+    public void updateMarket(Long marketId, MarketUpdateRequest marketUpdateRequest) {
         // 가게 조회
         Market market = marketRepository.findById(marketId)
                 .orElseThrow(() -> new MemberException(MarketErrorCode.NOT_FOUND_MARKET_ID));
 
-        // 영업 시간 설정
-        market.setBusinessHours(marketHoursRequest.getOpenAt(), marketHoursRequest.getCloseAt());
+        // 가게 영업 시간 및 픽업 시간 업데이트
+        updateBusinessAndPickupHours(market, marketUpdateRequest);
 
-        // 픽업 시간 설정
-        market.setPickUpHours(marketHoursRequest.getPickupStartAt(), marketHoursRequest.getPickupEndAt());
+        // 가게 사진 업데이트
+        updateMarketImages(market, marketUpdateRequest.getImageUrls());
+
+    }
+
+    /**
+     * 가게 영업 시간 및 픽업 시간을 업데이트합니다.
+     */
+    private void updateBusinessAndPickupHours(Market market, MarketUpdateRequest marketUpdateRequest) {
+        // 영업 시간 업데이트
+        market.setBusinessHours(marketUpdateRequest.getOpenAt(), marketUpdateRequest.getCloseAt());
+
+        // 픽업 시간 업데이트
+        market.setPickUpHours(marketUpdateRequest.getPickupStartAt(), marketUpdateRequest.getPickupEndAt());
+    }
+
+    /**
+     * 가게 사진을 업데이트합니다.
+     */
+    private void updateMarketImages(Market market, List<String> imageUrls) {
+        // 기존 사진 조회
+        List<MarketImage> existingMarketImages = marketImageRepository.findAllByMarketId(market.getId());
+
+        // DB에서 기존 사진 삭제
+        marketImageRepository.deleteAll(existingMarketImages);
+
+        // DB에 새로운 사진 저장
+        for (String imageUrl : imageUrls) {
+            // 파일이 존재하는지 확인
+            if (!s3ImageService.doesImageExist(imageUrl)) {
+                throw new S3Exception(S3ErrorCode.IMAGE_NOT_FOUND_ERROR);
+            }
+
+            MarketImage updateImage = MarketImage.builder()
+                    .market(market)
+                    .imageUrl(imageUrl)
+                    .build();
+
+            marketImageRepository.save(updateImage);
+        }
     }
 }
