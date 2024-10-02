@@ -66,9 +66,7 @@ public class MarketReadController {
     public ResponseEntity<BfResponse<MarketPagingResponse>> findMarketByCursorId(
             @Parameter(description = "마지막으로 조회한 커서 ID 입니다. 가게 ID 입니다.") @RequestParam("cursorId") Long cursorId,
             @Parameter(description = "페이지의 크기 입니다.") @RequestParam("size") Integer size) {
-
-        return ResponseEntity.ok(
-                new BfResponse<>(marketReadService.getMarketByCursorId(cursorId, size)));
+        return ResponseEntity.ok(new BfResponse<>(marketReadService.getMarketByCursorId(cursorId, size)));
     }
 
     @Operation(

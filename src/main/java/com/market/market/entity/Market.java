@@ -21,6 +21,9 @@ public class Market {
     @Column(name = "market_name")
     private String marketName;
 
+    @Column(name = "summary")
+    private String summary;
+
     @Column(name = "number")
     private String businessNumber;
 
@@ -45,12 +48,16 @@ public class Market {
     @Column(name = "pickup_end_at")
     private String pickupEndAt;
 
-    public void setBusinessHours(String openAt, String closeAt) {
+    public void updateSummary(String summary) {
+        this.summary = summary;
+    }
+
+    public void updateBusinessHours(String openAt, String closeAt) {
         this.openAt = openAt;
         this.closeAt = closeAt;
     }
 
-    public void setPickUpHours(String pickupStartAt, String pickupEndAt) {
+    public void updatePickUpHours(String pickupStartAt, String pickupEndAt) {
         this.pickupStartAt = pickupStartAt;
         this.pickupEndAt = pickupEndAt;
     }

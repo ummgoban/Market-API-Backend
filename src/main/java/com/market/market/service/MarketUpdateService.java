@@ -36,23 +36,17 @@ public class MarketUpdateService {
         Market market = marketRepository.findById(marketId)
                 .orElseThrow(() -> new MemberException(MarketErrorCode.NOT_FOUND_MARKET_ID));
 
-        // 가게 영업 시간 및 픽업 시간 업데이트
-        updateBusinessAndPickupHours(market, marketUpdateRequest);
+        // 한 줄 소개 업데이트
+        market.updateSummary(marketUpdateRequest.getSummary());
+
+        // 영업 시간 업데이트
+        market.updateBusinessHours(marketUpdateRequest.getOpenAt(), marketUpdateRequest.getCloseAt());
+
+        // 픽업 시간 업데이트
+        market.updatePickUpHours(marketUpdateRequest.getPickupStartAt(), marketUpdateRequest.getPickupEndAt());
 
         // 가게 사진 업데이트
         updateMarketImages(market, marketUpdateRequest.getImageUrls());
-
-    }
-
-    /**
-     * 가게 영업 시간 및 픽업 시간을 업데이트합니다.
-     */
-    private void updateBusinessAndPickupHours(Market market, MarketUpdateRequest marketUpdateRequest) {
-        // 영업 시간 업데이트
-        market.setBusinessHours(marketUpdateRequest.getOpenAt(), marketUpdateRequest.getCloseAt());
-
-        // 픽업 시간 업데이트
-        market.setPickUpHours(marketUpdateRequest.getPickupStartAt(), marketUpdateRequest.getPickupEndAt());
     }
 
     /**

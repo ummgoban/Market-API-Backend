@@ -38,5 +38,5 @@ public class MarketPagingInfoResponse {
     private String pickupEndAt;
 
     @Schema(description = "가게 이미지")
-    List<String> images;
+    List<String> imageUrls;
 }

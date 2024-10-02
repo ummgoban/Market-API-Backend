@@ -46,7 +46,8 @@ public class MarketReadService {
     @Transactional(readOnly = true)
     public MarketSpecificResponse getSpecificMarket(Long marketId) {
         // dev 머지 후, exception handler 구현
-        Market market = marketRepository.findById(marketId).orElseThrow(() -> new MarketException(MarketErrorCode.NOT_FOUND_MARKET_ID));
+        Market market = marketRepository.findById(marketId)
+                .orElseThrow(() -> new MarketException(MarketErrorCode.NOT_FOUND_MARKET_ID));
 
         // 가게 이미지들 조회
         List<MarketImage> marketImages = marketImageRepository.findAllByMarketId(marketId);
@@ -102,7 +103,7 @@ public class MarketReadService {
 
             // 가게에 대해 가게의 이미지 데이터 조회 로직
             List<MarketImage> marketImages = marketImageRepository.findAllByMarketId(infoDto.getId());
-            List<String> images = marketImages.stream().map(MarketImage::getImageUrl).toList();
+            List<String> imageUrls = marketImages.stream().map(MarketImage::getImageUrl).toList();
 
             MarketPagingInfoResponse marketPagingInfoResponse = MarketPagingInfoResponse.builder()
                     .id(infoDto.getId())
@@ -113,7 +114,7 @@ public class MarketReadService {
                     .closeAt(infoDto.getCloseAt())
                     .pickupStartAt(infoDto.getPickupStartAt())
                     .pickupEndAt(infoDto.getPickupEndAt())
-                    .images(images)
+                    .imageUrls(imageUrls)
                     .build();
 
             response.add(marketPagingInfoResponse);
