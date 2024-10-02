@@ -36,7 +36,7 @@ public class BucketController {
         return ResponseEntity.ok(new BfResponse<>(bucketService.findBucket(Long.parseLong(principalDetails.getUsername()))));
     }
 
-    @Operation(summary = "장바구니 다른 가게 상품 여부 확인", description = "장바구니에 현재 가게와 다른 가게의 상품이 존재하는지 여부를 확인합니다..")
+    @Operation(summary = "장바구니 다른 가게 상품 여부 확인", description = "장바구니에 현재 가게와 다른 가게의 상품이 존재하는지 여부를 확인합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "가게 상품 여부 확인 성공")
     })
