@@ -46,7 +46,8 @@ public class MarketReadService {
     @Transactional(readOnly = true)
     public MarketSpecificResponse findSpecificMarket(Long marketId) {
         // dev 머지 후, exception handler 구현
-        Market market = marketRepository.findById(marketId).orElseThrow(() -> new MarketException(MarketErrorCode.NOT_FOUND_MARKET_ID));
+        Market market = marketRepository.findById(marketId)
+                .orElseThrow(() -> new MarketException(MarketErrorCode.NOT_FOUND_MARKET_ID));
 
         // 가게 이미지들 조회
         List<MarketImage> marketImages = marketImageRepository.findAllByMarketId(marketId);
@@ -143,7 +144,6 @@ public class MarketReadService {
      * 세금 유형을 기반으로 사업자 등록 번호가 유효한지 여부를 확인
      */
     private boolean isValidBusinessNumber(String taxType, String businessStatus) {
-
         return !"국세청에 등록되지 않은 사업자등록번호입니다.".equals(taxType) &&
                 !"휴업자".equals(businessStatus) &&
                 !"폐업자".equals(businessStatus);

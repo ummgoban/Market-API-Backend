@@ -24,7 +24,7 @@ public class MarketSpecificResponse {
     private String name;
 
     @Schema(description = "가게 사업자 번호")
-    private String number;
+    private String businessNumber;
 
     @Schema(description = "가게 주소")
     private String address;
@@ -60,7 +60,7 @@ public class MarketSpecificResponse {
         return MarketSpecificResponse.builder()
                 .id(market.getId())
                 .name(market.getMarketName())
-                .number(market.getBusinessNumber())
+                .businessNumber(market.getBusinessNumber())
                 .address(market.getAddress())
                 .specificAddress(market.getSpecificAddress())
                 .contactNumber(market.getContactNumber())
