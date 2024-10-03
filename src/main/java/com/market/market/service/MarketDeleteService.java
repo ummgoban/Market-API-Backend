@@ -14,7 +14,7 @@ public class MarketDeleteService {
     private final S3ImageService s3ImageService;
 
     /**
-     * S3에사 가게 사진을 삭제합니다.
+     * S3에서 가게 사진을 삭제합니다.
      */
     public void deleteMarketImage(String imageUrl) {
         s3ImageService.deleteImage(imageUrl);

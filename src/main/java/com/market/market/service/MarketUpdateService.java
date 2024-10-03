@@ -49,20 +49,30 @@ public class MarketUpdateService {
      * 가게 사진을 업데이트합니다.
      */
     private void updateMarketImages(Market market, List<String> imageUrls) {
-        // 기존 사진 조회
+        // 기존 사진 List 조회
         List<MarketImage> existingMarketImages = marketImageRepository.findAllByMarketId(market.getId());
 
-        // DB에서 기존 사진 삭제
-        marketImageRepository.deleteAll(existingMarketImages);
+        // 기존 사진 URL List 조회
+        List<String> existingMarketImageUrls = existingMarketImages.stream()
+                .map(MarketImage::getImageUrl)
+                .toList();
 
-        // DB에 새로운 사진 저장
+        // DB에 없는 사진 저장
         for (String imageUrl : imageUrls) {
-            MarketImage updateImage = MarketImage.builder()
-                    .market(market)
-                    .imageUrl(imageUrl)
-                    .build();
+            if (!existingMarketImageUrls.contains(imageUrl)) {
+                MarketImage updateImage = MarketImage.builder()
+                        .market(market)
+                        .imageUrl(imageUrl)
+                        .build();
+                marketImageRepository.save(updateImage);
+            }
+        }
 
-            marketImageRepository.save(updateImage);
+        // 새로 추가된 리스트에 없는 이미지는 삭제
+        for (MarketImage existingMarketImage : existingMarketImages) {
+            if (!imageUrls.contains(existingMarketImage.getImageUrl())) {
+                marketImageRepository.delete(existingMarketImage);
+            }
         }
     }
 }
