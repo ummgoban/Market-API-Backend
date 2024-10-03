@@ -66,7 +66,6 @@ public class MarketReadController {
     public ResponseEntity<BfResponse<MarketPagingResponse>> findMarketByCursorId(
             @Parameter(description = "마지막으로 조회한 커서 ID 입니다. 가게 ID 입니다.") @RequestParam("cursorId") Long cursorId,
             @Parameter(description = "페이지의 크기 입니다.") @RequestParam("size") Integer size) {
-
         return ResponseEntity.ok(
                 new BfResponse<>(marketReadService.findMarketByCursorId(cursorId, size)));
     }
@@ -79,8 +78,11 @@ public class MarketReadController {
             @ApiResponse(responseCode = "200", description = "사업자 번호가 유효하면 true, 그렇지 않으면 false 반환", useReturnTypeSchema = true)
     })
     @GetMapping("/verification/business-number")
-    public ResponseEntity<BfResponse<BusinessNumberValidationResponse>> getBusinessStatus(@RequestParam String businessNumber) {
-        BusinessNumberValidationResponse businessNumberValidationResponse = marketReadService.validateBusinessStatus(businessNumber);
+    public ResponseEntity<BfResponse<BusinessNumberValidationResponse>> getBusinessStatus(
+            @Parameter(description = "사업자 등록 번호입니다.") @RequestParam String businessNumber,
+            @Parameter(description = "개업일자입니다.") @RequestParam String startDate,
+            @Parameter(description = "이름입니다.") @RequestParam String name) {
+        BusinessNumberValidationResponse businessNumberValidationResponse = marketReadService.validateBusinessValidate(businessNumber, startDate, name);
         return ResponseEntity.ok(new BfResponse<>(businessNumberValidationResponse));
     }
 }

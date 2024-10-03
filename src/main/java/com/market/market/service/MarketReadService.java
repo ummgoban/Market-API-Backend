@@ -5,7 +5,7 @@ import com.market.core.code.error.MemberErrorCode;
 import com.market.core.exception.MarketException;
 import com.market.core.exception.MemberException;
 import com.market.market.dto.response.*;
-import com.market.market.dto.server.BusinessStatusResponseDto;
+import com.market.market.dto.server.BusinessValidateResponseDto;
 import com.market.market.dto.server.MarketPagingInfoDto;
 import com.market.market.entity.Market;
 import com.market.market.entity.MarketImage;
@@ -22,6 +22,8 @@ import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -38,7 +40,7 @@ public class MarketReadService {
     private final MarketImageRepository marketImageRepository;
     private final ProductRepository productRepository;
     private final TagRepository tagRepository;
-    private final BusinessStatusService businessStatusService;
+    private final BusinessValidateService businessValidateService;
 
     /**
      * 가게 상세 조회 트랜잭션입니다.
@@ -130,22 +132,37 @@ public class MarketReadService {
     /**
      * 사업자 등록 번호 유효성 검증
      */
-    public BusinessNumberValidationResponse validateBusinessStatus(String businessNumber) {
-        BusinessStatusResponseDto businessStatusResponseDto = businessStatusService.getBusinessStatus(businessNumber);
-        String taxType = businessStatusResponseDto.getData().get(0).getTaxType();
-        String businessStatus = businessStatusResponseDto.getData().get(0).getBusinessStatus();
+    public BusinessNumberValidationResponse validateBusinessValidate(String businessNumber, String startDate, String name) {
+        BusinessValidateResponseDto businessValidateResponseDto = businessValidateService.getBusinessStatus(businessNumber, startDate, name);
 
         return BusinessNumberValidationResponse.builder()
-                .validBusinessNumber(isValidBusinessNumber(taxType, businessStatus))
+                .validBusinessNumber(isValidBusinessNumber(businessValidateResponseDto))
                 .build();
     }
 
     /**
-     * 세금 유형을 기반으로 사업자 등록 번호가 유효한지 여부를 확인
+     * 사업자 등록 번호가 유효한지 여부 확인
      */
-    private boolean isValidBusinessNumber(String taxType, String businessStatus) {
-        return !"국세청에 등록되지 않은 사업자등록번호입니다.".equals(taxType) &&
-                !"휴업자".equals(businessStatus) &&
-                !"폐업자".equals(businessStatus);
+    public boolean isValidBusinessNumber(BusinessValidateResponseDto businessValidateResponseDto) {
+        // 유효성 확인 (01: 유효, 02: 유효 X)
+        String valid = businessValidateResponseDto.getData().get(0).getValid();
+        if (valid.equals("02")) {
+            return false;
+        }
+
+        String startDate = businessValidateResponseDto.getData().get(0).getRequestParam().getStartDate();
+        // TODO: 이름 비교 소셜 로그인 검수 이후 추가
+        String name = businessValidateResponseDto.getData().get(0).getRequestParam().getPrimaryName();
+        String businessStatus = businessValidateResponseDto.getData().get(0).getStatus().getBusinessStatus();
+        String taxType = businessValidateResponseDto.getData().get(0).getStatus().getTaxType();
+
+        // 개업일자 LocalDate 타입으로 변환
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+        LocalDate inputDate = LocalDate.parse(startDate, formatter);
+
+        return !("휴업자".equals(businessStatus) || // 휴업자일 경우
+                "폐업자".equals(businessStatus) || // 폐업자일 경우
+                inputDate.isAfter(LocalDate.now()) || // 개업일이 현재 시간보다 미래일 경우
+                "국세청에 등록되지 않은 사업자등록번호입니다.".equals(taxType)); // 등록되지 않은 사업자 등록 번호일 경우
     }
 }
