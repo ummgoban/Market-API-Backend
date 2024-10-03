@@ -70,18 +70,32 @@ public class MarketCreateService {
      * 세금 유형을 기반으로 사업자 등록 번호가 유효한지 여부를 확인
      */
     private boolean isValidBusinessNumber(String taxType, String businessStatus) {
-
         return !"국세청에 등록되지 않은 사업자등록번호입니다.".equals(taxType) &&
                 !"휴업자".equals(businessStatus) &&
                 !"폐업자".equals(businessStatus);
     }
 
     /**
-     * S3에 가기 사진을 업로드합니다.
+     * S3에 가게 사진을 업로드합니다.
      */
     public MarketImageUrlResponse uploadMarketImage(MultipartFile uploadImage) {
+        // 파일 확장자 검사
+        if (!isImageFile(uploadImage)) {
+            throw new MarketException(MarketErrorCode.INVALID_IMAGE_EXTENSION);
+        }
+
         return MarketImageUrlResponse.builder()
                 .imageUrl(s3ImageService.uploadImage(uploadImage))
                 .build();
+    }
+
+
+    /**
+     * 파일 확장자가 이미지 파일인지 확인합니다.
+     */
+    private boolean isImageFile(MultipartFile uploadImage) {
+        String filename = uploadImage.getOriginalFilename();
+        String fileExtension = filename.substring(filename.lastIndexOf(".") + 1).toLowerCase();
+        return fileExtension.equals("jpg") || fileExtension.equals("jpeg") || fileExtension.equals("png") || fileExtension.equals("gif");
     }
 }

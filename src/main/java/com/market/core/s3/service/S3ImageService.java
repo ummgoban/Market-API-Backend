@@ -27,7 +27,7 @@ public class S3ImageService {
     public final AmazonS3 amazonS3;
 
     /**
-     * S3에 이미지 업로드
+     * S3에 파일 업로드
      */
     public String uploadImage(MultipartFile file) {
         String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
@@ -46,10 +46,10 @@ public class S3ImageService {
     }
 
     /**
-     * S3에서 이미지 삭제
+     * S3에서 파일 삭제
      */
     public void deleteImage(String imageUrl) {
-        // 파일이 존재하는지 확인
+        // TODO: S3 Bucket 주기적 청소 시 해당 메서드 삭제 고려
         if (!doesImageExist(imageUrl)) {
             throw new S3Exception(S3ErrorCode.IMAGE_NOT_FOUND_ERROR);
         }

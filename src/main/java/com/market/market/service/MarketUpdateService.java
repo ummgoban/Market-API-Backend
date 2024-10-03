@@ -1,10 +1,7 @@
 package com.market.market.service;
 
 import com.market.core.code.error.MarketErrorCode;
-import com.market.core.code.error.S3ErrorCode;
 import com.market.core.exception.MemberException;
-import com.market.core.exception.S3Exception;
-import com.market.core.s3.service.S3ImageService;
 import com.market.market.dto.request.MarketUpdateRequest;
 import com.market.market.entity.Market;
 import com.market.market.entity.MarketImage;
@@ -25,7 +22,6 @@ public class MarketUpdateService {
 
     private final MarketRepository marketRepository;
     private final MarketImageRepository marketImageRepository;
-    private final S3ImageService s3ImageService;
 
     /**
      * 가게 정보를 업데이트합니다.
@@ -61,11 +57,6 @@ public class MarketUpdateService {
 
         // DB에 새로운 사진 저장
         for (String imageUrl : imageUrls) {
-            // 파일이 존재하는지 확인
-            if (!s3ImageService.doesImageExist(imageUrl)) {
-                throw new S3Exception(S3ErrorCode.IMAGE_NOT_FOUND_ERROR);
-            }
-
             MarketImage updateImage = MarketImage.builder()
                     .market(market)
                     .imageUrl(imageUrl)
