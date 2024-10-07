@@ -5,7 +5,7 @@ import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
 /**
- * 장바구니 에러 코드를 관리하는 enum 클래스입니다.
+ * S3 에러 코드를 관리하는 enum 클래스입니다.
  */
 @Getter
 public enum S3ErrorCode implements BaseErrorCode {
