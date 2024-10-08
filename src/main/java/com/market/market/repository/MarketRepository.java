@@ -16,6 +16,8 @@ public interface MarketRepository extends JpaRepository<Market, Long>, MarketPag
 
     boolean existsByMarketName(String marketName);
 
+    boolean existsByBusinessNumber(String businessNumber);
+
     List<Market> findAllByMemberId(Long memberId);
   
     @Query("select m from Product p inner join Market m on p.market.id = m.id where p.id = :productId")

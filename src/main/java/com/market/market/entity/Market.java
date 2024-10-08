@@ -21,7 +21,7 @@ public class Market {
     @Column(name = "market_name")
     private String marketName;
 
-    @Column(name = "number")
+    @Column(name = "business_number")
     private String businessNumber;
 
     @Column(name = "address")
