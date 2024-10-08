@@ -1,5 +1,6 @@
 package com.market.market.dto.response;
 
+import com.market.product.dto.response.ProductResponse;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
@@ -37,6 +38,6 @@ public class MarketPagingInfoResponse {
     @Schema(description = "가게 픽업 마감 시간입니다.")
     private String pickupEndAt;
 
-    @Schema(description = "가게 이미지")
-    List<String> images;
+    @Schema(description = "가게의 상품 정보")
+    List<ProductResponse> products;
 }

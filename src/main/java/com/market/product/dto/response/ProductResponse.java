@@ -1,5 +1,6 @@
 package com.market.product.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.market.market.dto.server.TagResponseDto;
 import com.market.market.entity.Tag;
 import com.market.product.entity.Product;
@@ -40,6 +41,7 @@ public class ProductResponse {
     private Integer stock;
 
     @Schema(description = "상품 태그")
+    @JsonInclude(value = JsonInclude.Include.NON_NULL)
     private List<TagResponseDto> tags;
 
     public static ProductResponse from(Product product, List<Tag> tags) {
@@ -55,6 +57,18 @@ public class ProductResponse {
                 .discountRate(product.getDiscountRate())
                 .stock(product.getStock())
                 .tags(tagResponseDtos)
+                .build();
+    }
+
+    public static ProductResponse from(Product product) {
+        return ProductResponse.builder()
+                .id(product.getId())
+                .image(product.getProductImage())
+                .name(product.getName())
+                .originPrice(product.getOriginPrice())
+                .discountPrice(product.getDiscountPrice())
+                .discountRate(product.getDiscountRate())
+                .stock(product.getStock())
                 .build();
     }
 }
