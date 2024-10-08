@@ -9,6 +9,7 @@ import com.market.market.dto.server.BusinessStatusResponseDto;
 import com.market.market.dto.server.MarketPagingInfoDto;
 import com.market.market.entity.Market;
 import com.market.market.entity.MarketImage;
+import com.market.market.entity.Tag;
 import com.market.market.repository.MarketImageRepository;
 import com.market.market.repository.MarketRepository;
 import com.market.member.entity.Member;
@@ -59,9 +60,9 @@ public class MarketReadService {
 
         // 상품 각각에 대해 태그 정보 조회 후, productResponse 객체 생성 후 productResponses에 저장
         for (Product product : products) {
-            List<String> tagNames = tagRepository.findAllByProductId(product.getId());
+            List<Tag> tags = tagRepository.findAllByProductId(product.getId());
 
-            ProductResponse productResponse = ProductResponse.from(product, tagNames);
+            ProductResponse productResponse = ProductResponse.from(product, tags);
             productResponses.add(productResponse);
         }
 

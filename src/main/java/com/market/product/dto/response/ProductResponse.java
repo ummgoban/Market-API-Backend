@@ -1,5 +1,7 @@
 package com.market.product.dto.response;
 
+import com.market.market.dto.server.TagResponseDto;
+import com.market.market.entity.Tag;
 import com.market.product.entity.Product;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
@@ -38,9 +40,12 @@ public class ProductResponse {
     private Integer stock;
 
     @Schema(description = "상품 태그")
-    private List<String> tags;
+    private List<TagResponseDto> tags;
 
-    public static ProductResponse from(Product product, List<String> tagNames) {
+    public static ProductResponse from(Product product, List<Tag> tags) {
+
+        List<TagResponseDto> tagResponseDtos = tags.stream().map(TagResponseDto::from).toList();
+
         return ProductResponse.builder()
                 .id(product.getId())
                 .image(product.getProductImage())
@@ -49,7 +54,7 @@ public class ProductResponse {
                 .discountPrice(product.getDiscountPrice())
                 .discountRate(product.getDiscountRate())
                 .stock(product.getStock())
-                .tags(tagNames)
+                .tags(tagResponseDtos)
                 .build();
     }
 }
