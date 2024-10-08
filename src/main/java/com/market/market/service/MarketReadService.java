@@ -99,11 +99,12 @@ public class MarketReadService {
         // market 엔티티와 businessInfo 엔티티 조인 후, 데이터 조회
         Slice<MarketPagingInfoDto> marketList = marketRepository.findMarketByCursorId(cursorId, size);
 
+
         marketList.getContent().forEach(infoDto -> {
 
-            // 가게에 대해 가게의 이미지 데이터 조회 로직
-            List<MarketImage> marketImages = marketImageRepository.findAllByMarketId(infoDto.getId());
-            List<String> images = marketImages.stream().map(MarketImage::getImageUrl).toList();
+            // 가게의 상품 목록
+            List<Product> marketProducts = productRepository.findAllByMarketId(infoDto.getId());
+            List<ProductResponse> productResponses = marketProducts.stream().map(ProductResponse::from).toList();
 
             MarketPagingInfoResponse marketPagingInfoResponse = MarketPagingInfoResponse.builder()
                     .id(infoDto.getId())
@@ -114,7 +115,7 @@ public class MarketReadService {
                     .closeAt(infoDto.getCloseAt())
                     .pickupStartAt(infoDto.getPickupStartAt())
                     .pickupEndAt(infoDto.getPickupEndAt())
-                    .images(images)
+                    .products(productResponses)
                     .build();
 
             response.add(marketPagingInfoResponse);
