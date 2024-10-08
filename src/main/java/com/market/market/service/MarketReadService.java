@@ -70,7 +70,7 @@ public class MarketReadService {
     }
 
     /**
-     * 사용자의 가게 목록을 조회합니다.
+     * 사장님의 가게 목록을 조회합니다.
      */
     public List<MarketListResponse> getMarketList(Long memberId) {
         // 회원 조회
