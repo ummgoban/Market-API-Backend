@@ -7,8 +7,10 @@ import com.market.core.exception.MemberException;
 import com.market.market.dto.response.*;
 import com.market.market.dto.server.BusinessValidateResponseDto;
 import com.market.market.dto.server.MarketPagingInfoDto;
+import com.market.market.entity.BusinessStatus;
 import com.market.market.entity.Market;
 import com.market.market.entity.MarketImage;
+import com.market.market.entity.ValidStatus;
 import com.market.market.repository.MarketImageRepository;
 import com.market.market.repository.MarketRepository;
 import com.market.member.entity.Member;
@@ -132,11 +134,17 @@ public class MarketReadService {
     /**
      * 사업자 등록 번호 유효성 검증
      */
-    public BusinessNumberValidationResponse validateBusinessValidate(String businessNumber, String startDate, String name) {
-        BusinessValidateResponseDto businessValidateResponseDto = businessValidateService.getBusinessStatus(businessNumber, startDate, name);
+    public BusinessNumberValidateResponse validateBusinessValidate(String businessNumber, String startDate, String name, String marketName) {
+        BusinessValidateResponseDto businessValidateResponseDto = businessValidateService.getBusinessStatus(businessNumber, startDate, name, marketName);
 
-        return BusinessNumberValidationResponse.builder()
+        return BusinessNumberValidateResponse.builder()
                 .validBusinessNumber(isValidBusinessNumber(businessValidateResponseDto))
+                .businessNumberValidateInfoResponse(BusinessNumberValidateInfoResponse.builder()
+                        .businessNumber(businessValidateResponseDto.getData().get(0).getBusinessNumber())
+                        .startDate(businessValidateResponseDto.getData().get(0).getRequestParam().getStartDate())
+                        .name(businessValidateResponseDto.getData().get(0).getRequestParam().getPrimaryName())
+                        .marketName(businessValidateResponseDto.getData().get(0).getRequestParam().getMarketName())
+                        .build())
                 .build();
     }
 
@@ -145,23 +153,23 @@ public class MarketReadService {
      */
     public boolean isValidBusinessNumber(BusinessValidateResponseDto businessValidateResponseDto) {
         // 유효성 확인 (01: 유효, 02: 유효 X)
-        String valid = businessValidateResponseDto.getData().get(0).getValid();
-        if (valid.equals("02")) {
+        ValidStatus validStatus = businessValidateResponseDto.getData().get(0).getValidStatus();
+        if (ValidStatus.INVALID.equals(validStatus)) {
             return false;
         }
 
         String startDate = businessValidateResponseDto.getData().get(0).getRequestParam().getStartDate();
         // TODO: 이름 비교 소셜 로그인 검수 이후 추가
         String name = businessValidateResponseDto.getData().get(0).getRequestParam().getPrimaryName();
-        String businessStatus = businessValidateResponseDto.getData().get(0).getStatus().getBusinessStatus();
+        BusinessStatus businessStatus = businessValidateResponseDto.getData().get(0).getStatus().getBusinessStatus();
         String taxType = businessValidateResponseDto.getData().get(0).getStatus().getTaxType();
 
         // 개업일자 LocalDate 타입으로 변환
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
         LocalDate inputDate = LocalDate.parse(startDate, formatter);
 
-        return !("휴업자".equals(businessStatus) || // 휴업자일 경우
-                "폐업자".equals(businessStatus) || // 폐업자일 경우
+        return !(BusinessStatus.SUSPENDED.equals(businessStatus) || // 휴업자일 경우
+                BusinessStatus.CLOSED.equals(businessStatus) || // 폐업자일 경우
                 inputDate.isAfter(LocalDate.now()) || // 개업일이 현재 시간보다 미래일 경우
                 "국세청에 등록되지 않은 사업자등록번호입니다.".equals(taxType)); // 등록되지 않은 사업자 등록 번호일 경우
     }

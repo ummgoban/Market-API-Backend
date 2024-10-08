@@ -75,14 +75,15 @@ public class MarketReadController {
             description = "사업자 등록 번호가 유효한지 확인합니다."
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "사업자 번호가 유효하면 true, 그렇지 않으면 false 반환", useReturnTypeSchema = true)
+            @ApiResponse(responseCode = "200", description = "사업자 번호가 유효하면 true와 가게 이름, 그렇지 않으면 false와 빈 값 반환", useReturnTypeSchema = true)
     })
     @GetMapping("/verification/business-number")
-    public ResponseEntity<BfResponse<BusinessNumberValidationResponse>> getBusinessStatus(
+    public ResponseEntity<BfResponse<BusinessNumberValidateResponse>> getBusinessStatus(
             @Parameter(description = "사업자 등록 번호입니다.") @RequestParam String businessNumber,
             @Parameter(description = "개업일자입니다.") @RequestParam String startDate,
-            @Parameter(description = "이름입니다.") @RequestParam String name) {
-        BusinessNumberValidationResponse businessNumberValidationResponse = marketReadService.validateBusinessValidate(businessNumber, startDate, name);
-        return ResponseEntity.ok(new BfResponse<>(businessNumberValidationResponse));
+            @Parameter(description = "이름입니다.") @RequestParam String name,
+            @Parameter(description = "가게 이름입니다.") @RequestParam String marketName) {
+        BusinessNumberValidateResponse businessNumberValidateResponse = marketReadService.validateBusinessValidate(businessNumber, startDate, name, marketName);
+        return ResponseEntity.ok(new BfResponse<>(businessNumberValidateResponse));
     }
 }

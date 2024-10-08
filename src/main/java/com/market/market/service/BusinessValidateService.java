@@ -29,7 +29,7 @@ public class BusinessValidateService {
     @Value("${external.api.business-status.service-key}")
     private String serviceKey;
 
-    public BusinessValidateResponseDto getBusinessStatus(String businessNumber, String startDate, String name) {
+    public BusinessValidateResponseDto getBusinessStatus(String businessNumber, String startDate, String name, String marketName) {
 
         WebClient webClient = WebClient.builder()
                 .baseUrl(baseUrl)
@@ -51,6 +51,7 @@ public class BusinessValidateService {
                 .b_no(businessNumber)
                 .start_dt(startDate)
                 .p_nm(name)
+                .b_nm(marketName)
                 .build();
         businesses.add(businessValidateRequestDto);
         requestBody.put("businesses", businesses);

@@ -11,8 +11,11 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @Builder
 @RequiredArgsConstructor
-public class BusinessNumberValidationResponse {
+public class BusinessNumberValidateResponse {
 
     @Schema(description = "사업자 등록 번호의 유효성 여부", example = "true")
     private final boolean validBusinessNumber;
+
+    @Schema(description = "사업자 등록 번호 검증 결과의 사업자 정보")
+    private final BusinessNumberValidateInfoResponse businessNumberValidateInfoResponse;
 }

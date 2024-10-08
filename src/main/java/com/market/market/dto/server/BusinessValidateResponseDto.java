@@ -1,6 +1,8 @@
 package com.market.market.dto.server;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.market.market.entity.BusinessStatus;
+import com.market.market.entity.ValidStatus;
 import lombok.Getter;
 
 import java.util.List;
@@ -21,7 +23,7 @@ public class BusinessValidateResponseDto {
         private String businessNumber; // 사업자 등록 번호
 
         @JsonProperty("valid")
-        private String valid; // 유효 여부
+        private ValidStatus validStatus; // 유효 여부
 
         @JsonProperty("request_param")
         private RequestParam requestParam;
@@ -36,13 +38,16 @@ public class BusinessValidateResponseDto {
 
             @JsonProperty("p_nm")
             private String primaryName; // 이름
+
+            @JsonProperty("b_nm")
+            private String marketName; // 가게 이름
         }
 
         @Getter
         public static class Status {
 
             @JsonProperty("b_stt")
-            private String businessStatus; // 계속 사업자, 휴업자, 폐업자
+            private BusinessStatus businessStatus; // 계속 사업자, 휴업자, 폐업자
 
             @JsonProperty("tax_type")
             private String taxType; // 세금 타입

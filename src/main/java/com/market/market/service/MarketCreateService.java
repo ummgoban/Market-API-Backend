@@ -33,11 +33,6 @@ public class MarketCreateService {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberException(MemberErrorCode.NOT_FOUND_MEMBER_ID));
 
-        // 가게 이름 중복 체크
-        if (marketRepository.existsByMarketName(marketRegisterRequest.getMarketName())) {
-            throw new MarketException(MarketErrorCode.DUPLICATE_MARKET_NAME);
-        }
-
         // 사업자 등록 번호 중복 체크
         if (marketRepository.existsByBusinessNumber(marketRegisterRequest.getBusinessNumber())) {
             throw new MarketException(MarketErrorCode.DUPLICATE_BUSINESS_NUMBER);
