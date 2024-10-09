@@ -38,7 +38,7 @@ public class MarketReadController {
     @GetMapping("/{marketId}")
     public ResponseEntity<BfResponse<MarketSpecificResponse>> findSpecificMarket(
             @Parameter(description = "가게 ID 입니다.") @PathVariable("marketId") Long marketId) {
-        return ResponseEntity.ok(new BfResponse<>(marketReadService.findSpecificMarket(marketId)));
+        return ResponseEntity.ok(new BfResponse<>(marketReadService.getSpecificMarket(marketId)));
     }
   
     @Operation(
@@ -66,8 +66,7 @@ public class MarketReadController {
     public ResponseEntity<BfResponse<MarketPagingResponse>> findMarketByCursorId(
             @Parameter(description = "마지막으로 조회한 커서 ID 입니다. 가게 ID 입니다.") @RequestParam("cursorId") Long cursorId,
             @Parameter(description = "페이지의 크기 입니다.") @RequestParam("size") Integer size) {
-        return ResponseEntity.ok(
-                new BfResponse<>(marketReadService.findMarketByCursorId(cursorId, size)));
+        return ResponseEntity.ok(new BfResponse<>(marketReadService.getMarketByCursorId(cursorId, size)));
     }
 
     @Operation(
@@ -75,7 +74,7 @@ public class MarketReadController {
             description = "사업자 등록 번호가 유효한지 확인합니다."
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "사업자 번호가 유효하면 true와 가게 이름, 그렇지 않으면 false와 빈 값 반환", useReturnTypeSchema = true)
+            @ApiResponse(responseCode = "200", description = "사업자 번호가 유효하면 true, 그렇지 않으면 false 반환", useReturnTypeSchema = true)
     })
     @GetMapping("/verification/business-number")
     public ResponseEntity<BfResponse<BusinessNumberValidateResponse>> getBusinessStatus(

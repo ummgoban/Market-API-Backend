@@ -21,7 +21,10 @@ public class MarketSpecificResponse {
     private Long id;
 
     @Schema(description = "가게 이름")
-    private String name;
+    private String marketName;
+
+    @Schema(description = "가게 한 줄 소개")
+    private String summary;
 
     @Schema(description = "가게 사업자 번호")
     private String businessNumber;
@@ -48,18 +51,19 @@ public class MarketSpecificResponse {
     private String pickupEndAt;
 
     @Schema(description = "가게 이미지 목록")
-    List<String> images;
+    List<String> imageUrls;
 
     @Schema(description = "가게 상품 목록")
     List<ProductResponse> products;
 
     public static MarketSpecificResponse from(Market market, List<MarketImage> marketImages, List<ProductResponse> productResponses) {
 
-        List<String> images = marketImages.stream().map(MarketImage::getImageUrl).toList();
+        List<String> imageUrls = marketImages.stream().map(MarketImage::getImageUrl).toList();
 
         return MarketSpecificResponse.builder()
                 .id(market.getId())
-                .name(market.getMarketName())
+                .marketName(market.getMarketName())
+                .summary(market.getSummary())
                 .businessNumber(market.getBusinessNumber())
                 .address(market.getAddress())
                 .specificAddress(market.getSpecificAddress())
@@ -68,7 +72,7 @@ public class MarketSpecificResponse {
                 .closeAt(market.getCloseAt())
                 .pickupStartAt(market.getPickupStartAt())
                 .pickupEndAt(market.getPickupEndAt())
-                .images(images)
+                .imageUrls(imageUrls)
                 .products(productResponses)
                 .build();
     }
