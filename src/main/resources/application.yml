@@ -6,6 +6,9 @@ server:
       charset: UTF-8
       enabled: true
       force: true
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB
 
 spring:
   datasource:
@@ -64,6 +67,18 @@ spring:
             user-info-uri: https://kapi.kakao.com/v2/user/me
             user-name-attribute: id
 
+cloud:
+  aws:
+    s3: # 버킷 이름
+      bucket: capstone-dev-s3-bucket
+    region: # S3 지역
+      static: ap-northeast-2
+    stack:
+      auto: false
+    credentials:
+      access-key: ${AWS_S3_ACCESS_KEY}
+      secret-key: ${AWS_S3_SECRET_KEY}
+
 jwt:
   secret: ${JWT_SECRET_KEY} # JWT 서명을 위한 시크릿 키
   access-expiration-seconds: ${ACCESS_EXPIRATION_SECONDS} # access token 만료 시간
@@ -72,7 +87,7 @@ jwt:
 external:
   api:
     business-status:
-      url: https://api.odcloud.kr/api/nts-businessman/v1/status
+      url: https://api.odcloud.kr/api/nts-businessman/v1/validate
       service-key: ${BUSINESS_SERVICE_KEY}
 
 springdoc:

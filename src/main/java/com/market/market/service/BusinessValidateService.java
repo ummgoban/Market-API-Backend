@@ -2,7 +2,8 @@ package com.market.market.service;
 
 import com.market.core.code.error.MarketErrorCode;
 import com.market.core.exception.MarketException;
-import com.market.market.dto.server.BusinessStatusResponseDto;
+import com.market.market.dto.server.BusinessValidateRequestDto;
+import com.market.market.dto.server.BusinessValidateResponseDto;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
@@ -11,14 +12,16 @@ import org.springframework.web.util.UriComponentsBuilder;
 import reactor.core.publisher.Mono;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
  * 사업자 번호를 사용하여 외부 API를 통해 사업자 상태 정보를 조회
  */
 @Service
-public class BusinessStatusService {
+public class BusinessValidateService {
 
     @Value("${external.api.business-status.url}")
     private String baseUrl;
@@ -26,7 +29,7 @@ public class BusinessStatusService {
     @Value("${external.api.business-status.service-key}")
     private String serviceKey;
 
-    public BusinessStatusResponseDto getBusinessStatus(String businessNumber) {
+    public BusinessValidateResponseDto getBusinessStatus(String businessNumber, String startDate, String name, String marketName) {
 
         WebClient webClient = WebClient.builder()
                 .baseUrl(baseUrl)
@@ -41,19 +44,25 @@ public class BusinessStatusService {
                         .toUriString()
         );
 
-        // 요청 본문 설정 (사업자 번호 배열로 전달)
+        // 요청 본문 설정
         Map<String, Object> requestBody = new HashMap<>();
-        requestBody.put("b_no", new String[]{businessNumber});
+        List<Object> businesses = new ArrayList<>();
+        BusinessValidateRequestDto businessValidateRequestDto = BusinessValidateRequestDto.builder()
+                .b_no(businessNumber)
+                .start_dt(startDate)
+                .p_nm(name)
+                .b_nm(marketName)
+                .build();
+        businesses.add(businessValidateRequestDto);
+        requestBody.put("businesses", businesses);
 
-        BusinessStatusResponseDto response = webClient.post()
+        return webClient.post()
                 .uri(uri)
                 .bodyValue(requestBody)
                 .retrieve()
                 .onStatus(HttpStatusCode::is4xxClientError, responseEntity -> Mono.error(new MarketException(MarketErrorCode.BAD_REQUEST_BUSINESS_STATUS)))
                 .onStatus(HttpStatusCode::is5xxServerError, responseEntity -> Mono.error(new MarketException(MarketErrorCode.BUSINESS_STATUS_SERVER_ERROR)))
-                .bodyToMono(BusinessStatusResponseDto.class)
+                .bodyToMono(BusinessValidateResponseDto.class)
                 .block();
-
-        return response;
     }
 }

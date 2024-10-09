@@ -49,6 +49,15 @@ public class GlobalExceptionHandler {
     }
 
     /**
+     * S3 관련 예외 Handler
+     */
+    @ExceptionHandler(S3Exception.class)
+    protected ResponseEntity<ErrorResponse> handleS3Exception(S3Exception exception) {
+        BaseErrorCode errorCode = exception.getErrorCode();
+        return ResponseEntity.status(errorCode.getStatus()).body(errorCode.getErrorResponse());
+    }
+
+    /**
      * Member 관련 예외 Handler
      */
     @ExceptionHandler(MemberException.class)

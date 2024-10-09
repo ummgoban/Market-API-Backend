@@ -5,11 +5,13 @@ import com.market.core.code.error.MemberErrorCode;
 import com.market.core.exception.MarketException;
 import com.market.core.exception.MemberException;
 import com.market.market.dto.response.*;
-import com.market.market.dto.server.BusinessStatusResponseDto;
+import com.market.market.dto.server.BusinessValidateResponseDto;
 import com.market.market.dto.server.MarketPagingInfoDto;
+import com.market.market.entity.BusinessStatus;
 import com.market.market.entity.Market;
 import com.market.market.entity.MarketImage;
 import com.market.market.entity.Tag;
+import com.market.market.entity.ValidStatus;
 import com.market.market.repository.MarketImageRepository;
 import com.market.market.repository.MarketRepository;
 import com.market.member.entity.Member;
@@ -23,6 +25,8 @@ import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -39,15 +43,16 @@ public class MarketReadService {
     private final MarketImageRepository marketImageRepository;
     private final ProductRepository productRepository;
     private final TagRepository tagRepository;
-    private final BusinessStatusService businessStatusService;
+    private final BusinessValidateService businessValidateService;
 
     /**
      * 가게 상세 조회 트랜잭션입니다.
      */
     @Transactional(readOnly = true)
-    public MarketSpecificResponse findSpecificMarket(Long marketId) {
+    public MarketSpecificResponse getSpecificMarket(Long marketId) {
         // dev 머지 후, exception handler 구현
-        Market market = marketRepository.findById(marketId).orElseThrow(() -> new MarketException(MarketErrorCode.NOT_FOUND_MARKET_ID));
+        Market market = marketRepository.findById(marketId)
+                .orElseThrow(() -> new MarketException(MarketErrorCode.NOT_FOUND_MARKET_ID));
 
         // 가게 이미지들 조회
         List<MarketImage> marketImages = marketImageRepository.findAllByMarketId(marketId);
@@ -92,7 +97,7 @@ public class MarketReadService {
      * 커서 기반 페이지네이션을 사용하여 전체 가게 목록을 조회합니다.
      */
     @Transactional(readOnly = true)
-    public MarketPagingResponse findMarketByCursorId(Long cursorId, Integer size) {
+    public MarketPagingResponse getMarketByCursorId(Long cursorId, Integer size) {
 
         List<MarketPagingInfoResponse> response = new ArrayList<>();
 
@@ -102,7 +107,6 @@ public class MarketReadService {
 
         marketList.getContent().forEach(infoDto -> {
 
-            // 가게의 상품 목록
             List<Product> marketProducts = productRepository.findAllByMarketId(infoDto.getId());
             List<ProductResponse> productResponses = marketProducts.stream().map(ProductResponse::from).toList();
 
@@ -131,23 +135,43 @@ public class MarketReadService {
     /**
      * 사업자 등록 번호 유효성 검증
      */
-    public BusinessNumberValidationResponse validateBusinessStatus(String businessNumber) {
-        BusinessStatusResponseDto businessStatusResponseDto = businessStatusService.getBusinessStatus(businessNumber);
-        String taxType = businessStatusResponseDto.getData().get(0).getTaxType();
-        String businessStatus = businessStatusResponseDto.getData().get(0).getBusinessStatus();
+    public BusinessNumberValidateResponse validateBusinessValidate(String businessNumber, String startDate, String name, String marketName) {
+        BusinessValidateResponseDto businessValidateResponseDto = businessValidateService.getBusinessStatus(businessNumber, startDate, name, marketName);
 
-        return BusinessNumberValidationResponse.builder()
-                .validBusinessNumber(isValidBusinessNumber(taxType, businessStatus))
+        return BusinessNumberValidateResponse.builder()
+                .validBusinessNumber(isValidBusinessNumber(businessValidateResponseDto))
+                .businessNumberValidateInfoResponse(BusinessNumberValidateInfoResponse.builder()
+                        .businessNumber(businessValidateResponseDto.getData().get(0).getBusinessNumber())
+                        .startDate(businessValidateResponseDto.getData().get(0).getRequestParam().getStartDate())
+                        .name(businessValidateResponseDto.getData().get(0).getRequestParam().getPrimaryName())
+                        .marketName(businessValidateResponseDto.getData().get(0).getRequestParam().getMarketName())
+                        .build())
                 .build();
     }
 
     /**
-     * 세금 유형을 기반으로 사업자 등록 번호가 유효한지 여부를 확인
+     * 사업자 등록 번호가 유효한지 여부 확인
      */
-    private boolean isValidBusinessNumber(String taxType, String businessStatus) {
+    public boolean isValidBusinessNumber(BusinessValidateResponseDto businessValidateResponseDto) {
+        // 유효성 확인 (01: 유효, 02: 유효 X)
+        ValidStatus validStatus = businessValidateResponseDto.getData().get(0).getValidStatus();
+        if (ValidStatus.INVALID.equals(validStatus)) {
+            return false;
+        }
 
-        return !"국세청에 등록되지 않은 사업자등록번호입니다.".equals(taxType) &&
-                !"휴업자".equals(businessStatus) &&
-                !"폐업자".equals(businessStatus);
+        String startDate = businessValidateResponseDto.getData().get(0).getRequestParam().getStartDate();
+        // TODO: 이름 비교 소셜 로그인 검수 이후 추가
+        String name = businessValidateResponseDto.getData().get(0).getRequestParam().getPrimaryName();
+        BusinessStatus businessStatus = businessValidateResponseDto.getData().get(0).getStatus().getBusinessStatus();
+        String taxType = businessValidateResponseDto.getData().get(0).getStatus().getTaxType();
+
+        // 개업일자 LocalDate 타입으로 변환
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+        LocalDate inputDate = LocalDate.parse(startDate, formatter);
+
+        return !(BusinessStatus.SUSPENDED.equals(businessStatus) || // 휴업자일 경우
+                BusinessStatus.CLOSED.equals(businessStatus) || // 폐업자일 경우
+                inputDate.isAfter(LocalDate.now()) || // 개업일이 현재 시간보다 미래일 경우
+                "국세청에 등록되지 않은 사업자등록번호입니다.".equals(taxType)); // 등록되지 않은 사업자 등록 번호일 경우
     }
 }

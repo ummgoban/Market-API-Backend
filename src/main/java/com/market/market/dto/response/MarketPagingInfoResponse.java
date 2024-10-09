@@ -41,3 +41,4 @@ public class MarketPagingInfoResponse {
     @Schema(description = "가게의 상품 정보")
     List<ProductResponse> products;
 }
+

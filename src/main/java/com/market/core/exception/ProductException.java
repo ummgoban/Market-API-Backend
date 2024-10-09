@@ -1,6 +1,5 @@
 package com.market.core.exception;
 
-
 import com.market.core.code.error.BaseErrorCode;
 import lombok.Getter;
 

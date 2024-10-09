@@ -38,7 +38,7 @@ public class MarketReadController {
     @GetMapping("/{marketId}")
     public ResponseEntity<BfResponse<MarketSpecificResponse>> findSpecificMarket(
             @Parameter(description = "가게 ID 입니다.") @PathVariable("marketId") Long marketId) {
-        return ResponseEntity.ok(new BfResponse<>(marketReadService.findSpecificMarket(marketId)));
+        return ResponseEntity.ok(new BfResponse<>(marketReadService.getSpecificMarket(marketId)));
     }
   
     @Operation(
@@ -66,9 +66,7 @@ public class MarketReadController {
     public ResponseEntity<BfResponse<MarketPagingResponse>> findMarketByCursorId(
             @Parameter(description = "마지막으로 조회한 커서 ID 입니다. 가게 ID 입니다.") @RequestParam("cursorId") Long cursorId,
             @Parameter(description = "페이지의 크기 입니다.") @RequestParam("size") Integer size) {
-
-        return ResponseEntity.ok(
-                new BfResponse<>(marketReadService.findMarketByCursorId(cursorId, size)));
+        return ResponseEntity.ok(new BfResponse<>(marketReadService.getMarketByCursorId(cursorId, size)));
     }
 
     @Operation(
@@ -79,8 +77,12 @@ public class MarketReadController {
             @ApiResponse(responseCode = "200", description = "사업자 번호가 유효하면 true, 그렇지 않으면 false 반환", useReturnTypeSchema = true)
     })
     @GetMapping("/verification/business-number")
-    public ResponseEntity<BfResponse<BusinessNumberValidationResponse>> getBusinessStatus(@RequestParam String businessNumber) {
-        BusinessNumberValidationResponse businessNumberValidationResponse = marketReadService.validateBusinessStatus(businessNumber);
-        return ResponseEntity.ok(new BfResponse<>(businessNumberValidationResponse));
+    public ResponseEntity<BfResponse<BusinessNumberValidateResponse>> getBusinessStatus(
+            @Parameter(description = "사업자 등록 번호입니다.") @RequestParam String businessNumber,
+            @Parameter(description = "개업일자입니다.") @RequestParam String startDate,
+            @Parameter(description = "이름입니다.") @RequestParam String name,
+            @Parameter(description = "가게 이름입니다.") @RequestParam String marketName) {
+        BusinessNumberValidateResponse businessNumberValidateResponse = marketReadService.validateBusinessValidate(businessNumber, startDate, name, marketName);
+        return ResponseEntity.ok(new BfResponse<>(businessNumberValidateResponse));
     }
 }
