@@ -13,6 +13,7 @@ public enum MarketErrorCode implements BaseErrorCode {
     BAD_REQUEST_BUSINESS_STATUS(400, "잘못된 요청입니다. 사업자 등록 번호를 확인하세요.", HttpStatus.BAD_REQUEST),
     NOT_FOUND_MARKET_ID(404, "존재하지 않는 가게입니다.", HttpStatus.NOT_FOUND),
     DUPLICATE_MARKET_NAME(400, "이미 존재하는 마켓 이름입니다.", HttpStatus.BAD_REQUEST),
+    DUPLICATE_BUSINESS_NUMBER(400, "사업자 등록 번호가 중복되었습니다.", HttpStatus.BAD_REQUEST),
     INVALID_BUSINESS_NUMBER(400, "유효하지 않은 사업자 등록번호입니다.", HttpStatus.BAD_REQUEST),
     INVALID_BUSINESS_HOURS(400, "유효하지 않은 영업 시간입니다.", HttpStatus.BAD_REQUEST),
     INVALID_PICKUP_HOURS(400, "유효하지 않은 픽업 시간입니다.", HttpStatus.BAD_REQUEST),

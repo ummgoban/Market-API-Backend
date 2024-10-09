@@ -87,7 +87,7 @@ jwt:
 external:
   api:
     business-status:
-      url: https://api.odcloud.kr/api/nts-businessman/v1/status
+      url: https://api.odcloud.kr/api/nts-businessman/v1/validate
       service-key: ${BUSINESS_SERVICE_KEY}
 
 springdoc:

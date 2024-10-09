@@ -8,7 +8,6 @@ import com.market.core.s3.service.S3ImageService;
 import com.market.market.dto.request.MarketRegisterRequest;
 import com.market.market.dto.response.MarketImageUrlResponse;
 import com.market.market.dto.response.RegisterMarketResponse;
-import com.market.market.dto.server.BusinessStatusResponseDto;
 import com.market.market.entity.Market;
 import com.market.market.repository.MarketRepository;
 import com.market.member.entity.Member;
@@ -30,6 +29,7 @@ public class MarketCreateService {
     private final BusinessStatusService businessStatusService;
     private final S3ImageService s3ImageService;
 
+
     /**
      * 가게 등록
      */
@@ -39,23 +39,15 @@ public class MarketCreateService {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberException(MemberErrorCode.NOT_FOUND_MEMBER_ID));
 
-        // 가게 이름 중복 체크
-        if (marketRepository.existsByMarketName(marketRegisterRequest.getMarketName())) {
-            throw new MarketException(MarketErrorCode.DUPLICATE_MARKET_NAME);
-        }
-
-        // 사업자 등록 번호 유효성 검증
-        BusinessStatusResponseDto businessStatusResponseDto = businessStatusService.getBusinessStatus(marketRegisterRequest.getBusinessNumber());
-        String taxType = businessStatusResponseDto.getData().get(0).getTaxType();
-        String businessStatus = businessStatusResponseDto.getData().get(0).getBusinessStatus();
-        if (!isValidBusinessNumber(taxType, businessStatus)) {
-            throw new MarketException(MarketErrorCode.INVALID_BUSINESS_NUMBER);
+        // 사업자 등록 번호 중복 체크
+        if (marketRepository.existsByBusinessNumber(marketRegisterRequest.getBusinessNumber())) {
+            throw new MarketException(MarketErrorCode.DUPLICATE_BUSINESS_NUMBER);
         }
 
         Market market = Market.builder()
                 .member(member)
                 .marketName(marketRegisterRequest.getMarketName())
-                .businessNumber(businessStatusResponseDto.getData().get(0).getBusinessNumber())
+                .businessNumber(marketRegisterRequest.getBusinessNumber())
                 .address(marketRegisterRequest.getAddress())
                 .specificAddress(marketRegisterRequest.getSpecificAddress())
                 .contactNumber(marketRegisterRequest.getContactNumber())
@@ -65,6 +57,7 @@ public class MarketCreateService {
                 .marketId(marketRepository.save(market).getId())
                 .build();
     }
+
 
     /**
      * 세금 유형을 기반으로 사업자 등록 번호가 유효한지 여부를 확인
