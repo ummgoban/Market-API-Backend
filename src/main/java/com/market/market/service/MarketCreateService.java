@@ -26,7 +26,6 @@ public class MarketCreateService {
 
     private final MemberRepository memberRepository;
     private final MarketRepository marketRepository;
-    private final BusinessStatusService businessStatusService;
     private final S3ImageService s3ImageService;
 
 
@@ -89,6 +88,6 @@ public class MarketCreateService {
     private boolean isImageFile(MultipartFile uploadImage) {
         String filename = uploadImage.getOriginalFilename();
         String fileExtension = filename.substring(filename.lastIndexOf(".") + 1).toLowerCase();
-        return fileExtension.equals("jpg") || fileExtension.equals("jpeg") || fileExtension.equals("png") || fileExtension.equals("gif");
+        return fileExtension.equals("jpg") || fileExtension.equals("jpeg") || fileExtension.equals("png");
     }
 }
