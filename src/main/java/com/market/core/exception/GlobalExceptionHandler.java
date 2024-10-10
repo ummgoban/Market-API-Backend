@@ -34,8 +34,9 @@ public class GlobalExceptionHandler {
      * Jwt 관련 예외 Handler
      */
     @ExceptionHandler(JwtException.class)
-    protected ResponseEntity<ErrorResponse> handleMemberException(JwtException exception) {
-        BaseErrorCode errorCode = exception.getErrorCode();
+    protected ResponseEntity<ErrorResponse> handleMemberException(JwtException ex) {
+        log.error("JwtException 발생");
+        BaseErrorCode errorCode = ex.getErrorCode();
         return ResponseEntity.status(errorCode.getStatus()).body(errorCode.getErrorResponse());
     }
 
@@ -43,8 +44,9 @@ public class GlobalExceptionHandler {
      * OAuth 관련 예외 Handler
      */
     @ExceptionHandler(OAuthException.class)
-    protected ResponseEntity<ErrorResponse> handleMemberException(OAuthException exception) {
-        BaseErrorCode errorCode = exception.getErrorCode();
+    protected ResponseEntity<ErrorResponse> handleMemberException(OAuthException ex) {
+        log.error("JwtException 발생");
+        BaseErrorCode errorCode = ex.getErrorCode();
         return ResponseEntity.status(errorCode.getStatus()).body(errorCode.getErrorResponse());
     }
 
@@ -52,8 +54,9 @@ public class GlobalExceptionHandler {
      * S3 관련 예외 Handler
      */
     @ExceptionHandler(S3Exception.class)
-    protected ResponseEntity<ErrorResponse> handleS3Exception(S3Exception exception) {
-        BaseErrorCode errorCode = exception.getErrorCode();
+    protected ResponseEntity<ErrorResponse> handleS3Exception(S3Exception ex) {
+        log.error("S3Exception 발생");
+        BaseErrorCode errorCode = ex.getErrorCode();
         return ResponseEntity.status(errorCode.getStatus()).body(errorCode.getErrorResponse());
     }
 
@@ -61,8 +64,9 @@ public class GlobalExceptionHandler {
      * Member 관련 예외 Handler
      */
     @ExceptionHandler(MemberException.class)
-    protected ResponseEntity<ErrorResponse> handleMemberException(MemberException exception) {
-        BaseErrorCode errorCode = exception.getErrorCode();
+    protected ResponseEntity<ErrorResponse> handleMemberException(MemberException ex) {
+        log.error("MemberException 발생");
+        BaseErrorCode errorCode = ex.getErrorCode();
         return ResponseEntity.status(errorCode.getStatus()).body(errorCode.getErrorResponse());
     }
 
@@ -70,8 +74,9 @@ public class GlobalExceptionHandler {
      * Market 관련 예외 Handler
      */
     @ExceptionHandler(MarketException.class)
-    protected ResponseEntity<ErrorResponse> handleMarketException(MarketException exception) {
-        BaseErrorCode errorCode = exception.getErrorCode();
+    protected ResponseEntity<ErrorResponse> handleMarketException(MarketException ex) {
+        log.error("MarketException 발생");
+        BaseErrorCode errorCode = ex.getErrorCode();
         return ResponseEntity.status(errorCode.getStatus()).body(errorCode.getErrorResponse());
     }
 }
