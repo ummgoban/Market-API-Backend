@@ -112,7 +112,7 @@ public class SecurityConfig {
                 antMatcher(GET, "/bucket"), // 장바구니 조회
                 antMatcher(GET, "/bucket/{marketId}/verification/product"), //  장바구니 다른 가게 상품 여부 확인
                 antMatcher(POST, "/bucket/{marketId}"), // 장바구니 상품 추가
-                antMatcher(GET, "/order/market/{marketId}") // 가게의 접수된 주문 목록 조회
+                antMatcher(GET, "/order/market") // 가게의 접수된 주문 목록 조회
         );
 
         return requestMatchers.toArray(RequestMatcher[]::new);
