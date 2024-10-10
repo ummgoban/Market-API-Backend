@@ -82,12 +82,15 @@ public class ErrorResponse {
 
     private void setConstraintMessages(Set<ConstraintViolation<?>> violations) {
 
-        this.constraintMessages = violations
-                .stream()
-                .map(s -> new CustomFieldError(s.getPropertyPath().toString(), s.getInvalidValue(),
-                        s.getMessage()))
-                .collect(Collectors.toList());
+        customFieldErrors = new ArrayList<>();
 
+        violations.forEach(error -> {
+            customFieldErrors.add(new CustomFieldError(
+                    error.getPropertyPath().toString(),
+                    error.getInvalidValue(),
+                    error.getMessage()
+            ));
+        });
     }
 
     @Getter
