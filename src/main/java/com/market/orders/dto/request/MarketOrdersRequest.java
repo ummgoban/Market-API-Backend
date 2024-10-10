@@ -2,24 +2,23 @@ package com.market.orders.dto.request;
 
 import com.market.orders.annotation.ValidOrdersStatus;
 import com.market.orders.entity.OrdersStatus;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-@Data
-@Builder
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
+@Schema(description = "가게의 주문 관리 조회 요청 DTO 입니다.")
 public class MarketOrdersRequest {
 
     @ValidOrdersStatus
+    @Schema(description = "주문 상태 값. [접수 대기 : ORDERED, 주문 수락(픽업 대기) : ACCEPTED, 픽업완료/취소된 주문 : PICKUP_OR_CANCEL]")
     private String ordersStatus;
 
+    @Schema(description = "가게 ID")
     private Long marketId;
 
     public static List<OrdersStatus> from(MarketOrdersRequest request) {

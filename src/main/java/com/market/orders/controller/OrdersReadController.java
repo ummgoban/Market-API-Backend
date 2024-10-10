@@ -29,11 +29,11 @@ public class OrdersReadController {
     private final OrdersReadService ordersReadService;
 
     @Operation(
-            summary = "가게의 접수된 주문 목록 조회",
-            description = "가게의 접수된 주문 목록 조회입니다."
+            summary = "가게의 주문 목록 조회",
+            description = "가게의 주문 목록 조회입니다."
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "가게의 접수된 주문 목록 조회 성공")
+            @ApiResponse(responseCode = "200", description = "가게의 주문 목록 조회 성공", useReturnTypeSchema = true)
     })
     @GetMapping("/market")
     public ResponseEntity<BfResponse<List<MarketOrderedOrdersResponse>>> getMarketOrderedOrders(
