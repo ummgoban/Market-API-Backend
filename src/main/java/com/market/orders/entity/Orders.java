@@ -32,10 +32,13 @@ public class Orders {
     @Column(name = "pickup_reserved_at")
     private LocalDateTime pickupReservedAt;
 
+    @Column(name = "orders_price")
+    private Integer ordersPrice;
+
     @Column(name = "done_at")
     private LocalDateTime doneAt;
 
-    @Column(name = "status")
+    @Column(name = "orders_status")
     @Enumerated(EnumType.STRING)
-    private Status status;
+    private OrdersStatus ordersStatus;
 }
