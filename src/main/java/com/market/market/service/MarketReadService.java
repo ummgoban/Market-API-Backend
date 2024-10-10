@@ -10,6 +10,7 @@ import com.market.market.dto.server.MarketPagingInfoDto;
 import com.market.market.entity.BusinessStatus;
 import com.market.market.entity.Market;
 import com.market.market.entity.MarketImage;
+import com.market.market.entity.Tag;
 import com.market.market.entity.ValidStatus;
 import com.market.market.repository.MarketImageRepository;
 import com.market.market.repository.MarketRepository;
@@ -64,9 +65,9 @@ public class MarketReadService {
 
         // 상품 각각에 대해 태그 정보 조회 후, productResponse 객체 생성 후 productResponses에 저장
         for (Product product : products) {
-            List<String> tagNames = tagRepository.findAllByProductId(product.getId());
+            List<Tag> tags = tagRepository.findAllByProductId(product.getId());
 
-            ProductResponse productResponse = ProductResponse.from(product, tagNames);
+            ProductResponse productResponse = ProductResponse.from(product, tags);
             productResponses.add(productResponse);
         }
 
@@ -74,7 +75,7 @@ public class MarketReadService {
     }
 
     /**
-     * 사용자의 가게 목록을 조회합니다.
+     * 사장님의 가게 목록을 조회합니다.
      */
     public List<MarketListResponse> getMarketList(Long memberId) {
         // 회원 조회
@@ -103,11 +104,11 @@ public class MarketReadService {
         // market 엔티티와 businessInfo 엔티티 조인 후, 데이터 조회
         Slice<MarketPagingInfoDto> marketList = marketRepository.findMarketByCursorId(cursorId, size);
 
+
         marketList.getContent().forEach(infoDto -> {
 
-            // 가게에 대해 가게의 이미지 데이터 조회 로직
-            List<MarketImage> marketImages = marketImageRepository.findAllByMarketId(infoDto.getId());
-            List<String> imageUrls = marketImages.stream().map(MarketImage::getImageUrl).toList();
+            List<Product> marketProducts = productRepository.findAllByMarketId(infoDto.getId());
+            List<ProductResponse> productResponses = marketProducts.stream().map(ProductResponse::from).toList();
 
             MarketPagingInfoResponse marketPagingInfoResponse = MarketPagingInfoResponse.builder()
                     .id(infoDto.getId())
@@ -118,7 +119,7 @@ public class MarketReadService {
                     .closeAt(infoDto.getCloseAt())
                     .pickupStartAt(infoDto.getPickupStartAt())
                     .pickupEndAt(infoDto.getPickupEndAt())
-                    .imageUrls(imageUrls)
+                    .products(productResponses)
                     .build();
 
             response.add(marketPagingInfoResponse);

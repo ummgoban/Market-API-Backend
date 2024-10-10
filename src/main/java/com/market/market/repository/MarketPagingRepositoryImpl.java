@@ -28,15 +28,14 @@ public class MarketPagingRepositoryImpl implements MarketPagingRepository {
                 em.createQuery("select " +
                                 "new com.market.market.dto.server.MarketPagingInfoDto" +
                                 "(m.id," +
-                                "b.marketName," +
-                                "b.address," +
-                                "b.specificAddress," +
+                                "m.marketName," +
+                                "m.address," +
+                                "m.specificAddress," +
                                 "m.openAt," +
                                 "m.closeAt," +
                                 "m.pickupStartAt," +
                                 "m.pickupEndAt) " +
                                 "from Market m " +
-                                "inner join BusinessInfo b on m.id = b.market.id " +
                                 "where (:cursorId = 0L or m.id > :cursorId) " +
                                 "order by m.id asc ", MarketPagingInfoDto.class)
                         .setParameter("cursorId", cursorId)

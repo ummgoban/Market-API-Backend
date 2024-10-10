@@ -90,7 +90,8 @@ public class SecurityConfig {
                 antMatcher(GET, "/v3/api-docs/**"), // Swagger의 API 문서 데이터를 JSON 형식으로 제공하는 경로
                 antMatcher(POST, "/auth/accessToken"), // OAuth AccessToken 발급
                 antMatcher(POST, "/auth/login"), // OAuth 로그인
-                antMatcher(GET, "/market/paging") // 전체 가게 목록 페이징 조회
+                antMatcher(GET, "/market/paging"), // 전체 가게 목록 페이징 조회
+                antMatcher(GET, "/market/{marketId}") // 가게 상세 조회
         );
 
         return requestMatchers.toArray(RequestMatcher[]::new);
@@ -105,7 +106,6 @@ public class SecurityConfig {
                 antMatcher(POST, "/market"), // 가게 등록
                 antMatcher(POST, "/market/images"), // S3 Bucket에 가게 사진 업로드
                 antMatcher(GET, "/market"), // 가게 목록 조회
-                antMatcher(GET, "/market/{marketId}"), // 가게 상세 조회
                 antMatcher(GET, "/market/verification/business-number"), // 사업자 등록 번호 유효성 검증
                 antMatcher(PATCH, "/market/{marketId}"), // 가게 영업 시간 및 픽업 시간 설정
                 antMatcher(DELETE, "/market/images"), // S3 Bucket에서 가게 사진 삭제

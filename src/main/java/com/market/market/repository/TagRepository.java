@@ -15,10 +15,10 @@ public interface TagRepository extends JpaRepository<Tag, Long> {
      * @param productId
      * @return
      */
-    @Query("select t.name " +
+    @Query("select t " +
             "from Tag t " +
             "inner join ProductTag pt on t.id = pt.tag.id " +
             "inner join Product p on pt.product.id = p.id " +
             "where p.id = :productId")
-    List<String> findAllByProductId(@Param("productId") Long productId);
+    List<Tag> findAllByProductId(@Param("productId") Long productId);
 }
