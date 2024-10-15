@@ -12,7 +12,7 @@ import java.util.List;
 public interface OrdersRepository extends JpaRepository<Orders, Long> {
 
     @Query("select o from Orders o where o.market.id = :marketId and o.ordersStatus in :ordersStatus")
-    List<Orders> getMarketOrderedOrdersByMarketIdAndOrdersStatus(@Param("marketId") Long marketId,
+    List<Orders> getMarketOrdersByMarketIdAndOrdersStatus(@Param("marketId") Long marketId,
                                                                  @Param("ordersStatus") List<OrdersStatus> ordersStatus);
 
     @Query("select new com.market.orders.dto.server.OrdersProductsDto(" +

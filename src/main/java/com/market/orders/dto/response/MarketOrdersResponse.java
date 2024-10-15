@@ -15,7 +15,7 @@ import java.util.List;
 @Getter
 @Builder
 @Schema(description = "가게의 접수된 주문 목록 조회 DTO 입니다.")
-public class MarketOrderedOrdersResponse {
+public class MarketOrdersResponse {
 
     @Schema(description = "주문 ID")
     private Long id;

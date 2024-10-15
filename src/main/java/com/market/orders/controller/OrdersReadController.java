@@ -3,7 +3,7 @@ package com.market.orders.controller;
 
 import com.market.core.response.BfResponse;
 import com.market.orders.annotation.ValidOrdersStatus;
-import com.market.orders.dto.response.MarketOrderedOrdersResponse;
+import com.market.orders.dto.response.MarketOrdersResponse;
 import com.market.orders.entity.OrdersStatus;
 import com.market.orders.service.OrdersReadService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -39,7 +39,7 @@ public class OrdersReadController {
             @ApiResponse(responseCode = "200", description = "가게의 주문 목록 조회 성공", useReturnTypeSchema = true)
     })
     @GetMapping("/market")
-    public ResponseEntity<BfResponse<List<MarketOrderedOrdersResponse>>> getMarketOrderedOrders(
+    public ResponseEntity<BfResponse<List<MarketOrdersResponse>>> getMarketOrders(
             @Parameter(description = "주문 상태 값. [접수 대기 : ORDERED, 주문 수락(픽업 대기) : ACCEPTED, 픽업완료/취소된 주문 : PICKUP_OR_CANCEL]")
             @RequestParam("ordersStatus") @ValidOrdersStatus String ordersStatus,
             @Parameter(description = "가게 ID")
@@ -47,7 +47,7 @@ public class OrdersReadController {
 
         // 픽업완료/취소된 주문 조회
         if (ordersStatus.equals(OrdersStatus.PICKUP_OR_CANCEL.name())) {
-            return ResponseEntity.ok(new BfResponse<>(ordersReadService.getMarketOrderedOrders(
+            return ResponseEntity.ok(new BfResponse<>(ordersReadService.getMarketOrders(
                     new ArrayList<>(List.of(OrdersStatus.CANCEL, OrdersStatus.PICKUP)), marketId)));
         }
 
@@ -57,7 +57,7 @@ public class OrdersReadController {
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("Invalid order status: " + ordersStatus));
 
-        return ResponseEntity.ok(new BfResponse<>(ordersReadService.getMarketOrderedOrders(
+        return ResponseEntity.ok(new BfResponse<>(ordersReadService.getMarketOrders(
                 new ArrayList<>(List.of(orderStatus)), marketId)));
     }
 }
