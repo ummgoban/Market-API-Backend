@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -59,5 +60,18 @@ public class OrdersReadController {
 
         return ResponseEntity.ok(new BfResponse<>(ordersReadService.getMarketOrders(
                 new ArrayList<>(List.of(orderStatus)), marketId)));
+    }
+
+    @Operation(
+            summary = "주문 상세 조회",
+            description = "주문 상세 조회입니다."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "주문 상세 목록 조회 성공", useReturnTypeSchema = true)
+    })
+    @GetMapping("/{orderId}")
+    public ResponseEntity<BfResponse<MarketOrdersResponse>> getMarketOrders(
+            @Parameter(description = "주문번호") @PathVariable("orderId") Long orderId) {
+        return ResponseEntity.ok(new BfResponse<>(ordersReadService.getOrder(orderId)));
     }
 }

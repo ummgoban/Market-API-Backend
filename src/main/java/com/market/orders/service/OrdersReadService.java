@@ -2,6 +2,7 @@ package com.market.orders.service;
 
 
 import com.market.core.exception.MemberException;
+import com.market.core.exception.OrdersException;
 import com.market.member.entity.Member;
 import com.market.member.repository.MemberRepository;
 import com.market.orders.dto.response.MarketOrdersResponse;
@@ -12,11 +13,11 @@ import com.market.orders.repository.OrdersRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.market.core.code.error.MemberErrorCode.NOT_FOUND_MEMBER_ID;
+import static com.market.core.code.error.OrdersErrorCode.NOT_FOUND_ORDERS_ID;
 
 @Service
 @RequiredArgsConstructor
@@ -53,5 +54,15 @@ public class OrdersReadService {
         });
 
         return response;
+    }
+
+    @Transactional(readOnly = true)
+    public MarketOrdersResponse getOrder(Long orderId) {
+        Orders orders = ordersRepository.getOrdersByOrdersId(orderId).orElseThrow(() -> new OrdersException(NOT_FOUND_ORDERS_ID));
+
+        // 주문 상품 조회
+        List<OrdersProductsDto> ordersProducts = ordersRepository.getOrdersProductsDtoByOrdersId(orders.getId());
+
+        return MarketOrdersResponse.from(orders, ordersProducts);
     }
 }
