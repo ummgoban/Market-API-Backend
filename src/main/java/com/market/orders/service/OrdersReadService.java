@@ -12,6 +12,7 @@ import com.market.orders.repository.OrdersRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,6 +46,8 @@ public class OrdersReadService {
                     .pickupReservedAt(orders.getPickupReservedAt())
                     .ordersPrice(orders.getOrdersPrice())
                     .orderMemberName(member.getName())
+                    .ordersStatus(orders.getOrdersStatus())
+                    .customerRequset(orders.getCustomerRequset())
                     .products(ordersProducts)
                     .build());
         });
