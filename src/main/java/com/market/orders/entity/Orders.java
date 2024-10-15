@@ -41,4 +41,7 @@ public class Orders {
     @Column(name = "orders_status")
     @Enumerated(EnumType.STRING)
     private OrdersStatus ordersStatus;
+
+    @Column(name = "customer_request")
+    private String customerRequset;
 }
