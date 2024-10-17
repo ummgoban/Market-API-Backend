@@ -1,10 +1,13 @@
 package com.market.product.service;
 
 import com.market.core.code.error.MarketErrorCode;
+import com.market.core.code.error.ProductErrorCode;
 import com.market.core.exception.MarketException;
+import com.market.core.exception.ProductException;
 import com.market.market.entity.Market;
 import com.market.market.repository.MarketRepository;
 import com.market.product.dto.request.ProductCreateRequest;
+import com.market.product.dto.request.ProductUpdateRequest;
 import com.market.product.dto.response.ProductResponse;
 import com.market.product.entity.Product;
 import com.market.product.entity.ProductStatus;
@@ -64,5 +67,16 @@ public class ProductService {
                         .stock(product.getStock())
                         .build())
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * 상품을 수정합니다.
+     */
+    @Transactional
+    public void updateProduct(Long productId, ProductUpdateRequest productUpdateRequest) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new ProductException(ProductErrorCode.NOT_FOUND_PRODUCT_ID));
+
+        product.updateProduct(productUpdateRequest);
     }
 }

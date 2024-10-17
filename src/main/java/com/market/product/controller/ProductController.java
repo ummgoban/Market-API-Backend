@@ -5,6 +5,7 @@ import com.market.core.response.BfResponse;
 import com.market.core.s3.dto.response.ImageUrlResponse;
 import com.market.core.s3.service.ImageUrlService;
 import com.market.product.dto.request.ProductCreateRequest;
+import com.market.product.dto.request.ProductUpdateRequest;
 import com.market.product.dto.response.ProductResponse;
 import com.market.product.service.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -71,11 +72,27 @@ public class ProductController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "상품 목록 조회 성공", useReturnTypeSchema = true),
     })
-    @PostMapping()
+    @GetMapping()
     public ResponseEntity<BfResponse<List<ProductResponse>>> createProduct(
             @RequestParam Long marketId
     ) {
         List<ProductResponse> productResponses = productService.getProducts(marketId);
         return ResponseEntity.ok(new BfResponse<>(productResponses));
+    }
+
+    @Operation(
+            summary = "상품 수정",
+            description = "상품을 수정합니다."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "상품 수정 성공", useReturnTypeSchema = true),
+    })
+    @PatchMapping("/{productId}")
+    public ResponseEntity<BfResponse<GlobalSuccessCode>> updateProduct(
+            @PathVariable Long productId,
+            @RequestBody ProductUpdateRequest productUpdateRequest
+    ) {
+        productService.updateProduct(productId, productUpdateRequest);
+        return ResponseEntity.ok(new BfResponse<>(GlobalSuccessCode.SUCCESS));
     }
 }

@@ -2,6 +2,7 @@ package com.market.product.entity;
 
 
 import com.market.market.entity.Market;
+import com.market.product.dto.request.ProductUpdateRequest;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -40,4 +41,17 @@ public class Product {
 
     @Column(name = "stock")
     private Integer stock;
+
+    /**
+     * 상품 업데이트
+     */
+    public void updateProduct(ProductUpdateRequest productUpdateRequest) {
+        this.productStatus = productUpdateRequest.getProductStatus();
+        this.productImage = productUpdateRequest.getProductImage();
+        this.name = productUpdateRequest.getName();
+        this.originPrice = productUpdateRequest.getOriginPrice();
+        this.discountPrice = productUpdateRequest.getDiscountPrice();
+        this.discountRate = productUpdateRequest.getDiscountRate();
+        this.stock = productUpdateRequest.getStock();
+    }
 }
