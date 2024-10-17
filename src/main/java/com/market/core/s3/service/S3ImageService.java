@@ -62,7 +62,7 @@ public class S3ImageService {
     /**
      * S3에 URL이 있는지 확인
      */
-    public boolean doesImageExist(String imageUrl) {
+    private boolean doesImageExist(String imageUrl) {
         String fileName = getDecodedFileName(imageUrl);
 
         return amazonS3.doesObjectExist(bucketName, fileName);

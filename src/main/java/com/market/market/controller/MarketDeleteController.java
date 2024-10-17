@@ -2,7 +2,7 @@ package com.market.market.controller;
 
 import com.market.core.code.success.GlobalSuccessCode;
 import com.market.core.response.BfResponse;
-import com.market.market.service.MarketDeleteService;
+import com.market.core.s3.service.ImageUrlService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "가게 DELETE", description = "가게 DELETE 관련 API")
 public class MarketDeleteController {
 
-    private final MarketDeleteService marketDeleteService;
+    private final ImageUrlService imageUrlService;
 
     @Operation(
             summary = "S3 Bucket에서 가게 사진 삭제",
@@ -38,7 +38,7 @@ public class MarketDeleteController {
             @Parameter(description = "사진 URL입니다.", example = "https://.../ecc84...203.png")
             @RequestParam("imageUrl") String imageUrl
     ) {
-        marketDeleteService.deleteMarketImage(imageUrl);
+        imageUrlService.deleteImage(imageUrl);
         return ResponseEntity.ok(new BfResponse<>(GlobalSuccessCode.SUCCESS));
     }
 }
