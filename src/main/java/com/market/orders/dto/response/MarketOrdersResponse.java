@@ -1,6 +1,7 @@
 package com.market.orders.dto.response;
 
 import com.market.orders.dto.server.OrdersProductsDto;
+import com.market.orders.entity.Orders;
 import com.market.orders.entity.OrdersStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
@@ -40,4 +41,17 @@ public class MarketOrdersResponse {
 
     @Schema(description = "접수된 주문의 상품 정보들")
     private List<OrdersProductsDto> products;
+
+    public static MarketOrdersResponse from(Orders orders, List<OrdersProductsDto> ordersProducts) {
+        return MarketOrdersResponse.builder()
+                .id(orders.getId())
+                .createdAt(orders.getCreatedAt())
+                .pickupReservedAt(orders.getPickupReservedAt())
+                .ordersPrice(orders.getOrdersPrice())
+                .orderMemberName(orders.getMember().getName())
+                .ordersStatus(orders.getOrdersStatus())
+                .customerRequset(orders.getCustomerRequset())
+                .products(ordersProducts)
+                .build();
+    }
 }
