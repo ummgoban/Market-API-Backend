@@ -26,6 +26,6 @@ public class ProductCreateRequest {
     @Schema(description = "할인율", example = "20", required = true)
     private final int discountRate;
 
-    @Schema(description = "판매 정가", example = "판매 정가", required = true)
+    @Schema(description = "재고", example = "2", required = true)
     private final int stock;
 }

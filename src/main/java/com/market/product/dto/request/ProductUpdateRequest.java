@@ -2,6 +2,7 @@ package com.market.product.dto.request;
 
 import com.market.product.entity.ProductStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -18,7 +19,8 @@ public class ProductUpdateRequest {
     @Schema(description = "상품명", example = "상품명", required = true)
     private final String name;
 
-    @Schema(description = "상품 상태", example = "OUT_OF_STOCK", required = true, allowableValues = {"IN_STOCK", "OUT_OF_STOCK", "HIDDEN"})
+    @Pattern(regexp = "IN_STOCK|OUT_OF_STOCK|HIDDEN", message = "상품 상태는 IN_STOCK, OUT_OF_STOCK, HIDDEN 중 하나여야 합니다.")
+    @Schema(description = "상품 상태", example = "IN_STOCK/OUT_OF_STOCK/HIDDEN", required = true, allowableValues = {"IN_STOCK", "OUT_OF_STOCK", "HIDDEN"})
     private ProductStatus productStatus;
 
     @Schema(description = "판매 정가", example = "10000", required = true)
@@ -30,6 +32,6 @@ public class ProductUpdateRequest {
     @Schema(description = "할인율", example = "20", required = true)
     private final int discountRate;
 
-    @Schema(description = "판매 정가", example = "판매 정가", required = true)
+    @Schema(description = "재고", example = "2", required = true)
     private final int stock;
 }
