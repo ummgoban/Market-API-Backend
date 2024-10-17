@@ -113,7 +113,11 @@ public class SecurityConfig {
                 antMatcher(GET, "/bucket/{marketId}/verification/product"), //  장바구니 다른 가게 상품 여부 확인
                 antMatcher(POST, "/bucket/{marketId}"), // 장바구니 상품 추가
                 antMatcher(GET, "/order/market"), // 가게의 접수된 주문 목록 조회
-                antMatcher(GET, "/order/{orderId}") // 주문 상세 조회
+                antMatcher(GET, "/order/{orderId}"), // 주문 상세 조회
+                antMatcher(GET, "/product"), // 상품 목록 조회
+                antMatcher(PATCH, "/product/{productId}"), // 상품 수정
+                antMatcher(POST, "/product"), // 상품 등록
+                antMatcher(POST, "/product/images") // S3 Bucket에 상품 사진 업로드
         );
 
         return requestMatchers.toArray(RequestMatcher[]::new);
