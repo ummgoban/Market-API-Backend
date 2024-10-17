@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.market.market.dto.server.TagResponseDto;
 import com.market.market.entity.Tag;
 import com.market.product.entity.Product;
+import com.market.product.entity.ProductStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
@@ -37,6 +38,9 @@ public class ProductResponse {
     @Schema(description = "상품 할인율")
     private Integer discountRate;
 
+    @Schema(description = "상품 상태")
+    private ProductStatus productStatus;
+
     @Schema(description = "상품 재고")
     private Integer stock;
 
@@ -55,6 +59,7 @@ public class ProductResponse {
                 .originPrice(product.getOriginPrice())
                 .discountPrice(product.getDiscountPrice())
                 .discountRate(product.getDiscountRate())
+                .productStatus(product.getProductStatus())
                 .stock(product.getStock())
                 .tags(tagResponseDtos)
                 .build();

@@ -44,4 +44,25 @@ public class ProductService {
 
         productRepository.save(product);
     }
+
+    /**
+     * 상품 목록을 조회합니다.
+     */
+    @Transactional(readOnly = true)
+    public List<ProductResponse> getProducts(Long marketId) {
+        List<Product> productList = productRepository.findAllByMarketId(marketId);
+
+        return productList.stream()
+                .map(product -> ProductResponse.builder()
+                        .id(product.getId())
+                        .image(product.getProductImage())
+                        .name(product.getName())
+                        .originPrice(product.getOriginPrice())
+                        .discountPrice(product.getDiscountPrice())
+                        .discountRate(product.getDiscountRate())
+                        .productStatus(product.getProductStatus())
+                        .stock(product.getStock())
+                        .build())
+                .collect(Collectors.toList());
+    }
 }

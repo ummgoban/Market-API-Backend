@@ -63,4 +63,19 @@ public class ProductController {
         productService.createProduct(marketId, productCreateRequest);
         return ResponseEntity.ok(new BfResponse<>(GlobalSuccessCode.SUCCESS));
     }
+
+    @Operation(
+            summary = "상품 목록 조회",
+            description = "상품 목록을 조회합니다."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "상품 목록 조회 성공", useReturnTypeSchema = true),
+    })
+    @PostMapping()
+    public ResponseEntity<BfResponse<List<ProductResponse>>> createProduct(
+            @RequestParam Long marketId
+    ) {
+        List<ProductResponse> productResponses = productService.getProducts(marketId);
+        return ResponseEntity.ok(new BfResponse<>(productResponses));
+    }
 }
