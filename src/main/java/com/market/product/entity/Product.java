@@ -12,7 +12,6 @@ import lombok.*;
 @AllArgsConstructor
 public class Product {
 
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -20,6 +19,9 @@ public class Product {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "market_id")
     private Market market;
+
+    @Column(name = "product_status")
+    private ProductStatus productStatus;
 
     @Column(name = "product_image")
     private String productImage;
