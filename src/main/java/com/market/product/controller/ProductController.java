@@ -11,6 +11,8 @@ import com.market.product.dto.response.ProductResponse;
 import com.market.product.service.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirements;
@@ -44,11 +46,28 @@ public class ProductController {
             @ApiResponse(responseCode = "200", description = "S3 상품 사진 업로드 성공", useReturnTypeSchema = true),
     })
     @PostMapping(value = "/images", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<BfResponse<ImageUrlResponse>> uploadMarketImage(
+    public ResponseEntity<BfResponse<ImageUrlResponse>> uploadProductImage(
             @Parameter(description = "상품 사진입니다.")
             @RequestPart("updateImage") MultipartFile updateImage) {
         ImageUrlResponse imageUrl = imageUrlService.uploadImage(updateImage);
         return ResponseEntity.ok(new BfResponse<>(imageUrl));
+    }
+
+    @Operation(
+            summary = "S3 Bucket에서 상품 사진 삭제",
+            description = "S3 Bucket에서 상품의 사진을 삭제합니다."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "S3 상품 사진 삭제 성공",
+                    content = @Content(examples = @ExampleObject(value = "{ \"code\": 200, \"message\": \"정상 처리되었습니다.\" }")))
+    })
+    @DeleteMapping( "/images")
+    public ResponseEntity<BfResponse<GlobalSuccessCode>> deleteProductImage(
+            @Parameter(description = "사진 URL입니다.", example = "https://.../ecc84...203.png")
+            @RequestParam("imageUrl") String imageUrl
+    ) {
+        imageUrlService.deleteImage(imageUrl);
+        return ResponseEntity.ok(new BfResponse<>(GlobalSuccessCode.SUCCESS));
     }
 
     @Operation(
