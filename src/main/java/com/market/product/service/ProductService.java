@@ -79,4 +79,15 @@ public class ProductService {
 
         product.updateProduct(productUpdateRequest);
     }
+
+    /**
+     * 상품을 삭제합니다.
+     */
+    @Transactional
+    public void deleteProduct(Long productId) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new ProductException(ProductErrorCode.NOT_FOUND_PRODUCT_ID));
+
+        productRepository.delete(product);
+    }
 }

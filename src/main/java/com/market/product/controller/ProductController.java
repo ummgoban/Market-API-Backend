@@ -95,4 +95,17 @@ public class ProductController {
         productService.updateProduct(productId, productUpdateRequest);
         return ResponseEntity.ok(new BfResponse<>(GlobalSuccessCode.SUCCESS));
     }
+
+    @Operation(
+            summary = "상품 삭제",
+            description = "상품을 삭제합니다."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "상품 삭제 성공", useReturnTypeSchema = true),
+    })
+    @DeleteMapping("/{productId}")
+    public ResponseEntity<BfResponse<GlobalSuccessCode>> updateProduct(@PathVariable Long productId) {
+        productService.deleteProduct(productId);
+        return ResponseEntity.ok(new BfResponse<>(GlobalSuccessCode.SUCCESS));
+    }
 }
