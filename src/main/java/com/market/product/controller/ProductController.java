@@ -4,6 +4,7 @@ import com.market.core.code.success.GlobalSuccessCode;
 import com.market.core.response.BfResponse;
 import com.market.core.s3.dto.response.ImageUrlResponse;
 import com.market.core.s3.service.ImageUrlService;
+import com.market.core.security.principal.PrincipalDetails;
 import com.market.product.dto.request.ProductCreateRequest;
 import com.market.product.dto.request.ProductUpdateRequest;
 import com.market.product.dto.response.ProductResponse;
@@ -12,10 +13,12 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -43,8 +46,7 @@ public class ProductController {
     @PostMapping(value = "/images", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<BfResponse<ImageUrlResponse>> uploadMarketImage(
             @Parameter(description = "상품 사진입니다.")
-            @RequestPart("updateImage") MultipartFile updateImage
-    ) {
+            @RequestPart("updateImage") MultipartFile updateImage) {
         ImageUrlResponse imageUrl = imageUrlService.uploadImage(updateImage);
         return ResponseEntity.ok(new BfResponse<>(imageUrl));
     }
@@ -58,10 +60,10 @@ public class ProductController {
     })
     @PostMapping()
     public ResponseEntity<BfResponse<GlobalSuccessCode>> createProduct(
+            @AuthenticationPrincipal PrincipalDetails principalDetails,
             @RequestParam Long marketId,
-            @RequestBody ProductCreateRequest productCreateRequest
-    ) {
-        productService.createProduct(marketId, productCreateRequest);
+            @RequestBody ProductCreateRequest productCreateRequest) {
+        productService.createProduct(Long.parseLong(principalDetails.getUsername()), marketId, productCreateRequest);
         return ResponseEntity.ok(new BfResponse<>(GlobalSuccessCode.SUCCESS));
     }
 
@@ -69,13 +71,13 @@ public class ProductController {
             summary = "상품 목록 조회",
             description = "상품 목록을 조회합니다."
     )
+    @SecurityRequirements(value = {})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "상품 목록 조회 성공", useReturnTypeSchema = true),
     })
     @GetMapping()
     public ResponseEntity<BfResponse<List<ProductResponse>>> createProduct(
-            @RequestParam Long marketId
-    ) {
+            @RequestParam Long marketId) {
         List<ProductResponse> productResponses = productService.getProducts(marketId);
         return ResponseEntity.ok(new BfResponse<>(productResponses));
     }
@@ -89,10 +91,10 @@ public class ProductController {
     })
     @PatchMapping("/{productId}")
     public ResponseEntity<BfResponse<GlobalSuccessCode>> updateProduct(
+            @AuthenticationPrincipal PrincipalDetails principalDetails,
             @PathVariable Long productId,
-            @RequestBody ProductUpdateRequest productUpdateRequest
-    ) {
-        productService.updateProduct(productId, productUpdateRequest);
+            @RequestBody ProductUpdateRequest productUpdateRequest) {
+        productService.updateProduct(Long.parseLong(principalDetails.getUsername()), productId, productUpdateRequest);
         return ResponseEntity.ok(new BfResponse<>(GlobalSuccessCode.SUCCESS));
     }
 
@@ -104,8 +106,10 @@ public class ProductController {
             @ApiResponse(responseCode = "200", description = "상품 삭제 성공", useReturnTypeSchema = true),
     })
     @DeleteMapping("/{productId}")
-    public ResponseEntity<BfResponse<GlobalSuccessCode>> updateProduct(@PathVariable Long productId) {
-        productService.deleteProduct(productId);
+    public ResponseEntity<BfResponse<GlobalSuccessCode>> updateProduct(
+            @AuthenticationPrincipal PrincipalDetails principalDetails,
+            @PathVariable Long productId) {
+        productService.deleteProduct(Long.parseLong(principalDetails.getUsername()), productId);
         return ResponseEntity.ok(new BfResponse<>(GlobalSuccessCode.SUCCESS));
     }
 }
