@@ -91,7 +91,8 @@ public class SecurityConfig {
                 antMatcher(POST, "/auth/accessToken"), // OAuth AccessToken 발급
                 antMatcher(POST, "/auth/login"), // OAuth 로그인
                 antMatcher(GET, "/market/paging"), // 전체 가게 목록 페이징 조회
-                antMatcher(GET, "/market/{marketId}") // 가게 상세 조회
+                antMatcher(GET, "/market/{marketId}"), // 가게 상세 조회
+                antMatcher(GET, "/product") // 상품 목록 조회
         );
 
         return requestMatchers.toArray(RequestMatcher[]::new);
@@ -113,7 +114,11 @@ public class SecurityConfig {
                 antMatcher(GET, "/bucket/{marketId}/verification/product"), //  장바구니 다른 가게 상품 여부 확인
                 antMatcher(POST, "/bucket/{marketId}"), // 장바구니 상품 추가
                 antMatcher(GET, "/order/market"), // 가게의 접수된 주문 목록 조회
-                antMatcher(GET, "/order/{orderId}") // 주문 상세 조회
+                antMatcher(GET, "/order/{orderId}"), // 주문 상세 조회
+                antMatcher(DELETE, "/product/{productId}"), // 상품 삭제
+                antMatcher(PATCH, "/product/{productId}"), // 상품 수정
+                antMatcher(POST, "/product"), // 상품 등록
+                antMatcher(POST, "/product/images") // S3 Bucket에 상품 사진 업로드
         );
 
         return requestMatchers.toArray(RequestMatcher[]::new);

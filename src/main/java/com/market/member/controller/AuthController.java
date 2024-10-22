@@ -35,7 +35,7 @@ public class AuthController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "OAuth AccessToken 발급 성공", useReturnTypeSchema = true),
     })
-    @PostMapping("/accessToken")
+    @PostMapping("/request")
     public ResponseEntity<BfResponse<AccessTokenResponse>> getAccessToken(@RequestBody OAuthAuthorizationRequest oAuthAuthorizationRequest) {
         AccessTokenResponse accessToken = authService.getAccessToken(oAuthAuthorizationRequest);
         return ResponseEntity.ok(new BfResponse<>(accessToken));
