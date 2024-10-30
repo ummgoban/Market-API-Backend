@@ -65,4 +65,30 @@ public class OrdersReadService {
 
         return MarketOrdersResponse.from(orders, ordersProducts);
     }
+
+    @Transactional(readOnly = true)
+    public List<MarketOrdersResponse> getMemberOrdersInProgress(Long memberId) {
+        List<MarketOrdersResponse> response = new ArrayList<>();
+
+        List<Orders> memberOrders = ordersRepository.
+                getMemberOrdersByMemberIdAndOrdersStatus(memberId, OrdersStatus.getInProgressOrderStatus());
+
+        memberOrders.forEach(orders -> {
+
+            // 주문 상품 조회
+            List<OrdersProductsDto> ordersProducts = ordersRepository.getOrdersProductsDtoByOrdersId(orders.getId());
+
+            response.add(MarketOrdersResponse.builder()
+                    .id(orders.getId())
+                    .createdAt(orders.getCreatedAt())
+                    .pickupReservedAt(orders.getPickupReservedAt())
+                    .ordersPrice(orders.getOrdersPrice())
+                    .ordersStatus(orders.getOrdersStatus())
+                    .customerRequset(orders.getCustomerRequset())
+                    .products(ordersProducts)
+                    .build());
+        });
+
+        return response;
+    }
 }
