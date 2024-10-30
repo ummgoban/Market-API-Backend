@@ -21,7 +21,7 @@ public class MarketSpecificResponse {
     private Long id;
 
     @Schema(description = "가게 이름")
-    private String marketName;
+    private String name;
 
     @Schema(description = "가게 한 줄 소개")
     private String summary;
@@ -62,7 +62,7 @@ public class MarketSpecificResponse {
 
         return MarketSpecificResponse.builder()
                 .id(market.getId())
-                .marketName(market.getMarketName())
+                .name(market.getMarketName())
                 .summary(market.getSummary())
                 .businessNumber(market.getBusinessNumber())
                 .address(market.getAddress())
