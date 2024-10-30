@@ -76,7 +76,13 @@ public class OrdersReadController {
         return ResponseEntity.ok(new BfResponse<>(ordersReadService.getOrder(orderId)));
     }
 
-
+    @Operation(
+            summary = "회원의 진행 중인 주문 목록 조회",
+            description = "회원의 진행 중인 주문 목록 조회입니다."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "회원의 진행 중인 주문 목록 조회 성공", useReturnTypeSchema = true)
+    })
     @GetMapping("member/order/progress")
     public ResponseEntity<BfResponse<List<MarketOrdersResponse>>> getMemberOrdersInProgress(
             @AuthenticationPrincipal PrincipalDetails principalDetails) {
