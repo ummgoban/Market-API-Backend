@@ -18,7 +18,7 @@ public class MarketPagingInfoResponse {
     private Long id;
 
     @Schema(description = "가게 이름입니다.")
-    private String marketName;
+    private String name;
 
     @Schema(description = "가게 주소입니다.")
     private String address;

@@ -47,9 +47,9 @@ public class OrdersReadController {
             @RequestParam("marketId") Long marketId) {
 
         // 픽업완료/취소된 주문 조회
-        if (ordersStatus.equals(OrdersStatus.PICKUP_OR_CANCEL.name())) {
+        if (ordersStatus.equals(OrdersStatus.PICKUPED_OR_CANCELED.name())) {
             return ResponseEntity.ok(new BfResponse<>(ordersReadService.getMarketOrders(
-                    new ArrayList<>(List.of(OrdersStatus.CANCEL, OrdersStatus.PICKUP)), marketId)));
+                    new ArrayList<>(List.of(OrdersStatus.CANCELED, OrdersStatus.PICKUPED)), marketId)));
         }
 
         // 접수 대기 or 픽업 대기 주문 조회

@@ -20,7 +20,7 @@ public class BusinessNumberValidateInfoResponse {
     private final String startDate;
 
     @Schema(description = "이름", example = "홍길동")
-    private final String name;
+    private final String memberName;
 
     @Schema(description = "가게 이름", example = "가게 이름")
     private final String marketName;

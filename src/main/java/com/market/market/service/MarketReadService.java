@@ -88,7 +88,7 @@ public class MarketReadService {
         return marketList.stream()
                 .map(market -> MarketListResponse.builder()
                         .marketId(market.getId())
-                        .marketName(market.getMarketName())
+                        .name(market.getMarketName())
                         .build())
                 .collect(Collectors.toList());
     }
@@ -112,7 +112,7 @@ public class MarketReadService {
 
             MarketPagingInfoResponse marketPagingInfoResponse = MarketPagingInfoResponse.builder()
                     .id(infoDto.getId())
-                    .marketName(infoDto.getMarketName())
+                    .name(infoDto.getMarketName())
                     .address(infoDto.getAddress())
                     .specificAddress(infoDto.getSpecificAddress())
                     .openAt(infoDto.getOpenAt())
@@ -143,7 +143,7 @@ public class MarketReadService {
                 .businessNumberValidateInfoResponse(BusinessNumberValidateInfoResponse.builder()
                         .businessNumber(businessValidateResponseDto.getData().get(0).getBusinessNumber())
                         .startDate(businessValidateResponseDto.getData().get(0).getRequestParam().getStartDate())
-                        .name(businessValidateResponseDto.getData().get(0).getRequestParam().getPrimaryName())
+                        .memberName(businessValidateResponseDto.getData().get(0).getRequestParam().getPrimaryName())
                         .marketName(businessValidateResponseDto.getData().get(0).getRequestParam().getMarketName())
                         .build())
                 .build();

@@ -40,7 +40,7 @@ public class MarketCreateService {
 
         Market market = Market.builder()
                 .member(member)
-                .marketName(marketRegisterRequest.getMarketName())
+                .marketName(marketRegisterRequest.getName())
                 .businessNumber(marketRegisterRequest.getBusinessNumber())
                 .address(marketRegisterRequest.getAddress())
                 .specificAddress(marketRegisterRequest.getSpecificAddress())

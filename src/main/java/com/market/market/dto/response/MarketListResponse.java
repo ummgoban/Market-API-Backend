@@ -10,5 +10,5 @@ import lombok.RequiredArgsConstructor;
 public class MarketListResponse {
 
     private final Long marketId;
-    private final String marketName;
+    private final String name;
 }

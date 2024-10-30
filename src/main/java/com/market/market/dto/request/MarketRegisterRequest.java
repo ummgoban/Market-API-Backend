@@ -10,7 +10,7 @@ import lombok.Getter;
 public class MarketRegisterRequest {
 
     @Schema(description = "가게 이름", example = "가게 이름", required = true)
-    private String marketName;
+    private String name;
 
     @Schema(description = "사업자 등록 번호", example = "0000000000", required = true)
     private String businessNumber;
