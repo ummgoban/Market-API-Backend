@@ -19,7 +19,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create # 추후 none 변경
+      ddl-auto: none # 추후 none 변경
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
