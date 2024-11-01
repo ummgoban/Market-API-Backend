@@ -47,7 +47,14 @@ public class MarketLikeController {
     }
 
 
-
+    @Operation(
+            summary = "가게 찜 취소",
+            description = "가게를 찜 취소합니다."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "가게 찜 취소",
+                    content = @Content(examples = @ExampleObject(value = "{ \"code\": 200, \"message\": \"정상적으로 처리되었습니다.\" }")))
+    })
     @DeleteMapping("/{marketId}/like")
     public ResponseEntity<BfResponse<Void>> deleteMarketLike(
             @AuthenticationPrincipal PrincipalDetails principalDetails,
