@@ -5,7 +5,12 @@ import com.market.core.code.success.GlobalSuccessCode;
 import com.market.core.response.BfResponse;
 import com.market.core.security.principal.PrincipalDetails;
 import com.market.market.service.MarketLikeService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +31,14 @@ public class MarketLikeController {
 
     private final MarketLikeService marketLikeService;
 
+    @Operation(
+            summary = "가게 찜",
+            description = "가게를 찜합니다."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "가게 찜 성공",
+                    content = @Content(examples = @ExampleObject(value = "{ \"code\": 201, \"message\": \"정상적으로 생성되었습니다.\" }")))
+    })
     @PostMapping("/{marketId}/like")
     public ResponseEntity<BfResponse<Void>> createMarketLike(
             @AuthenticationPrincipal PrincipalDetails principalDetails,
