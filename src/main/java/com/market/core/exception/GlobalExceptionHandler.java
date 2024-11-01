@@ -83,4 +83,14 @@ public class GlobalExceptionHandler {
         BaseErrorCode errorCode = ex.getErrorCode();
         return ResponseEntity.status(errorCode.getStatus()).body(errorCode.getErrorResponse());
     }
+
+    /**
+     * MarketLike 관련 예외 Handler
+     */
+    @ExceptionHandler(MarketLikeException.class)
+    protected ResponseEntity<ErrorResponse> handleMarketLikeException(MarketLikeException ex) {
+        log.error("MarketLikeException 발생");
+        BaseErrorCode errorCode = ex.getErrorCode();
+        return ResponseEntity.status(errorCode.getStatus()).body(errorCode.getErrorResponse());
+    }
 }

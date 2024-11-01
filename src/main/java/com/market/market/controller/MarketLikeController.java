@@ -15,10 +15,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * 가게 찜 관련 API controller 입니다.
@@ -44,7 +41,19 @@ public class MarketLikeController {
             @AuthenticationPrincipal PrincipalDetails principalDetails,
             @Parameter(description = "가게 ID") @PathVariable("marketId") Long marketId) {
 
-        marketLikeService.createMarketLike(1L, marketId);
+        marketLikeService.createMarketLike(Long.parseLong(principalDetails.getUsername()), marketId);
+
+        return ResponseEntity.ok(new BfResponse<>(GlobalSuccessCode.CREATE));
+    }
+
+
+
+    @DeleteMapping("/{marketId}/like")
+    public ResponseEntity<BfResponse<Void>> deleteMarketLike(
+            @AuthenticationPrincipal PrincipalDetails principalDetails,
+            @Parameter(description = "가게 ID") @PathVariable("marketId") Long marketId) {
+
+        marketLikeService.deleteMarketLike(Long.parseLong(principalDetails.getUsername()), marketId);
 
         return ResponseEntity.ok(new BfResponse<>(GlobalSuccessCode.CREATE));
     }

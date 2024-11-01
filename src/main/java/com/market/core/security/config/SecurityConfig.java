@@ -118,7 +118,9 @@ public class SecurityConfig {
                 antMatcher(DELETE, "/product/{productId}"), // 상품 삭제
                 antMatcher(PATCH, "/product/{productId}"), // 상품 수정
                 antMatcher(POST, "/product"), // 상품 등록
-                antMatcher(POST, "/product/images") // S3 Bucket에 상품 사진 업로드
+                antMatcher(POST, "/product/images"), // S3 Bucket에 상품 사진 업로드
+                antMatcher(POST, "/market/{marketId}/like"), // 가게 찜하기
+                antMatcher(DELETE, "/market/{marketId}/like") // 가게 찜 취소하기
         );
 
         return requestMatchers.toArray(RequestMatcher[]::new);
