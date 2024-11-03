@@ -1,5 +1,6 @@
 package com.market.orders.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.market.orders.dto.server.OrdersProductsDto;
 import com.market.orders.entity.Orders;
 import com.market.orders.entity.OrdersStatus;
@@ -15,6 +16,7 @@ import java.util.List;
  */
 @Getter
 @Builder
+@JsonInclude(value = JsonInclude.Include.NON_NULL)
 @Schema(description = "가게의 접수된 주문 목록 조회 DTO 입니다.")
 public class MarketOrdersResponse {
 
