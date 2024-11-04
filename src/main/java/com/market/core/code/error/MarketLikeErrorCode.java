@@ -12,7 +12,9 @@ import org.springframework.http.HttpStatus;
 public enum MarketLikeErrorCode implements BaseErrorCode {
 
     // 404 NOT FOUND
-    MARKET_LIKE_NOT_FOUND(404, "유저는 해당 가게를 찜하지 않았습니다.", HttpStatus.NOT_FOUND);
+    MARKET_LIKE_NOT_FOUND(404, "유저는 해당 가게를 찜하지 않았습니다.", HttpStatus.NOT_FOUND),
+
+    DUPLICATE_MARKET_LIKE(400, "이미 해당 유저는 해당 가게를 찜한 상태입니다.", HttpStatus.BAD_REQUEST);
 
     private final int errorCode;
     private final String errorMessage;
