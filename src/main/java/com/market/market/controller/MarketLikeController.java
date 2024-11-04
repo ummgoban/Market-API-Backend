@@ -4,7 +4,9 @@ package com.market.market.controller;
 import com.market.core.code.success.GlobalSuccessCode;
 import com.market.core.response.BfResponse;
 import com.market.core.security.principal.PrincipalDetails;
+import com.market.market.dto.response.MarketPagingResponse;
 import com.market.market.service.MarketLikeService;
+import com.market.market.service.MarketPagingService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -27,6 +29,7 @@ import org.springframework.web.bind.annotation.*;
 public class MarketLikeController {
 
     private final MarketLikeService marketLikeService;
+    private final MarketPagingService marketPagingService;
 
     @Operation(
             summary = "가게 찜",
@@ -63,5 +66,14 @@ public class MarketLikeController {
         marketLikeService.deleteMarketLike(Long.parseLong(principalDetails.getUsername()), marketId);
 
         return ResponseEntity.ok(new BfResponse<>(GlobalSuccessCode.CREATE));
+    }
+
+    @GetMapping("/like")
+    public ResponseEntity<BfResponse<MarketPagingResponse>> findMemberMarketLikeList(
+            @AuthenticationPrincipal PrincipalDetails principalDetails,
+            @Parameter(description = "마지막으로 조회한 커서 ID 입니다. 가게 ID 입니다.") @RequestParam("cursorId") Long cursorId,
+            @Parameter(description = "페이지의 크기 입니다.") @RequestParam("size") Integer size) {
+
+        return ResponseEntity.ok(new BfResponse<>(marketPagingService.getMemberMarketByCursorId(Long.parseLong(principalDetails.getUsername()), cursorId, size)));
     }
 }

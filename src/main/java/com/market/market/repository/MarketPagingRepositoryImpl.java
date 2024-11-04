@@ -36,11 +36,48 @@ public class MarketPagingRepositoryImpl implements MarketPagingRepository {
                                 "m.pickupStartAt," +
                                 "m.pickupEndAt) " +
                                 "from Market m " +
+                                "left join MarketLike " +
                                 "where (:cursorId = 0L or m.id > :cursorId) " +
                                 "order by m.id asc ", MarketPagingInfoDto.class)
                         .setParameter("cursorId", cursorId)
                         .setMaxResults(size + 1)
                         .getResultList();
+
+        return hasNext(content, size);
+    }
+
+    @Override
+    public Slice<MarketPagingInfoDto> findMemberLikeMarketByCursorId(Long memberId, Long cursorId, Integer size) {
+
+        List<MarketPagingInfoDto> content =
+                // market 엔티티와 businessInfo 엔티티 조인 후, 데이터 조회
+                em.createQuery("select " +
+                                "new com.market.market.dto.server.MarketPagingInfoDto" +
+                                "(m.id," +
+                                "m.marketName," +
+                                "m.address," +
+                                "m.specificAddress," +
+                                "m.openAt," +
+                                "m.closeAt," +
+                                "m.pickupStartAt," +
+                                "m.pickupEndAt) " +
+                                "from Market m " +
+                                "where (:cursorId = 0L or m.id > :cursorId) " +
+                                "and exists (" +
+                                "               select 1 " +
+                                "               from MarketLike ml " +
+                                "               where ml.market.id = m.id and ml.member.id = :memberId " +
+                                "           ) " +
+                                "order by m.id asc ", MarketPagingInfoDto.class)
+                        .setParameter("cursorId", cursorId)
+                        .setParameter("memberId", memberId)
+                        .setMaxResults(size + 1)
+                        .getResultList();
+
+        return hasNext(content, size);
+    }
+
+    private Slice<MarketPagingInfoDto> hasNext(List<MarketPagingInfoDto> content, Integer size) {
 
         boolean hasNext = false;
 
