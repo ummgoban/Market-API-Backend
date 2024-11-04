@@ -2,6 +2,7 @@ package com.market.orders.controller;
 
 
 import com.market.core.response.BfResponse;
+import com.market.core.security.principal.PrincipalDetails;
 import com.market.orders.annotation.ValidOrdersStatus;
 import com.market.orders.dto.response.MarketOrdersResponse;
 import com.market.orders.entity.OrdersStatus;
@@ -13,6 +14,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,7 +27,6 @@ import java.util.List;
  */
 @Validated
 @RestController
-@RequestMapping("order")
 @RequiredArgsConstructor
 @Tag(name = "주문 READ", description = "주문 READ 관련 API")
 public class OrdersReadController {
@@ -39,7 +40,7 @@ public class OrdersReadController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "가게의 주문 목록 조회 성공", useReturnTypeSchema = true)
     })
-    @GetMapping("/market")
+    @GetMapping("order/market")
     public ResponseEntity<BfResponse<List<MarketOrdersResponse>>> getMarketOrders(
             @Parameter(description = "주문 상태 값. [접수 대기 : ORDERED, 주문 수락(픽업 대기) : ACCEPTED, 픽업완료/취소된 주문 : PICKUP_OR_CANCEL]")
             @RequestParam("ordersStatus") @ValidOrdersStatus String ordersStatus,
@@ -69,9 +70,23 @@ public class OrdersReadController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "주문 상세 목록 조회 성공", useReturnTypeSchema = true)
     })
-    @GetMapping("/{orderId}")
+    @GetMapping("order/{orderId}")
     public ResponseEntity<BfResponse<MarketOrdersResponse>> getMarketOrders(
             @Parameter(description = "주문번호") @PathVariable("orderId") Long orderId) {
         return ResponseEntity.ok(new BfResponse<>(ordersReadService.getOrder(orderId)));
+    }
+
+    @Operation(
+            summary = "회원의 진행 중인 주문 목록 조회",
+            description = "회원의 진행 중인 주문 목록 조회입니다."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "회원의 진행 중인 주문 목록 조회 성공", useReturnTypeSchema = true)
+    })
+    @GetMapping("member/order/progress")
+    public ResponseEntity<BfResponse<List<MarketOrdersResponse>>> getMemberOrdersInProgress(
+            @AuthenticationPrincipal PrincipalDetails principalDetails) {
+        return ResponseEntity.ok(new BfResponse<>(
+                ordersReadService.getMemberOrdersInProgress(Long.parseLong(principalDetails.getUsername()))));
     }
 }
