@@ -36,7 +36,6 @@ public class MarketPagingRepositoryImpl implements MarketPagingRepository {
                                 "m.pickupStartAt," +
                                 "m.pickupEndAt) " +
                                 "from Market m " +
-                                "left join MarketLike " +
                                 "where (:cursorId = 0L or m.id > :cursorId) " +
                                 "order by m.id asc ", MarketPagingInfoDto.class)
                         .setParameter("cursorId", cursorId)
