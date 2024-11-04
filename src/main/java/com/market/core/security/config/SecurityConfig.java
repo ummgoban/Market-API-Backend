@@ -120,7 +120,11 @@ public class SecurityConfig {
                 antMatcher(PATCH, "/product/{productId}"), // 상품 수정
                 antMatcher(POST, "/product"), // 상품 등록
                 antMatcher(POST, "/product/images"), // S3 Bucket에 상품 사진 업로드
+                antMatcher(POST, "/market/{marketId}/like"), // 가게 찜하기
+                antMatcher(DELETE, "/market/{marketId}/like"), // 가게 찜 취소하기
+                antMatcher(GET, "/market/like"), // 회원 가게 찜 목록 조회
                 antMatcher(GET, "/member/order/progress") // 회원의 진행 중인 주문 조회
+
         );
 
         return requestMatchers.toArray(RequestMatcher[]::new);

@@ -3,6 +3,7 @@ package com.market.market.controller;
 import com.market.core.response.BfResponse;
 import com.market.core.security.principal.PrincipalDetails;
 import com.market.market.dto.response.*;
+import com.market.market.service.MarketPagingService;
 import com.market.market.service.MarketReadService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -27,6 +28,7 @@ import java.util.List;
 public class MarketReadController {
 
     private final MarketReadService marketReadService;
+    private final MarketPagingService marketPagingService;
 
     @Operation(
             summary = "가게 상세 조회",
@@ -40,7 +42,7 @@ public class MarketReadController {
             @Parameter(description = "가게 ID 입니다.") @PathVariable("marketId") Long marketId) {
         return ResponseEntity.ok(new BfResponse<>(marketReadService.getSpecificMarket(marketId)));
     }
-  
+
     @Operation(
             summary = "가게 목록 조회",
             description = "사용자의 가게 목록을 조회합니다."
@@ -66,7 +68,7 @@ public class MarketReadController {
     public ResponseEntity<BfResponse<MarketPagingResponse>> findMarketByCursorId(
             @Parameter(description = "마지막으로 조회한 커서 ID 입니다. 가게 ID 입니다.") @RequestParam("cursorId") Long cursorId,
             @Parameter(description = "페이지의 크기 입니다.") @RequestParam("size") Integer size) {
-        return ResponseEntity.ok(new BfResponse<>(marketReadService.getMarketByCursorId(cursorId, size)));
+        return ResponseEntity.ok(new BfResponse<>(marketPagingService.getMarketByCursorId(cursorId, size)));
     }
 
     @Operation(
