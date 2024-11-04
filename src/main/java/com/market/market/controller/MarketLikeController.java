@@ -73,8 +73,7 @@ public class MarketLikeController {
             description = "회원의 가게 찜 목록 조회합니다."
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "회원의 가게 찜 목록 조회",
-                    content = @Content(examples = @ExampleObject(value = "{ \"code\": 200, \"message\": \"정상적으로 처리되었습니다.\" }")))
+            @ApiResponse(responseCode = "200", description = "회원의 가게 찜 목록 조회", useReturnTypeSchema = true)
     })
     @GetMapping("/like")
     public ResponseEntity<BfResponse<MarketPagingResponse>> findMemberMarketLikeList(
