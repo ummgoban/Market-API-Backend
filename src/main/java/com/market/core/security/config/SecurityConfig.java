@@ -45,7 +45,7 @@ public class SecurityConfig {
      * 공개 접근 필터 체인
      */
     @Bean
-    @Order(1)
+    @Order(2)
     public SecurityFilterChain publicFilterChain(HttpSecurity http) throws Exception {
         defaultSecuritySetting(http);
         http
@@ -63,7 +63,7 @@ public class SecurityConfig {
      * 인증 및 권한이 필요한 필터 체인
      */
     @Bean
-    @Order(2)
+    @Order(1)
     public SecurityFilterChain authenticatedFilterChain(HttpSecurity http, JwtService jwtService) throws Exception {
         defaultSecuritySetting(http);
         http
