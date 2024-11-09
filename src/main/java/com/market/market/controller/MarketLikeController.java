@@ -32,40 +32,21 @@ public class MarketLikeController {
     private final MarketPagingService marketPagingService;
 
     @Operation(
-            summary = "가게 찜",
-            description = "가게를 찜합니다."
+            summary = "가게 찜 상태 변경하기",
+            description = "이미 찜했으면 찜을 취소한다. 기존에 찜하지 않았으면 찜 추가한다."
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "가게 찜 성공",
-                    content = @Content(examples = @ExampleObject(value = "{ \"code\": 201, \"message\": \"정상적으로 생성되었습니다.\" }")))
-    })
-    @PostMapping("/{marketId}/like")
-    public ResponseEntity<BfResponse<Void>> createMarketLike(
-            @AuthenticationPrincipal PrincipalDetails principalDetails,
-            @Parameter(description = "가게 ID") @PathVariable("marketId") Long marketId) {
-
-        marketLikeService.createMarketLike(Long.parseLong(principalDetails.getUsername()), marketId);
-
-        return ResponseEntity.ok(new BfResponse<>(GlobalSuccessCode.CREATE));
-    }
-
-
-    @Operation(
-            summary = "가게 찜 취소",
-            description = "가게를 찜 취소합니다."
-    )
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "가게 찜 취소",
+            @ApiResponse(responseCode = "200", description = "가게 찜 상태 변경 성공",
                     content = @Content(examples = @ExampleObject(value = "{ \"code\": 200, \"message\": \"정상적으로 처리되었습니다.\" }")))
     })
-    @DeleteMapping("/{marketId}/like")
-    public ResponseEntity<BfResponse<Void>> deleteMarketLike(
+    @PostMapping("/{marketId}/like")
+    public ResponseEntity<BfResponse<Void>> createMarketLikeOrDeleteMarketLike(
             @AuthenticationPrincipal PrincipalDetails principalDetails,
             @Parameter(description = "가게 ID") @PathVariable("marketId") Long marketId) {
 
-        marketLikeService.deleteMarketLike(Long.parseLong(principalDetails.getUsername()), marketId);
+        marketLikeService.createMarketLikeOrDeleteMarketLike(Long.parseLong(principalDetails.getUsername()), marketId);
 
-        return ResponseEntity.ok(new BfResponse<>(GlobalSuccessCode.CREATE));
+        return ResponseEntity.ok(new BfResponse<>(GlobalSuccessCode.SUCCESS));
     }
 
     @Operation(
