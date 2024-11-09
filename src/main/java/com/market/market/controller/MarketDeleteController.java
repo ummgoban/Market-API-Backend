@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
  * 가게 Delete 관련 API controller 입니다.
  */
 @RestController
-@RequestMapping("market")
+@RequestMapping("markets")
 @RequiredArgsConstructor
 @Tag(name = "가게 DELETE", description = "가게 DELETE 관련 API")
 public class MarketDeleteController {

@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
  * 장바구니 관련 API controller 입니다.
  */
 @RestController
-@RequestMapping("/bucket")
+@RequestMapping("/buckets")
 @RequiredArgsConstructor
 @Tag(name = "장바구니", description = "장바구니 관련 API")
 public class BucketController {
@@ -40,7 +40,7 @@ public class BucketController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "가게 상품 여부 확인 성공")
     })
-    @GetMapping("/{marketId}/verification/product")
+    @GetMapping("/markets/{marketId}")
     public ResponseEntity<BfResponse<BucketDiscriminationResponse>> discriminateBucket(
             @AuthenticationPrincipal PrincipalDetails principalDetails,
             @Parameter(description = "현재 장바구니에 담고자 하는 상품의 가게 ID 입니다.") @PathVariable("marketId") Long marketId) {
@@ -52,7 +52,7 @@ public class BucketController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "장바구니 상품 추가 성공")
     })
-    @PostMapping("/{marketId}")
+    @PostMapping("/markets/{marketId}")
     public ResponseEntity<BfResponse<String>> saveBucket(
             @RequestBody BucketSaveRequest bucketSaveRequest,
             @Parameter(description = "현재 장바구니에 담고자 하는 상품의 가게 ID 입니다.") @PathVariable("marketId") Long marketId) {

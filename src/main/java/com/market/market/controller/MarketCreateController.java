@@ -23,7 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
  * 가게 Create 관련 API controller 입니다.
  */
 @RestController
-@RequestMapping("market")
+@RequestMapping("markets")
 @RequiredArgsConstructor
 @Tag(name = "가게 CREATE", description = "가게 CREATE 관련 API")
 public class MarketCreateController {
