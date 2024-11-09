@@ -45,7 +45,7 @@ public class SecurityConfig {
      * 공개 접근 필터 체인
      */
     @Bean
-    @Order(1)
+    @Order(2)
     public SecurityFilterChain publicFilterChain(HttpSecurity http) throws Exception {
         defaultSecuritySetting(http);
         http
@@ -63,7 +63,7 @@ public class SecurityConfig {
      * 인증 및 권한이 필요한 필터 체인
      */
     @Bean
-    @Order(2)
+    @Order(1)
     public SecurityFilterChain authenticatedFilterChain(HttpSecurity http, JwtService jwtService) throws Exception {
         defaultSecuritySetting(http);
         http
@@ -121,8 +121,7 @@ public class SecurityConfig {
                 antMatcher(PATCH, "/product/{productId}"), // 상품 수정
                 antMatcher(POST, "/product"), // 상품 등록
                 antMatcher(POST, "/product/images"), // S3 Bucket에 상품 사진 업로드
-                antMatcher(POST, "/market/{marketId}/like"), // 가게 찜하기
-                antMatcher(DELETE, "/market/{marketId}/like"), // 가게 찜 취소하기
+                antMatcher(POST, "/market/{marketId}/like"), // 가게 찜 상태 변경하기
                 antMatcher(GET, "/market/like"), // 회원 가게 찜 목록 조회
                 antMatcher(GET, "/member/order/progress") // 회원의 진행 중인 주문 조회
 

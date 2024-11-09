@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import static com.market.core.code.error.MarketErrorCode.NOT_FOUND_MARKET_ID;
-import static com.market.core.code.error.MarketLikeErrorCode.DUPLICATE_MARKET_LIKE;
 import static com.market.core.code.error.MarketLikeErrorCode.MARKET_LIKE_NOT_FOUND;
 import static com.market.core.code.error.MemberErrorCode.NOT_FOUND_MEMBER_ID;
 
@@ -30,23 +29,26 @@ public class MarketLikeService {
     private final MarketLikeRepository marketLikeRepository;
 
     @Transactional
-    public void createMarketLike(Long memberId, Long marketId) {
+    public void createMarketLikeOrDeleteMarketLike(Long memberId, Long marketId) {
+
         Member member = memberRepository.findById(memberId).orElseThrow(() -> new MemberException(NOT_FOUND_MEMBER_ID));
         Market market = marketRepository.findById(marketId).orElseThrow(() -> new MarketException(NOT_FOUND_MARKET_ID));
 
         boolean isExists = marketLikeRepository.existsByMemberAndMarket(member, market);
+        // 이미 찜이 존재하면 > 찜 삭제, 찜이 존재하지 않으면 > 찜 추가
         if (isExists) {
-            throw new MarketLikeException(DUPLICATE_MARKET_LIKE);
+            deleteMarketLike(member.getId(), market.getId());
+        } else {
+
+            marketLikeRepository.save(MarketLike.builder()
+                    .member(member)
+                    .market(market)
+                    .build());
         }
 
-        marketLikeRepository.save(MarketLike.builder()
-                .member(member)
-                .market(market)
-                .build());
     }
 
-    @Transactional
-    public void deleteMarketLike(Long memberId, Long marketId) {
+    private void deleteMarketLike(Long memberId, Long marketId) {
         MarketLike marketLike = marketLikeRepository.findMarketLikeByMemberAndMarket(memberId, marketId).orElseThrow(()
                 -> new MarketLikeException(MARKET_LIKE_NOT_FOUND));
 
