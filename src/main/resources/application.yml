@@ -102,3 +102,8 @@ logging:
   level:
     org.springframework.security: debug
     org.hibernate.orm.jdbc.bind: trace
+
+google:
+  firebase:
+    secret-key-path: src/main/resources/fcm-secret.json
+    projectId: ${GOOGLE_FIREBASE_PROJECTID}

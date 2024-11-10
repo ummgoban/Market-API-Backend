@@ -1,4 +1,4 @@
-package com.market.utils.controller;
+package com.market.utils.aws.controller;
 
 import com.market.core.code.success.GlobalSuccessCode;
 import com.market.core.response.BfResponse;
