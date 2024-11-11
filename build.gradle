@@ -56,6 +56,9 @@ dependencies {
 	//Dotenv for 환경 변수 인식
 	implementation 'io.github.cdimascio:dotenv-java:3.0.0'
 
+	//firebase admin sdk
+	implementation 'com.google.firebase:firebase-admin:9.2.0'
+
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 

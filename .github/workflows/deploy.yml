@@ -75,6 +75,7 @@ jobs:
             echo "REFRESH_EXPIRATION_SECONDS=${{ secrets.REFRESH_EXPIRATION_SECONDS }}" >> ./.env
             echo "ACCESS_EXPIRATION_SECONDS=${{ secrets.ACCESS_EXPIRATION_SECONDS }}" >> ./.env
             echo "BUSINESS_SERVICE_KEY=${{ secrets.BUSINESS_SERVICE_KEY }}" >> ./.env
+            echo "GOOGLE_FIREBASE_PROJECTID=${{ secrets.GOOGLE_FIREBASE_PROJECTID }}" >> ./.env
 
 
       # 권한 부여 후 gradle build
