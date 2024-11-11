@@ -14,4 +14,4 @@ services:
 
       - type: bind
         source: /root/fcm-secret.json
-        target: src/main/resources/fcm-secret.json
+        target: /src/main/resources/fcm-secret.json
