@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
  * 가게 Update 관련 API controller 입니다.
  */
 @RestController
-@RequestMapping("market")
+@RequestMapping("markets")
 @RequiredArgsConstructor
 @Tag(name = "가게 UPDATE", description = "가게 UPDATE 관련 API")
 public class MarketUpdateController {

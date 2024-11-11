@@ -30,7 +30,7 @@ import java.util.List;
  * 상품 관련 API controller 입니다.
  */
 @RestController
-@RequestMapping("/product")
+@RequestMapping("/products")
 @RequiredArgsConstructor
 @Tag(name = "상품", description = "상품 관련 API")
 public class ProductController {

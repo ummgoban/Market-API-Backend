@@ -86,14 +86,24 @@ public class SecurityConfig {
      */
     private RequestMatcher[] publicRequestMatchers() {
         List<RequestMatcher> requestMatchers = List.of(
+
+                // swagger
                 antMatcher(GET, "/swagger-ui/**"), // Swagger UI 웹 인터페이스를 제공하는 경로
                 antMatcher(GET, "/v3/api-docs/**"), // Swagger의 API 문서 데이터를 JSON 형식으로 제공하는 경로
+
+                // AWS Health Check
                 antMatcher(GET, "utils/health"),
+
+                // 토큰
                 antMatcher(POST, "/auth/accessToken"), // OAuth AccessToken 발급
                 antMatcher(POST, "/auth/login"), // OAuth 로그인
-                antMatcher(GET, "/market/paging"), // 전체 가게 목록 페이징 조회
-                antMatcher(GET, "/market/{marketId}"), // 가게 상세 조회
-                antMatcher(GET, "/product") // 상품 목록 조회
+
+                // 가게
+                antMatcher(GET, "/markets"), // 전체 가게 목록 페이징 조회
+                antMatcher(GET, "/markets/{marketId}"), // 가게 상세 조회
+
+                // 상품
+                antMatcher(GET, "/products") // 상품 목록 조회
 
         );
 
@@ -105,25 +115,39 @@ public class SecurityConfig {
      */
     private RequestMatcher[] authenticatedRequestMatchers() {
         List<RequestMatcher> requestMatchers = List.of(
+
+                // 토큰
                 antMatcher(POST, "/auth/refresh"), // 토큰 갱신
-                antMatcher(POST, "/market"), // 가게 등록
-                antMatcher(POST, "/market/images"), // S3 Bucket에 가게 사진 업로드
-                antMatcher(GET, "/market"), // 가게 목록 조회
-                antMatcher(GET, "/market/verification/business-number"), // 사업자 등록 번호 유효성 검증
-                antMatcher(PATCH, "/market/{marketId}"), // 가게 영업 시간 및 픽업 시간 설정
-                antMatcher(DELETE, "/market/images"), // S3 Bucket에서 가게 사진 삭제
-                antMatcher(GET, "/bucket"), // 장바구니 조회
-                antMatcher(GET, "/bucket/{marketId}/verification/product"), //  장바구니 다른 가게 상품 여부 확인
-                antMatcher(POST, "/bucket/{marketId}"), // 장바구니 상품 추가
-                antMatcher(GET, "/order/market"), // 가게의 접수된 주문 목록 조회
-                antMatcher(GET, "/order/{orderId}"), // 주문 상세 조회
-                antMatcher(DELETE, "/product/{productId}"), // 상품 삭제
-                antMatcher(PATCH, "/product/{productId}"), // 상품 수정
-                antMatcher(POST, "/product"), // 상품 등록
-                antMatcher(POST, "/product/images"), // S3 Bucket에 상품 사진 업로드
-                antMatcher(POST, "/market/{marketId}/like"), // 가게 찜 상태 변경하기
-                antMatcher(GET, "/market/like"), // 회원 가게 찜 목록 조회
-                antMatcher(GET, "/member/order/progress") // 회원의 진행 중인 주문 조회
+
+                // 회원
+                antMatcher(GET, "/members/orders/progress"), // 회원의 진행 중인 주문 조회
+                antMatcher(GET, "/members/markets"), // 가게 목록 조회
+                antMatcher(GET, "/members/markets/likes"), // 회원 가게 찜 목록 조회
+
+                // 가게
+                antMatcher(POST, "/markets"), // 가게 등록
+                antMatcher(POST, "/markets/images"), // S3 Bucket에 가게 사진 업로드
+                antMatcher(GET, "/markets/verification/business-number"), // 사업자 등록 번호 유효성 검증
+                antMatcher(PATCH, "/markets/{marketId}"), // 가게 영업 시간 및 픽업 시간 설정
+                antMatcher(DELETE, "/markets/images"), // S3 Bucket에서 가게 사진 삭제
+                antMatcher(GET, "/markets/orders"), // 가게의 주문 목록 조회
+                antMatcher(POST, "/markets/{marketId}/likes"), // 가게 찜 상태 변경하기
+
+                // 장바구니
+                antMatcher(GET, "/buckets"), // 장바구니 조회
+                antMatcher(GET, "/buckets/markets/{marketId}"), //  장바구니 다른 가게 상품 여부 확인
+                antMatcher(POST, "/buckets/markets/{marketId}"), // 장바구니 상품 추가
+
+                // 상품
+                antMatcher(DELETE, "/products/{productId}"), // 상품 삭제
+                antMatcher(PATCH, "/products/{productId}"), // 상품 수정
+                antMatcher(POST, "/products"), // 상품 등록
+                antMatcher(POST, "/products/images"), // S3 Bucket에 상품 사진 업로드
+                antMatcher(DELETE, "/products/images"), // S3 Bucket에 상품 사진 삭제
+
+                // 주문
+                antMatcher(GET, "/orders/{orderId}") // 주문 상세 조회
+
 
         );
 
