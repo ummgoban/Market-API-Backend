@@ -12,6 +12,6 @@ services:
         source: /root/.env
         target: /.env
 
-      - type: volume
-        source: /var/lib/docker/volumes/fcm-secret.json
+      - type: bind
+        source: /root/fcm-secret.json
         target: src/main/resources/fcm-secret.json
