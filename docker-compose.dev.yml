@@ -9,9 +9,9 @@ services:
       - "8080:8080"
     volumes:
       - type: bind
-        source: /home/ubuntu/Market-API-Backend/.env
+        source: /root/.env
         target: /.env
 
       - type: bind
-        source: /home/ubuntu/Market-API-Backend/fcm-secret.json
+        source: /root/fcm-secret.json
         target: /src/main/resources/fcm-secret.json
