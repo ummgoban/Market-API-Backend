@@ -6,13 +6,13 @@ import com.market.core.exception.MarketException;
 import com.market.core.exception.MemberException;
 import com.market.market.dto.response.*;
 import com.market.market.dto.server.BusinessValidateResponseDto;
-import com.market.market.dto.server.MarketPagingInfoDto;
 import com.market.market.entity.BusinessStatus;
 import com.market.market.entity.Market;
 import com.market.market.entity.MarketImage;
 import com.market.market.entity.Tag;
 import com.market.market.entity.ValidStatus;
 import com.market.market.repository.MarketImageRepository;
+import com.market.market.repository.MarketLikeRepository;
 import com.market.market.repository.MarketRepository;
 import com.market.member.entity.Member;
 import com.market.member.repository.MemberRepository;
@@ -21,7 +21,6 @@ import com.market.product.dto.response.ProductResponse;
 import com.market.product.entity.Product;
 import com.market.product.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,6 +40,7 @@ public class MarketReadService {
     private final MemberRepository memberRepository;
     private final MarketRepository marketRepository;
     private final MarketImageRepository marketImageRepository;
+    private final MarketLikeRepository marketLikeRepository;
     private final ProductRepository productRepository;
     private final TagRepository tagRepository;
     private final BusinessValidateService businessValidateService;
@@ -49,10 +49,19 @@ public class MarketReadService {
      * 가게 상세 조회 트랜잭션입니다.
      */
     @Transactional(readOnly = true)
-    public MarketSpecificResponse getSpecificMarket(Long marketId) {
-        // dev 머지 후, exception handler 구현
+    public MarketSpecificResponse getSpecificMarket(Long memberId, Long marketId) {
+
+        boolean hasLike = false;
+
         Market market = marketRepository.findById(marketId)
                 .orElseThrow(() -> new MarketException(MarketErrorCode.NOT_FOUND_MARKET_ID));
+
+        if (memberId != null) {
+            Member member = memberRepository.findById(memberId)
+                    .orElseThrow(() -> new MemberException(MemberErrorCode.NOT_FOUND_MEMBER_ID));
+
+            hasLike = marketLikeRepository.existsByMemberAndMarket(member, market);
+        }
 
         // 가게 이미지들 조회
         List<MarketImage> marketImages = marketImageRepository.findAllByMarketId(marketId);
@@ -71,7 +80,7 @@ public class MarketReadService {
             productResponses.add(productResponse);
         }
 
-        return MarketSpecificResponse.from(market, marketImages, productResponses);
+        return MarketSpecificResponse.from(market, marketImages, hasLike, productResponses);
     }
 
     /**
