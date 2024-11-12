@@ -4,7 +4,7 @@ name: Build and Push Docker Images
 on:
   push:
     branches:
-      - dev
+      - main
 
 jobs:
   build-image-and-push:
@@ -29,35 +29,17 @@ jobs:
       # 멀티플랫폼 이미지 빌드 환경 설정
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-      # 스프링부트 빌드
-      - name: 스프링부트 애플리케이션 빌드
-        run: |
-          chmod +x ./gradlew
-          ./gradlew bootJar
-      # 도커 이미지 빌드
-      - name: 도커 이미지 빌드
-        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/market-image:latest --platform linux/amd64 .
-      # dockerhub 에 로그인
-      - name: Login to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-      # 도커 이미지 push
-      - name: 도커 이미지 push
-        run: |
-          docker push ${{ secrets.DOCKER_USERNAME }}/market-image:latest
       # 서버에 .env 파일 생성
       - name: Set ".env" for configuration at NCP Server
         uses: appleboy/ssh-action@master
         with:
-          username: ${{ secrets.SERVER_USERNAME }} # 아이디
-          host: ${{ secrets.SERVER_IP }}
-          password: ${{ secrets.SERVER_PASSWORD }} # 비밀번호
+          host: ${{ secrets.EC2_SERVER_IP }}
+          username: ${{ secrets.EC2_SERVER_USERNAME }}
+          key: ${{ secrets.EC2_SERVER_KEY }}
           script: |
             rm -rf ./.env
             touch ./.env
-        
+            
             echo "DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}" >> ./.env
             echo "DB_HOST=${{ secrets.DB_HOST }}" >> ./.env
             echo "DB_PORT=${{ secrets.DB_PORT }}" >> ./.env
@@ -89,18 +71,18 @@ jobs:
       - name: Copy docker-compose file in ec2 via ssh password
         uses: appleboy/scp-action@v0.1.7
         with:
-          host: ${{ secrets.SERVER_IP }}
-          username: ${{ secrets.SERVER_USERNAME }}
-          password: ${{ secrets.SERVER_PASSWORD }}
+          host: ${{ secrets.EC2_SERVER_IP }}
+          username: ${{ secrets.EC2_SERVER_USERNAME }}
+          key: ${{ secrets.EC2_SERVER_KEY }}
           source: "./docker-compose.yml"
-          target: "/root"
+          target: "/home/ubuntu/Market-API-Backend/"
 
       - name: Depoly to Server
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.SERVER_IP }}
-          username: ${{ secrets.SERVER_USERNAME }}
-          password: ${{ secrets.SERVER_PASSWORD }}
+          host: ${{ secrets.EC2_SERVER_IP }}
+          username: ${{ secrets.EC2_SERVER_USERNAME }}
+          key: ${{ secrets.EC2_SERVER_KEY }}
           script: |
             cd ~
             docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }} 
