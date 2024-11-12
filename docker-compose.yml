@@ -1,0 +1,17 @@
+version: '3.2'
+services:
+  remind:
+    image: ${DOCKER_USERNAME}/market-image:latest
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - "8080:8080"
+    volumes:
+      - type: bind
+        source: /home/ubuntu/Market-API-Backend/.env
+        target: /.env
+
+      - type: bind
+        source: /home/ubuntu/Market-API-Backend/fcm-secret.json
+        target: /src/main/resources/fcm-secret.json

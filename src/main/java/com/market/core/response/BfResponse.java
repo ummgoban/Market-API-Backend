@@ -1,18 +1,18 @@
 package com.market.core.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.market.core.code.GlobalSuccessCode;
+import com.market.core.code.success.GlobalSuccessCode;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 
-import static com.market.core.code.GlobalSuccessCode.SUCCESS;
+import static com.market.core.code.success.GlobalSuccessCode.SUCCESS;
 
 /**
  * 프로젝트 전역적으로 사용되는 REST API 응답 클래스입니다.
  * @param <T>
  */
 @Getter
-@JsonInclude(value = JsonInclude.Include.NON_EMPTY)
+@JsonInclude(value = JsonInclude.Include.NON_NULL)
 public class BfResponse<T> {
 
     @Schema(description = "응답 코드", example = "200")
