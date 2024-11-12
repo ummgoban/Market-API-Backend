@@ -56,7 +56,10 @@ public class MarketSpecificResponse {
     @Schema(description = "가게 상품 목록")
     List<ProductResponse> products;
 
-    public static MarketSpecificResponse from(Market market, List<MarketImage> marketImages, List<ProductResponse> productResponses) {
+    @Schema(description = "가게 찜 여부")
+    boolean hasLike;
+
+    public static MarketSpecificResponse from(Market market, List<MarketImage> marketImages, boolean hasLike, List<ProductResponse> productResponses) {
 
         List<String> imageUrls = marketImages.stream().map(MarketImage::getImageUrl).toList();
 
@@ -74,6 +77,7 @@ public class MarketSpecificResponse {
                 .pickupEndAt(market.getPickupEndAt())
                 .imageUrls(imageUrls)
                 .products(productResponses)
+                .hasLike(hasLike)
                 .build();
     }
 }

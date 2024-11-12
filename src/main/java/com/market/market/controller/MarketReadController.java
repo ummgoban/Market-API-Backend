@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -36,9 +37,15 @@ public class MarketReadController {
             @ApiResponse(responseCode = "200", description = "가게 상세 조회 성공")
     })
     @GetMapping("/{marketId}")
-    public ResponseEntity<BfResponse<MarketSpecificResponse>> findSpecificMarket (
+    public ResponseEntity<BfResponse<MarketSpecificResponse>> findSpecificMarket(
+            @AuthenticationPrincipal PrincipalDetails principalDetails,
             @Parameter(description = "가게 ID 입니다.") @PathVariable("marketId") Long marketId) {
-        return ResponseEntity.ok(new BfResponse<>(marketReadService.getSpecificMarket(marketId)));
+        if (principalDetails == null) {
+            return ResponseEntity.ok(new BfResponse<>(marketReadService.getSpecificMarket(null, marketId)));
+        } else {
+            return ResponseEntity.ok(new BfResponse<>(
+                    marketReadService.getSpecificMarket(Long.parseLong(principalDetails.getUsername()), marketId)));
+        }
     }
 
     @Operation(

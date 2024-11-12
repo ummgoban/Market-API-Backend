@@ -1,6 +1,7 @@
 package com.market.core.security.config;
 
-import com.market.core.security.filter.JwtFilter;
+import com.market.core.security.filter.AuthenticatedJwtFilter;
+import com.market.core.security.filter.PublicJwtFilter;
 import com.market.core.security.service.jwt.JwtService;
 import com.market.member.entity.RolesType;
 import lombok.RequiredArgsConstructor;
@@ -42,24 +43,6 @@ public class SecurityConfig {
     }
 
     /**
-     * 공개 접근 필터 체인
-     */
-    @Bean
-    @Order(2)
-    public SecurityFilterChain publicFilterChain(HttpSecurity http) throws Exception {
-        defaultSecuritySetting(http);
-        http
-                .securityMatchers(matcher -> matcher
-                        .requestMatchers(publicRequestMatchers()))
-                .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(publicRequestMatchers()).permitAll()
-                        .anyRequest().authenticated()
-                );
-
-        return http.build();
-    }
-
-    /**
      * 인증 및 권한이 필요한 필터 체인
      */
     @Bean
@@ -76,38 +59,48 @@ public class SecurityConfig {
 //                  TODO: 예외 처리
 //                .exceptionHandling(exception -> exception
 //                        .accessDeniedHandler())
-                .addFilterBefore(new JwtFilter(jwtService), ExceptionTranslationFilter.class);
+                .addFilterBefore(new AuthenticatedJwtFilter(jwtService), ExceptionTranslationFilter.class);
 
         return http.build();
     }
 
     /**
-     * 공개 접근 endpoint
+     * 공개 접근 필터 체인. 단, 토큰을 보내면 추출해 SecurityContext에 저장해 회원 정보를 유지 가능한 요청에 대한 필터
      */
-    private RequestMatcher[] publicRequestMatchers() {
-        List<RequestMatcher> requestMatchers = List.of(
+    @Bean
+    @Order(2)
+    public SecurityFilterChain publicAndAuthenticatedFilterChain(HttpSecurity http, JwtService jwtService) throws Exception {
+        defaultSecuritySetting(http);
+        http
+                .securityMatchers(matcher -> matcher
+                        .requestMatchers(publicAndAuthenticatedRequestMatchers()))
+                .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers(publicAndAuthenticatedRequestMatchers()).permitAll()
+                        .anyRequest().authenticated())
+//                  TODO: 예외 처리
+//                .exceptionHandling(exception -> exception
+//                        .accessDeniedHandler())
+                .addFilterBefore(new PublicJwtFilter(jwtService), ExceptionTranslationFilter.class);
 
-                // swagger
-                antMatcher(GET, "/swagger-ui/**"), // Swagger UI 웹 인터페이스를 제공하는 경로
-                antMatcher(GET, "/v3/api-docs/**"), // Swagger의 API 문서 데이터를 JSON 형식으로 제공하는 경로
+        return http.build();
+    }
 
-                // AWS Health Check
-                antMatcher(GET, "utils/health"),
+    /**
+     * 공개 접근 필터 체인. SecurityContext에 회원 정보를 저장할 필요가 없는 요청에 대한 필터
+     */
+    @Bean
+    @Order(3)
+    public SecurityFilterChain publicFilterChain(HttpSecurity http) throws Exception {
+        defaultSecuritySetting(http);
+        http
+                .securityMatchers(matcher -> matcher
+                        .requestMatchers(publicRequestMatchers()))
+                .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers(publicRequestMatchers()).permitAll()
+                        .anyRequest().authenticated()
+                );
 
-                // 토큰
-                antMatcher(POST, "/auth/accessToken"), // OAuth AccessToken 발급
-                antMatcher(POST, "/auth/login"), // OAuth 로그인
-
-                // 가게
-                antMatcher(GET, "/markets"), // 전체 가게 목록 페이징 조회
-                antMatcher(GET, "/markets/{marketId}"), // 가게 상세 조회
-
-                // 상품
-                antMatcher(GET, "/products") // 상품 목록 조회
-
-        );
-
-        return requestMatchers.toArray(RequestMatcher[]::new);
+        return http.build();
     }
 
     /**
@@ -148,6 +141,47 @@ public class SecurityConfig {
                 // 주문
                 antMatcher(GET, "/orders/{orderId}") // 주문 상세 조회
 
+
+        );
+
+        return requestMatchers.toArray(RequestMatcher[]::new);
+    }
+
+    /**
+     * 공개 접근, 단 토큰 보낼 시 정보를 저장하는 endpoint
+     */
+    private RequestMatcher[] publicAndAuthenticatedRequestMatchers() {
+        List<RequestMatcher> requestMatchers = List.of(
+
+                // market
+                antMatcher(GET, "/markets/{marketId}") // 가게 상세 조회
+        );
+
+        return requestMatchers.toArray(RequestMatcher[]::new);
+    }
+
+    /**
+     * 공개 접근 endpoint
+     */
+    private RequestMatcher[] publicRequestMatchers() {
+        List<RequestMatcher> requestMatchers = List.of(
+
+                // swagger
+                antMatcher(GET, "/swagger-ui/**"), // Swagger UI 웹 인터페이스를 제공하는 경로
+                antMatcher(GET, "/v3/api-docs/**"), // Swagger의 API 문서 데이터를 JSON 형식으로 제공하는 경로
+
+                // AWS Health Check
+                antMatcher(GET, "utils/health"),
+
+                // 토큰
+                antMatcher(POST, "/auth/accessToken"), // OAuth AccessToken 발급
+                antMatcher(POST, "/auth/login"), // OAuth 로그인
+
+                // 가게
+                antMatcher(GET, "/markets"), // 전체 가게 목록 페이징 조회
+
+                // 상품
+                antMatcher(GET, "/products") // 상품 목록 조회
 
         );
 
