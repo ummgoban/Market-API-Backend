@@ -18,8 +18,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class Member {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "oauth_id")

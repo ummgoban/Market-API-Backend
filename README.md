@@ -15,6 +15,7 @@
 커밋 타입은 다음과 같다.
 - `fix`: 코드베이스에서 버그를 패치
 - `feat`: 코드베이스에서 새 기능이 추가됨
+- `refactor`: 코드를 리팩토링함
 - `BREAKING CHANGE`: 단절적 API 변경(breaking API change). 타입/스코프 뒤에 !를 붙이기도 함
 - `build`: 빌드 관련 커밋
 - `ci`: ci 관련 커밋
