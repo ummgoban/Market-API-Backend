@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface MarketLikeRepository extends JpaRepository<MarketLike, Long> {
@@ -16,4 +17,7 @@ public interface MarketLikeRepository extends JpaRepository<MarketLike, Long> {
                                                          @Param("marketId") Long marketId);
 
     boolean existsByMemberAndMarket(Member member, Market market);
+
+    @Query("select distinct m.deviceToken from MarketLike ml inner join Member m on ml.member.id = m.id where ml.market.id = :marketId")
+    List<String> findMemberDeviceTokens(@Param("marketId") Long marketId);
 }
