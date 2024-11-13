@@ -36,6 +36,7 @@ public class ProductService {
 
     private final FCMUtil fcmUtil;
 
+
     /**
      * 상품을 등록합니다.
      */
@@ -62,6 +63,7 @@ public class ProductService {
 
         // 새로운 메뉴 업데이트 알림 전송
         sendProductCreatedAlarm(market);
+
     }
 
     /**

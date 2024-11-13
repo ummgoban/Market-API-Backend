@@ -6,9 +6,7 @@ server:
       charset: UTF-8
       enabled: true
       force: true
-    multipart:
-      max-file-size: 50MB
-      max-request-size: 50MB
+
 
 spring:
   datasource:
@@ -66,10 +64,12 @@ spring:
             token-uri: https://kauth.kakao.com/oauth/token
             user-info-uri: https://kapi.kakao.com/v2/user/me
             user-name-attribute: id
+
   servlet:
     multipart:
       max-file-size: 50MB
       max-request-size: 50MB
+
 
 cloud:
   aws:

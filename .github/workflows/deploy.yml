@@ -1,6 +1,7 @@
 name: Build and Push Docker Images
 
-# dev 브랜치에 push 될때 작동
+
+# main 브랜치에 push 될때 작동
 on:
   push:
     branches:
@@ -29,7 +30,7 @@ jobs:
       # 멀티플랫폼 이미지 빌드 환경 설정
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-      # 서버에 .env 파일 생성
+      # 운영 서버에 .env 파일 생성
       - name: Set ".env" for configuration at NCP Server
         uses: appleboy/ssh-action@master
         with:
@@ -66,17 +67,7 @@ jobs:
 
       - name: Gradle build
         run: ./gradlew build
-
-      - uses: actions/checkout@v4
-      - name: Copy docker-compose file in ec2 via ssh password
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.EC2_SERVER_IP }}
-          username: ${{ secrets.EC2_SERVER_USERNAME }}
-          key: ${{ secrets.EC2_SERVER_KEY }}
-          source: "./docker-compose.yml"
-          target: "/home/ubuntu/Market-API-Backend/"
-
+        
       - name: Depoly to Server
         uses: appleboy/ssh-action@master
         with:
@@ -84,11 +75,11 @@ jobs:
           username: ${{ secrets.EC2_SERVER_USERNAME }}
           key: ${{ secrets.EC2_SERVER_KEY }}
           script: |
-            cd ~
+            cd ~/Market-API-Backend
             docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }} 
             docker stop $(docker ps -a -q) 
             docker rm -f $(docker ps -qa)
-            chmod +x docker-compose.yml
+            sudo chmod +x docker-compose.yml
             docker-compose pull
             docker-compose up -d
             docker image prune -f

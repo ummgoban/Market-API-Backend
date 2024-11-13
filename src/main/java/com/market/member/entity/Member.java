@@ -5,8 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
 import java.time.LocalDateTime;
+
 
 /**
  * 회원 정보를 관리하는 엔티티 클래스입니다.
@@ -18,8 +18,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class Member {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "oauth_id")
@@ -49,4 +48,5 @@ public class Member {
         this.deviceToken = deviceToken;
         this.deviceTokenCreatedAt = LocalDateTime.now();
     }
+
 }
