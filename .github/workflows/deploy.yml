@@ -1,5 +1,6 @@
 name: Build and Push Docker Images
 
+
 # main 브랜치에 push 될때 작동
 on:
   push:
@@ -66,7 +67,7 @@ jobs:
 
       - name: Gradle build
         run: ./gradlew build
-
+        
       - name: Depoly to Server
         uses: appleboy/ssh-action@master
         with:

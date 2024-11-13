@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import java.time.LocalDateTime;
+
 
 /**
  * 회원 정보를 관리하는 엔티티 클래스입니다.
@@ -35,4 +37,16 @@ public class Member {
     @Column(name = "roles")
     @Enumerated(EnumType.STRING)
     private RolesType roles; // 권한
+
+    @Column(name = "device_token")
+    private String deviceToken;
+
+    @Column(name = "device_token_created_at")
+    private LocalDateTime deviceTokenCreatedAt;
+
+    public void saveDeviceToken(String deviceToken) {
+        this.deviceToken = deviceToken;
+        this.deviceTokenCreatedAt = LocalDateTime.now();
+    }
+
 }
