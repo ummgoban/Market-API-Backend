@@ -35,6 +35,16 @@ public class GlobalExceptionHandler {
     }
 
     /**
+     * Security Access Denied 관련 예외 Handler
+     */
+    @ExceptionHandler(CustomSecurityException.class)
+    protected ResponseEntity<ErrorResponse> handleCustomSecurityException(CustomSecurityException exception) {
+        log.error("CustomSecurityException 발생");
+        BaseErrorCode errorCode = exception.getErrorCode();
+        return ResponseEntity.status(errorCode.getStatus()).body(errorCode.getErrorResponse());
+    }
+
+    /**
      * Jwt 관련 예외 Handler
      */
     @ExceptionHandler(JwtException.class)
