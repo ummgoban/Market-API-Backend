@@ -26,6 +26,12 @@ public class MarketPagingInfoResponse {
     @Schema(description = "가게 상세 주소입니다.")
     private String specificAddress;
 
+    @Schema(description = "가게 위도")
+    private Double latitude;
+
+    @Schema(description = "가게 경도")
+    private Double longitude;
+
     @Schema(description = "가게 오픈 시간입니다.")
     private String openAt;
 

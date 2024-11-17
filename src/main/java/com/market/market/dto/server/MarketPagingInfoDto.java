@@ -26,4 +26,8 @@ public class MarketPagingInfoDto {
 
     private String pickupEndAt;
 
+    private Double latitude;
+
+    private Double longitude;
+
 }

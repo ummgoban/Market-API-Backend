@@ -59,6 +59,8 @@ jobs:
             echo "ACCESS_EXPIRATION_SECONDS=${{ secrets.ACCESS_EXPIRATION_SECONDS }}" >> ./.env
             echo "BUSINESS_SERVICE_KEY=${{ secrets.BUSINESS_SERVICE_KEY }}" >> ./.env
             echo "GOOGLE_FIREBASE_PROJECTID=${{ secrets.GOOGLE_FIREBASE_PROJECTID }}" >> ./.env
+            echo "X_NCP_APIGW_API_KEY_ID=${{ secrets.X_NCP_APIGW_API_KEY_ID }}" >> ./.env
+            echo "X_NCP_APIGW_API_KEY_SECRET=${{ secrets.X_NCP_APIGW_API_KEY_SECRET }}" >> ./.env
 
 
       # 권한 부여 후 gradle build

@@ -11,7 +11,8 @@ import lombok.*;
 @AllArgsConstructor
 public class Market {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -47,6 +48,12 @@ public class Market {
 
     @Column(name = "pickup_end_at")
     private String pickupEndAt;
+
+    @Column(name = "latitude")
+    private Double latitude;
+
+    @Column(name = "longitude")
+    private Double longitude;
 
     public void updateSummary(String summary) {
         this.summary = summary;
