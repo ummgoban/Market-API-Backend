@@ -21,7 +21,7 @@ public class MarketPagingRepositoryImpl implements MarketPagingRepository {
     private final EntityManager em;
 
     @Override
-    public Slice<MarketPagingInfoDto> findMarketByCursorId(Long cursorId, Integer size) {
+    public Slice<MarketPagingInfoDto> findMarketByCursorId(Long cursorId, Integer size, Double userLatitude, Double userLongitude) {
 
         List<MarketPagingInfoDto> content =
                 // market 엔티티와 businessInfo 엔티티 조인 후, 데이터 조회
@@ -34,11 +34,18 @@ public class MarketPagingRepositoryImpl implements MarketPagingRepository {
                                 "m.openAt," +
                                 "m.closeAt," +
                                 "m.pickupStartAt," +
-                                "m.pickupEndAt) " +
+                                "m.pickupEndAt," +
+                                "m.latitude," +
+                                "m.longitude) " +
                                 "from Market m " +
                                 "where (:cursorId = 0L or m.id > :cursorId) " +
-                                "order by m.id asc ", MarketPagingInfoDto.class)
+                                "order by " +
+                                "(6371 * " +
+                                "acos(cos(radians(:userLatitude)) * cos(radians(m.latitude)) * cos(radians(m.longitude) - " +
+                                "radians(:userLongitude)) + sin(radians(:userLatitude)) * sin(radians(m.latitude)))) asc ", MarketPagingInfoDto.class)
                         .setParameter("cursorId", cursorId)
+                        .setParameter("userLatitude", userLatitude)
+                        .setParameter("userLongitude", userLongitude)
                         .setMaxResults(size + 1)
                         .getResultList();
 
@@ -59,7 +66,9 @@ public class MarketPagingRepositoryImpl implements MarketPagingRepository {
                                 "m.openAt," +
                                 "m.closeAt," +
                                 "m.pickupStartAt," +
-                                "m.pickupEndAt) " +
+                                "m.pickupEndAt," +
+                                "m.latitude," +
+                                "m.longitude) " +
                                 "from Market m " +
                                 "where (:cursorId = 0L or m.id > :cursorId) " +
                                 "and exists (" +
