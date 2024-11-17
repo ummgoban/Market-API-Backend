@@ -27,6 +27,9 @@ public class MarketPagingService {
     private final MarketRepository marketRepository;
     private final ProductRepository productRepository;
 
+    private static final Double DEFAULT_LATITUDE = 37.582831666666664;
+    private static final Double DEFAULT_LONGITUDE = 127.06107333333334;
+
     /**
      * 커서 기반 페이지네이션을 사용하여 전체 가게 목록을 조회합니다.
      */
@@ -34,6 +37,11 @@ public class MarketPagingService {
     public MarketPagingResponse getMarketByCursorId(Long cursorId, Integer size, Double userLatitude, Double userLongitude) {
 
         List<MarketPagingInfoResponse> response = new ArrayList<>();
+
+        if (userLatitude == null || userLongitude == null) {
+            userLatitude = DEFAULT_LATITUDE;
+            userLongitude = DEFAULT_LONGITUDE;
+        }
 
         // market 엔티티와 businessInfo 엔티티 조인 후, 데이터 조회
         Slice<MarketPagingInfoDto> marketList = marketRepository.findMarketByCursorId(cursorId, size, userLatitude, userLongitude);
