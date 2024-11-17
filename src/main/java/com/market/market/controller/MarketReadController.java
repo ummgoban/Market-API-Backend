@@ -57,9 +57,9 @@ public class MarketReadController {
             @ApiResponse(responseCode = "200", description = "가게 목록 조회 성공")
     })
     @GetMapping()
-    public ResponseEntity<BfResponse<MarketPagingResponse>> findMarketByCursorId (
-            @Parameter(description = "사용자의 위도") @RequestParam("userLatitude") Double userLatitude,
-            @Parameter(description = "사용자의 경도") @RequestParam("userLongitude") Double userLongitude,
+    public ResponseEntity<BfResponse<MarketPagingResponse>> findMarketByCursorId(
+            @Parameter(description = "사용자의 위도") @RequestParam(value = "userLatitude", required = false) Double userLatitude,
+            @Parameter(description = "사용자의 경도") @RequestParam(value = "userLongitude", required = false) Double userLongitude,
             @Parameter(description = "마지막으로 조회한 커서(가게) ID 입니다. 첫 페이지 요청 시, ID 값은 0 입니다.") @RequestParam("cursorId") Long cursorId,
             @Parameter(description = "페이지의 크기 입니다.") @RequestParam("size") Integer size) {
         return ResponseEntity.ok(new BfResponse<>(marketPagingService.getMarketByCursorId(cursorId, size, userLatitude, userLongitude)));
