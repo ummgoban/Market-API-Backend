@@ -39,7 +39,7 @@ public class MarketOrdersResponse {
     private OrdersStatus ordersStatus;
 
     @Schema(description = "요청사항")
-    private String customerRequset;
+    private String customerRequest;
 
     @Schema(description = "접수된 주문의 상품 정보들")
     private List<OrdersProductsDto> products;
@@ -52,7 +52,7 @@ public class MarketOrdersResponse {
                 .ordersPrice(orders.getOrdersPrice())
                 .orderMemberName(orders.getMember().getName())
                 .ordersStatus(orders.getOrdersStatus())
-                .customerRequset(orders.getCustomerRequset())
+                .customerRequest(orders.getCustomerRequset())
                 .products(ordersProducts)
                 .build();
     }

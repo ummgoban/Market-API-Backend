@@ -48,7 +48,7 @@ public class OrdersReadService {
                     .ordersPrice(orders.getOrdersPrice())
                     .orderMemberName(member.getName())
                     .ordersStatus(orders.getOrdersStatus())
-                    .customerRequset(orders.getCustomerRequset())
+                    .customerRequest(orders.getCustomerRequset())
                     .products(ordersProducts)
                     .build());
         });
@@ -84,7 +84,7 @@ public class OrdersReadService {
                     .pickupReservedAt(orders.getPickupReservedAt())
                     .ordersPrice(orders.getOrdersPrice())
                     .ordersStatus(orders.getOrdersStatus())
-                    .customerRequset(orders.getCustomerRequset())
+                    .customerRequest(orders.getCustomerRequset())
                     .products(ordersProducts)
                     .build());
         });
