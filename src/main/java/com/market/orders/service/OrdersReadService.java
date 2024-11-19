@@ -5,7 +5,7 @@ import com.market.core.exception.MemberException;
 import com.market.core.exception.OrdersException;
 import com.market.member.entity.Member;
 import com.market.member.repository.MemberRepository;
-import com.market.orders.dto.response.MarketOrdersResponse;
+import com.market.orders.dto.response.OrdersResponse;
 import com.market.orders.dto.server.OrdersProductsDto;
 import com.market.orders.entity.Orders;
 import com.market.orders.entity.OrdersStatus;
@@ -13,6 +13,7 @@ import com.market.orders.repository.OrdersRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,8 +28,8 @@ public class OrdersReadService {
     private final MemberRepository memberRepository;
 
     @Transactional(readOnly = true)
-    public List<MarketOrdersResponse> getMarketOrders(List<OrdersStatus> ordersStatus, Long marketId) {
-        List<MarketOrdersResponse> response = new ArrayList<>();
+    public List<OrdersResponse> getMarketOrders(List<OrdersStatus> ordersStatus, Long marketId) {
+        List<OrdersResponse> response = new ArrayList<>();
 
         // 가게의 접수 or 픽업 대기 or 픽업완료/취소 주문 목록 조회
         List<Orders> orderedOrders = ordersRepository.getMarketOrdersByMarketIdAndOrdersStatus(marketId, ordersStatus);
@@ -41,7 +42,7 @@ public class OrdersReadService {
             // 주문 상품 조회
             List<OrdersProductsDto> ordersProducts = ordersRepository.getOrdersProductsDtoByOrdersId(orders.getId());
 
-            response.add(MarketOrdersResponse.builder()
+            response.add(OrdersResponse.builder()
                     .id(orders.getId())
                     .createdAt(orders.getCreatedAt())
                     .pickupReservedAt(orders.getPickupReservedAt())
@@ -57,28 +58,42 @@ public class OrdersReadService {
     }
 
     @Transactional(readOnly = true)
-    public MarketOrdersResponse getOrder(Long orderId) {
+    public OrdersResponse getOrder(Long orderId) {
         Orders orders = ordersRepository.getOrdersByOrdersId(orderId).orElseThrow(() -> new OrdersException(NOT_FOUND_ORDERS_ID));
 
         // 주문 상품 조회
         List<OrdersProductsDto> ordersProducts = ordersRepository.getOrdersProductsDtoByOrdersId(orders.getId());
 
-        return MarketOrdersResponse.from(orders, ordersProducts);
+        return OrdersResponse.from(orders, ordersProducts);
     }
 
     @Transactional(readOnly = true)
-    public List<MarketOrdersResponse> getMemberOrdersInProgress(Long memberId) {
-        List<MarketOrdersResponse> response = new ArrayList<>();
+    public List<OrdersResponse> getMemberOrdersInProgress(Long memberId) {
+        List<OrdersResponse> response = new ArrayList<>();
 
         List<Orders> memberOrders = ordersRepository.
                 getMemberOrdersByMemberIdAndOrdersStatus(memberId, OrdersStatus.getInProgressOrderStatus());
 
+        return getOrdersResponses(response, memberOrders);
+    }
+
+    @Transactional(readOnly = true)
+    public List<OrdersResponse> getMemberOrders(Long memberId) {
+        List<OrdersResponse> response = new ArrayList<>();
+
+        List<Orders> memberOrders = ordersRepository.getMemberOrdersByMemberId(memberId);
+
+        return getOrdersResponses(response, memberOrders);
+
+    }
+
+    private List<OrdersResponse> getOrdersResponses(List<OrdersResponse> response, List<Orders> memberOrders) {
         memberOrders.forEach(orders -> {
 
             // 주문 상품 조회
             List<OrdersProductsDto> ordersProducts = ordersRepository.getOrdersProductsDtoByOrdersId(orders.getId());
 
-            response.add(MarketOrdersResponse.builder()
+            response.add(OrdersResponse.builder()
                     .id(orders.getId())
                     .createdAt(orders.getCreatedAt())
                     .pickupReservedAt(orders.getPickupReservedAt())
@@ -91,4 +106,5 @@ public class OrdersReadService {
 
         return response;
     }
+
 }

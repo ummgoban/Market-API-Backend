@@ -20,6 +20,9 @@ public interface OrdersRepository extends JpaRepository<Orders, Long> {
     List<Orders> getMemberOrdersByMemberIdAndOrdersStatus(@Param("memberId") Long memberId,
                                                           @Param("ordersStatus") List<OrdersStatus> ordersStatuses);
 
+    @Query("select o from Orders o where o.member.id = :memberId order by o.createdAt desc")
+    List<Orders> getMemberOrdersByMemberId(@Param("memberId") Long memberId);
+
     @Query("select new com.market.orders.dto.server.OrdersProductsDto(" +
             "p.id," +
             "p.productImage," +
