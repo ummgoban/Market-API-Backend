@@ -1,10 +1,14 @@
 package com.market.orders.service;
 
 
+import com.market.core.exception.MarketException;
 import com.market.core.exception.MemberException;
 import com.market.core.exception.OrdersException;
+import com.market.market.entity.Market;
+import com.market.market.repository.MarketRepository;
 import com.market.member.entity.Member;
 import com.market.member.repository.MemberRepository;
+import com.market.orders.dto.response.MemberOrdersResponse;
 import com.market.orders.dto.response.OrdersResponse;
 import com.market.orders.dto.server.OrdersProductsDto;
 import com.market.orders.entity.Orders;
@@ -17,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.market.core.code.error.MarketErrorCode.NOT_FOUND_MARKET_ID;
 import static com.market.core.code.error.MemberErrorCode.NOT_FOUND_MEMBER_ID;
 import static com.market.core.code.error.OrdersErrorCode.NOT_FOUND_ORDERS_ID;
 
@@ -26,6 +31,7 @@ public class OrdersReadService {
 
     private final OrdersRepository ordersRepository;
     private final MemberRepository memberRepository;
+    private final MarketRepository marketRepository;
 
     @Transactional(readOnly = true)
     public List<OrdersResponse> getMarketOrders(List<OrdersStatus> ordersStatus, Long marketId) {
@@ -78,12 +84,12 @@ public class OrdersReadService {
     }
 
     @Transactional(readOnly = true)
-    public List<OrdersResponse> getMemberOrders(Long memberId) {
-        List<OrdersResponse> response = new ArrayList<>();
+    public List<MemberOrdersResponse> getMemberOrders(Long memberId) {
+        List<MemberOrdersResponse> response = new ArrayList<>();
 
         List<Orders> memberOrders = ordersRepository.getMemberOrdersByMemberId(memberId);
 
-        return getOrdersResponses(response, memberOrders);
+        return getMemberOrdersResponses(response, memberOrders);
 
     }
 
@@ -101,6 +107,31 @@ public class OrdersReadService {
                     .ordersStatus(orders.getOrdersStatus())
                     .customerRequest(orders.getCustomerRequest())
                     .products(ordersProducts)
+                    .build());
+        });
+
+        return response;
+    }
+
+    private List<MemberOrdersResponse> getMemberOrdersResponses(List<MemberOrdersResponse> response, List<Orders> memberOrders) {
+        memberOrders.forEach(orders -> {
+
+            // 가게 조회
+            Market market = marketRepository.findById(orders.getMarket().getId()).orElseThrow(() -> new MarketException(NOT_FOUND_MARKET_ID));
+            // 주문 상품 조회
+            List<OrdersProductsDto> ordersProducts = ordersRepository.getOrdersProductsDtoByOrdersId(orders.getId());
+
+            response.add(MemberOrdersResponse.builder()
+                    .ordersId(orders.getId())
+                    .marketId(market.getId())
+                    .marketName(market.getMarketName())
+                    .createdAt(orders.getCreatedAt())
+                    .pickupReservedAt(orders.getPickupReservedAt())
+                    .ordersPrice(orders.getOrdersPrice())
+                    .ordersStatus(orders.getOrdersStatus())
+                    .customerRequest(orders.getCustomerRequest())
+                    .products(ordersProducts)
+                    .imageUrl(ordersProducts.get(0).getImage())
                     .build());
         });
 
