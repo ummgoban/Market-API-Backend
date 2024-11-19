@@ -18,7 +18,7 @@ import java.util.List;
 @Builder
 @JsonInclude(value = JsonInclude.Include.NON_NULL)
 @Schema(description = "가게의 접수된 주문 목록 조회 DTO 입니다.")
-public class MarketOrdersResponse {
+public class OrdersResponse {
 
     @Schema(description = "주문 ID")
     private Long id;
@@ -44,8 +44,8 @@ public class MarketOrdersResponse {
     @Schema(description = "접수된 주문의 상품 정보들")
     private List<OrdersProductsDto> products;
 
-    public static MarketOrdersResponse from(Orders orders, List<OrdersProductsDto> ordersProducts) {
-        return MarketOrdersResponse.builder()
+    public static OrdersResponse from(Orders orders, List<OrdersProductsDto> ordersProducts) {
+        return OrdersResponse.builder()
                 .id(orders.getId())
                 .createdAt(orders.getCreatedAt())
                 .pickupReservedAt(orders.getPickupReservedAt())
