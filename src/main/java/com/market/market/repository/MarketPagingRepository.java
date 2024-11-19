@@ -8,7 +8,7 @@ import org.springframework.data.domain.Slice;
  */
 public interface MarketPagingRepository {
 
-    Slice<MarketPagingInfoDto> findMarketByCursorId(Long cursorId, Integer size);
+    Slice<MarketPagingInfoDto> findMarketByCursorId(Long cursorId, Integer size, Double userLatitude, Double userLongitude);
 
     Slice<MarketPagingInfoDto> findMemberLikeMarketByCursorId(Long memberId, Long cursorId, Integer size);
 }

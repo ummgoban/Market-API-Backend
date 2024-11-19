@@ -2,6 +2,7 @@ package com.market.core.security.config;
 
 import com.market.core.security.filter.AuthenticatedJwtFilter;
 import com.market.core.security.filter.PublicJwtFilter;
+import com.market.core.security.handler.CustomAccessDeniedHandler;
 import com.market.core.security.service.jwt.JwtService;
 import com.market.member.entity.RolesType;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +35,9 @@ import static org.springframework.security.web.util.matcher.AntPathRequestMatche
 @RequiredArgsConstructor
 public class SecurityConfig {
 
+    private final JwtService jwtService;
+    private final CustomAccessDeniedHandler customAccessDeniedHandler;
+
     /**
      * 로그인 인증 작업 처리
      */
@@ -47,7 +51,7 @@ public class SecurityConfig {
      */
     @Bean
     @Order(1)
-    public SecurityFilterChain authenticatedFilterChain(HttpSecurity http, JwtService jwtService) throws Exception {
+    public SecurityFilterChain authenticatedFilterChain(HttpSecurity http) throws Exception {
         defaultSecuritySetting(http);
         http
                 .securityMatchers(matcher -> matcher
@@ -56,9 +60,8 @@ public class SecurityConfig {
                         .requestMatchers(authenticatedRequestMatchers())
                         .hasAnyAuthority(RolesType.ROLE_USER.name(), RolesType.ROLE_STORE_OWNER.name())
                         .anyRequest().authenticated())
-//                  TODO: 예외 처리
-//                .exceptionHandling(exception -> exception
-//                        .accessDeniedHandler())
+                .exceptionHandling(exception -> exception
+                        .accessDeniedHandler(customAccessDeniedHandler))
                 .addFilterBefore(new AuthenticatedJwtFilter(jwtService), ExceptionTranslationFilter.class);
 
         return http.build();
@@ -69,7 +72,7 @@ public class SecurityConfig {
      */
     @Bean
     @Order(2)
-    public SecurityFilterChain publicAndAuthenticatedFilterChain(HttpSecurity http, JwtService jwtService) throws Exception {
+    public SecurityFilterChain publicAndAuthenticatedFilterChain(HttpSecurity http) throws Exception {
         defaultSecuritySetting(http);
         http
                 .securityMatchers(matcher -> matcher
@@ -77,9 +80,6 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(publicAndAuthenticatedRequestMatchers()).permitAll()
                         .anyRequest().authenticated())
-//                  TODO: 예외 처리
-//                .exceptionHandling(exception -> exception
-//                        .accessDeniedHandler())
                 .addFilterBefore(new PublicJwtFilter(jwtService), ExceptionTranslationFilter.class);
 
         return http.build();
@@ -118,7 +118,6 @@ public class SecurityConfig {
                 antMatcher(GET, "/members/markets/likes"), // 회원 가게 찜 목록 조회
                 antMatcher(POST, "/members/device-token"), // 기기 등록 토큰 저장
 
-
                 // 가게
                 antMatcher(POST, "/markets"), // 가게 등록
                 antMatcher(POST, "/markets/images"), // S3 Bucket에 가게 사진 업로드
@@ -142,8 +141,6 @@ public class SecurityConfig {
 
                 // 주문
                 antMatcher(GET, "/orders/{orderId}") // 주문 상세 조회
-
-
         );
 
         return requestMatchers.toArray(RequestMatcher[]::new);
@@ -184,7 +181,6 @@ public class SecurityConfig {
 
                 // 상품
                 antMatcher(GET, "/products") // 상품 목록 조회
-
         );
 
         return requestMatchers.toArray(RequestMatcher[]::new);

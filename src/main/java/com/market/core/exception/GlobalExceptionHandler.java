@@ -93,4 +93,14 @@ public class GlobalExceptionHandler {
         BaseErrorCode errorCode = ex.getErrorCode();
         return ResponseEntity.status(errorCode.getStatus()).body(errorCode.getErrorResponse());
     }
+
+    /**
+     * Geocoding 관련 예외 Handler
+     */
+    @ExceptionHandler(GeocodingException.class)
+    protected ResponseEntity<ErrorResponse> handleGeocodingException(GeocodingException ex) {
+        log.error("GeocodingException 발생");
+        BaseErrorCode errorCode = ex.getErrorCode();
+        return ResponseEntity.status(errorCode.getStatus()).body(errorCode.getErrorResponse());
+    }
 }

@@ -12,7 +12,8 @@ import org.springframework.http.HttpStatus;
 public enum OrdersErrorCode implements BaseErrorCode {
 
     // 404 NOT_FOUND
-    NOT_FOUND_ORDERS_ID(404, "존재하지 않는 주문번호입니다.", HttpStatus.NOT_FOUND);
+    NOT_FOUND_ORDERS_ID(404, "존재하지 않는 주문번호입니다.", HttpStatus.NOT_FOUND),
+    NOT_FOUND_ORDERS_STATUS(404, "존재하지 않는 주문 상태입니다.", HttpStatus.NOT_FOUND);
 
     private final int errorCode;
     private final String errorMessage;

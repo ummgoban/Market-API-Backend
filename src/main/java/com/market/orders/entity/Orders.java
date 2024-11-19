@@ -43,5 +43,9 @@ public class Orders {
     private OrdersStatus ordersStatus;
 
     @Column(name = "customer_request")
-    private String customerRequset;
+    private String customerRequest;
+
+    public void updateOrdersStatus(OrdersStatus ordersStatus) {
+        this.ordersStatus = ordersStatus;
+    }
 }

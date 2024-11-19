@@ -1,9 +1,12 @@
 package com.market.orders.entity;
 
+import com.market.core.exception.OrdersException;
 import lombok.Getter;
 
 import java.util.Arrays;
 import java.util.List;
+
+import static com.market.core.code.error.OrdersErrorCode.NOT_FOUND_ORDERS_STATUS;
 
 @Getter
 public enum OrdersStatus {
@@ -17,4 +20,11 @@ public enum OrdersStatus {
         return Arrays.asList(OrdersStatus.ORDERED, OrdersStatus.ACCEPTED);
     }
 
+    public static OrdersStatus from(String orderStatus) {
+
+        for(OrdersStatus ordersStatus : OrdersStatus.values()) {
+            if(ordersStatus.name().equals(orderStatus)) return ordersStatus;
+        }
+        throw new OrdersException(NOT_FOUND_ORDERS_STATUS);
+    }
 }

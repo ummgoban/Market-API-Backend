@@ -111,3 +111,11 @@ google:
   firebase:
     secret-key-path: src/main/resources/fcm-secret.json
     projectId: ${GOOGLE_FIREBASE_PROJECTID}
+
+x:
+  ncp:
+    apigw:
+      api-key:
+        id: ${X_NCP_APIGW_API_KEY_ID}
+        secret: ${X_NCP_APIGW_API_KEY_SECRET}
+

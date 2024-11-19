@@ -44,7 +44,7 @@ public class MarketOrdersReadController {
     })
     @GetMapping("/orders")
     public ResponseEntity<BfResponse<List<MarketOrdersResponse>>> getMarketOrders(
-            @Parameter(description = "주문 상태 값. [접수 대기 : ORDERED, 주문 수락(픽업 대기) : ACCEPTED, 픽업완료/취소된 주문 : PICKUP_OR_CANCEL]")
+            @Parameter(description = "주문 상태 값. [접수 대기 : ORDERED, 주문 수락(픽업 대기) : ACCEPTED, 픽업완료/취소된 주문 : PICKUPED_OR_CANCELED]")
             @RequestParam("ordersStatus") @ValidOrdersStatus String ordersStatus,
             @Parameter(description = "가게 ID")
             @RequestParam("marketId") Long marketId) {
