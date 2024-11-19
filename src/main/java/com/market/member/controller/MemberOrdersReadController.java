@@ -2,6 +2,7 @@ package com.market.member.controller;
 
 import com.market.core.response.BfResponse;
 import com.market.core.security.principal.PrincipalDetails;
+import com.market.orders.dto.response.MemberOrdersResponse;
 import com.market.orders.dto.response.OrdersResponse;
 import com.market.orders.service.OrdersReadService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -50,7 +51,7 @@ public class MemberOrdersReadController {
             @ApiResponse(responseCode = "200", description = "회원의 주문 목록 조회 성공", useReturnTypeSchema = true)
     })
     @GetMapping("/orders")
-    public ResponseEntity<BfResponse<List<OrdersResponse>>> getMemberOrders(
+    public ResponseEntity<BfResponse<List<MemberOrdersResponse>>> getMemberOrders(
             @AuthenticationPrincipal PrincipalDetails principalDetails) {
         return ResponseEntity.ok(new BfResponse<>(
                 ordersReadService.getMemberOrders(Long.parseLong(principalDetails.getUsername()))));
