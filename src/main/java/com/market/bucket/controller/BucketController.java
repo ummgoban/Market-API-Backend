@@ -59,4 +59,19 @@ public class BucketController {
         bucketService.saveBucket(Long.parseLong("1"), marketId, bucketSaveRequest.getProducts());
         return ResponseEntity.ok(new BfResponse<>("상품 추가 성공"));
     }
+
+
+    @Operation(summary = "장바구니 상품 갯수 변경", description = "장바구니 상품 갯수 변경 요청입니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "장바구니 상품 갯수 변경 성공")
+    })
+    @PatchMapping()
+    public ResponseEntity<BfResponse<GlobalSuccessCode>> updateBucketProduct(
+            @AuthenticationPrincipal PrincipalDetails principalDetails,
+            @Parameter(description = "변경할 상품 ID") @RequestParam("productId") Long productId,
+            @Parameter(description = "변경할 추가 수량 [ +이면 1, -이면 -1]") @RequestParam("count") Integer count) {
+        bucketService.updateBucketProduct(Long.parseLong(principalDetails.getUsername()), productId, count);
+        return ResponseEntity.ok(new BfResponse<>(GlobalSuccessCode.SUCCESS));
+    }
+
 }

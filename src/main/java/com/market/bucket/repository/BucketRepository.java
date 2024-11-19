@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * 장바구니 도메인의 Repository 입니다.
@@ -69,4 +70,12 @@ public interface BucketRepository extends JpaRepository<Bucket, Long> {
     @Modifying
     @Query("delete from Bucket bucket where bucket.id in :idList")
     void deleteByIdIn(@Param("idList") List<Long> idList);
+
+    /**
+     * 고객 ID, 상품 ID로 버킷 조회
+     * @param memberId
+     * @param productId
+     * @return
+     */
+    Optional<Bucket> findByMemberIdAndProductId(Long memberId, Long productId);
 }

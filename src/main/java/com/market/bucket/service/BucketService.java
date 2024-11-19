@@ -153,6 +153,13 @@ public class BucketService {
         }
     }
 
+    @Transactional
+    public void updateBucketProduct(Long memberId, Long productId, Integer count) {
+        Bucket bucket = bucketRepository.findByMemberIdAndProductId(memberId, productId).orElseThrow(() -> new BucketException(NOT_FOUND));
+
+        bucket.plusCount(count);
+    }
+
     private void deleteBucketProduct(Long memberId, Long marketId) {
         List<Long> deleteBucketId = bucketRepository.findAllIdByMarketIdAndMemberId(memberId, marketId);
         bucketRepository.deleteByIdIn(deleteBucketId);
