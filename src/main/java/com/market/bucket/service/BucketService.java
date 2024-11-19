@@ -5,6 +5,7 @@ import com.market.bucket.dto.server.BucketProductDto;
 import com.market.bucket.dto.server.BucketSaveDto;
 import com.market.bucket.entity.Bucket;
 import com.market.bucket.repository.BucketRepository;
+import com.market.core.exception.BucketException;
 import com.market.core.exception.MarketException;
 import com.market.core.exception.MemberException;
 import com.market.core.exception.ProductException;
@@ -25,6 +26,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static com.market.core.code.error.BucketErrorCode.NOT_FOUND;
 import static com.market.core.code.error.MarketErrorCode.*;
 import static com.market.core.code.error.MemberErrorCode.NOT_FOUND_MEMBER_ID;
 import static com.market.core.code.error.ProductErrorCode.NOT_FOUND_PRODUCT_ID;

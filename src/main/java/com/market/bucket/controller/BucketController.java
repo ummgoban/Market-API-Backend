@@ -4,6 +4,7 @@ import com.market.bucket.dto.request.BucketSaveRequest;
 import com.market.bucket.dto.response.BucketDiscriminationResponse;
 import com.market.bucket.dto.response.BucketProductResponse;
 import com.market.bucket.service.BucketService;
+import com.market.core.code.success.GlobalSuccessCode;
 import com.market.core.response.BfResponse;
 import com.market.core.security.principal.PrincipalDetails;
 import io.swagger.v3.oas.annotations.Operation;
@@ -54,9 +55,10 @@ public class BucketController {
     })
     @PostMapping("/markets/{marketId}")
     public ResponseEntity<BfResponse<String>> saveBucket(
+            @AuthenticationPrincipal PrincipalDetails principalDetails,
             @RequestBody BucketSaveRequest bucketSaveRequest,
             @Parameter(description = "현재 장바구니에 담고자 하는 상품의 가게 ID 입니다.") @PathVariable("marketId") Long marketId) {
-        bucketService.saveBucket(Long.parseLong("1"), marketId, bucketSaveRequest.getProducts());
+        bucketService.saveBucket(Long.parseLong(principalDetails.getUsername()), marketId, bucketSaveRequest.getProducts());
         return ResponseEntity.ok(new BfResponse<>("상품 추가 성공"));
     }
 
