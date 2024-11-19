@@ -21,4 +21,6 @@ public interface TagRepository extends JpaRepository<Tag, Long> {
             "inner join Product p on pt.product.id = p.id " +
             "where p.id = :productId")
     List<Tag> findAllByProductId(@Param("productId") Long productId);
+
+    List<Tag> findAllByMarketId(@Param("marketId") Long marketId);
 }

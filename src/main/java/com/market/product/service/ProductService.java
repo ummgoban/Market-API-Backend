@@ -7,8 +7,10 @@ import com.market.core.exception.MarketException;
 import com.market.core.exception.MemberException;
 import com.market.core.exception.ProductException;
 import com.market.market.entity.Market;
+import com.market.market.entity.Tag;
 import com.market.market.repository.MarketLikeRepository;
 import com.market.market.repository.MarketRepository;
+import com.market.market.repository.TagRepository;
 import com.market.member.entity.Member;
 import com.market.member.repository.MemberRepository;
 import com.market.product.dto.request.ProductCreateRequest;
@@ -16,7 +18,9 @@ import com.market.product.dto.request.ProductUpdateRequest;
 import com.market.product.dto.response.ProductResponse;
 import com.market.product.entity.Product;
 import com.market.product.entity.ProductStatus;
+import com.market.product.entity.ProductTag;
 import com.market.product.repository.ProductRepository;
+import com.market.product.repository.ProductTagRepository;
 import com.market.utils.fcm.FCMUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -33,6 +37,8 @@ public class ProductService {
     private final MarketRepository marketRepository;
     private final MemberRepository memberRepository;
     private final MarketLikeRepository marketLikeRepository;
+    private final TagRepository tagRepository;
+    private final ProductTagRepository productTagRepository;
 
     private final FCMUtil fcmUtil;
 
@@ -59,6 +65,34 @@ public class ProductService {
                 .stock(productCreateRequest.getStock())
                 .build();
 
+        List<Tag> marketTags = tagRepository.findAllByMarketId(marketId);
+
+        for (String name : productCreateRequest.getProductTags()) {
+
+            Tag tag;
+            boolean exist = marketTags.stream().anyMatch(marketTag -> marketTag.getName().equals(name));
+            // 기존 가게에 없던 tag인 경우,
+            if (!exist) {
+
+                tag = Tag.builder()
+                        .market(market)
+                        .name(name)
+                        .build();
+
+                tagRepository.save(tag);
+            } else {
+                tag = marketTags.stream()
+                        .filter(marketTag -> marketTag.getName().equals(name))
+                        .findFirst()
+                        .orElseThrow(() -> new IllegalArgumentException("상품 등록 INTERNAL SERVER ERROR"));
+            }
+
+            productTagRepository.save(ProductTag.builder()
+                    .product(product)
+                    .tag(tag)
+                    .build());
+        }
+
         productRepository.save(product);
 
         // 새로운 메뉴 업데이트 알림 전송
@@ -74,16 +108,12 @@ public class ProductService {
         List<Product> productList = productRepository.findAllByMarketId(marketId);
 
         return productList.stream()
-                .map(product -> ProductResponse.builder()
-                        .id(product.getId())
-                        .image(product.getProductImage())
-                        .name(product.getName())
-                        .originPrice(product.getOriginPrice())
-                        .discountPrice(product.getDiscountPrice())
-                        .discountRate(product.getDiscountRate())
-                        .productStatus(product.getProductStatus())
-                        .stock(product.getStock())
-                        .build())
+                .map(product -> {
+
+                    List<Tag> tags = tagRepository.findAllByProductId(product.getId());
+                    return ProductResponse.from(product, tags);
+
+                })
                 .collect(Collectors.toList());
     }
 
@@ -100,6 +130,42 @@ public class ProductService {
 
         // 가게 소유자가 맞는지 확인
         verifyOwnerOfMarket(memberId, market.getId());
+
+        // 기존 product tag 삭제
+        productTagRepository.deleteAllByProductId(productId);
+
+
+        List<String> productTagNames = productUpdateRequest.getProductTags();
+        List<Tag> marketTags = tagRepository.findAllByMarketId(product.getMarket().getId());
+
+
+        for (String name : productTagNames) {
+            boolean exist = marketTags.stream().anyMatch(productTag -> productTag.getName().equals(name));
+            // 기존 market에 있던 tag인 경우,
+            if (exist) {
+                Tag tag = marketTags.stream()
+                        .filter(marketTag -> marketTag.getName().equals(name))
+                        .findFirst()
+                        .orElseThrow(() -> new IllegalArgumentException("상품 수정 INTERNAL SERVER ERROR"));
+
+                productTagRepository.save(ProductTag.builder()
+                        .product(product)
+                        .tag(tag)
+                        .build());
+            } else {
+                // 기존 market에 없던 tag인 경우,
+                Tag tag = Tag.builder()
+                        .market(market)
+                        .name(name)
+                        .build();
+
+                tagRepository.save(tag);
+                productTagRepository.save(ProductTag.builder()
+                        .product(product)
+                        .tag(tag)
+                        .build());
+            }
+        }
 
         product.updateProduct(productUpdateRequest);
 
@@ -118,6 +184,7 @@ public class ProductService {
         // 가게 소유자가 맞는지 확인
         verifyOwnerOfMarket(memberId, product.getMarket().getId());
 
+        productTagRepository.deleteAllByProductId(product.getId());
         productRepository.delete(product);
     }
 
