@@ -36,8 +36,9 @@ public interface BucketRepository extends JpaRepository<Bucket, Long> {
      * @param productId
      * @return
      */
-    @Query("select b from Bucket b where b.product.id in :products")
-    List<Bucket> findByProductIdIn(@Param("products") List<Long> productId);
+    @Query("select b from Bucket b where b.member.id = :memberId and b.product.id in :products")
+    List<Bucket> findByMemberIdAndProductIdIn(@Param("memberId") Long memberId,
+                                              @Param("products") List<Long> productId);
 
     /**
      * 회원의 장바구니 정보를 조회
@@ -64,6 +65,7 @@ public interface BucketRepository extends JpaRepository<Bucket, Long> {
 
     /**
      * list id 에 해당하는 pk 값을 가진, bucket 튜플을 삭제
+     *
      * @param idList
      */
     @Modifying

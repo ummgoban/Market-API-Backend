@@ -115,7 +115,7 @@ public class BucketService {
         // 2-1. 장바구니에 담고자 하는 상품들의 id 값을 추출
         List<Long> productsId = products.stream().map(BucketSaveDto::getId).toList();
         // 2-2. 상품 id 값들의 장바구니 튜플을 조회
-        List<Bucket> buckets = bucketRepository.findByProductIdIn(productsId);
+        List<Bucket> buckets = bucketRepository.findByMemberIdAndProductIdIn(memberId, productsId);
 
         // 2-3. 기존 장바구니 상품과 동일한 상품이 존재하는 경우, 단순 갯수를 추가한다
         if (!buckets.isEmpty()) {
