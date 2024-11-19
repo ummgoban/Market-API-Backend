@@ -32,6 +32,9 @@ public class MemberOrdersResponse {
     @Schema(description = "주문 접수된 시각")
     private LocalDateTime createdAt;
 
+    @Schema(description = "픽업 완료 또는 주문 취소된 시각")
+    private LocalDateTime doneAt;
+
     @Schema(description = "픽업 희망 시각")
     private LocalDateTime pickupReservedAt;
 
