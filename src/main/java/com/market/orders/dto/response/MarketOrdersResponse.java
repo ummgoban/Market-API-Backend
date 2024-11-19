@@ -52,7 +52,7 @@ public class MarketOrdersResponse {
                 .ordersPrice(orders.getOrdersPrice())
                 .orderMemberName(orders.getMember().getName())
                 .ordersStatus(orders.getOrdersStatus())
-                .customerRequest(orders.getCustomerRequset())
+                .customerRequest(orders.getCustomerRequest())
                 .products(ordersProducts)
                 .build();
     }
