@@ -10,6 +10,7 @@ import com.market.core.security.dto.jwt.request.RefreshTokenRequest;
 import com.market.core.security.dto.jwt.response.AccessTokenResponse;
 import com.market.core.security.dto.jwt.response.JwtTokenResponse;
 import com.market.core.security.service.jwt.JwtService;
+import com.market.core.security.service.oauth.AppleOAuthService;
 import com.market.core.security.service.oauth.KakaoOAuthService;
 import com.market.core.security.service.oauth.NaverOAuthService;
 import com.market.core.security.service.oauth.OAuthService;
@@ -36,6 +37,7 @@ public class AuthService {
     private final JwtService jwtService;
     private final KakaoOAuthService kakaoOAuthService;
     private final NaverOAuthService naverOAuthService;
+    private final AppleOAuthService appleOAuthService;
 
     /**
      * Provider 서버에서 AccessToken 발급
@@ -130,7 +132,7 @@ public class AuthService {
         return switch (provider) {
             case NAVER -> naverOAuthService;
             case KAKAO -> kakaoOAuthService;
-            default -> throw new OAuthException(OAuthErrorCode.UNSUPPORTED_OAUTH_PROVIDER);
+            case APPLE -> appleOAuthService;
         };
     }
 }
