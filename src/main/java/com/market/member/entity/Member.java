@@ -1,5 +1,6 @@
 package com.market.member.entity;
 
+import com.market.member.dto.request.MemberUpdateRequest;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -44,5 +45,10 @@ public class Member {
     public void saveDeviceToken(String deviceToken) {
         this.deviceToken = deviceToken;
         this.deviceTokenCreatedAt = LocalDateTime.now();
+    }
+
+    // 회원 가입 시 정보 업데이트
+    public void updateMember(MemberUpdateRequest memberUpdateRequest) {
+        this.name = memberUpdateRequest.getName();
     }
 }
