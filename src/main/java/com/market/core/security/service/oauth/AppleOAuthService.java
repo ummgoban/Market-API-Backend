@@ -43,8 +43,6 @@ public class AppleOAuthService implements OAuthService {
         return MemberLoginDto.builder()
                 .oauthId(oauthId)
                 .provider(ProviderType.APPLE)
-                .name("default name")
-                .profileImageUrl("default Image")
                 .roles(oAuthLoginRequest.getRoles())
                 .build();
     }
