@@ -118,6 +118,7 @@ public class SecurityConfig {
                 antMatcher(GET, "/members/markets"), // 가게 목록 조회
                 antMatcher(GET, "/members/markets/likes"), // 회원 가게 찜 목록 조회
                 antMatcher(POST, "/members/device-token"), // 기기 등록 토큰 저장
+                antMatcher(PATCH, "/members"), // 회원 정보 수정
 
                 // 가게
                 antMatcher(POST, "/markets"), // 가게 등록
