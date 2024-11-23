@@ -4,9 +4,12 @@ package com.market.member.controller;
 import com.market.core.code.success.GlobalSuccessCode;
 import com.market.core.response.BfResponse;
 import com.market.core.security.principal.PrincipalDetails;
+import com.market.member.dto.request.MemberUpdateRequest;
 import com.market.member.service.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -40,6 +43,23 @@ public class MemberController {
 
         memberService.saveDeviceToken(Long.parseLong(principalDetails.getUsername()), deviceToken);
 
+        return ResponseEntity.ok(new BfResponse<>(GlobalSuccessCode.SUCCESS));
+    }
+
+    @Operation(
+            summary = "회원 정보 수정",
+            description = "회원 정보를 수정합니다."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "회원 정보 수정 성공",
+                    content = @Content(examples = @ExampleObject(value = "{ \"code\": 200, \"message\": \"정상 처리되었습니다.\" }")))
+
+    })
+    @PatchMapping("")
+    public ResponseEntity<BfResponse<Void>> updateMember(
+            @AuthenticationPrincipal PrincipalDetails principalDetails,
+            @RequestBody MemberUpdateRequest memberUpdateRequest) {
+        memberService.updateMember(Long.parseLong(principalDetails.getUsername()), memberUpdateRequest);
         return ResponseEntity.ok(new BfResponse<>(GlobalSuccessCode.SUCCESS));
     }
 }

@@ -3,6 +3,7 @@ package com.market.member.service;
 
 import com.market.core.code.error.MemberErrorCode;
 import com.market.core.exception.MemberException;
+import com.market.member.dto.request.MemberUpdateRequest;
 import com.market.member.entity.Member;
 import com.market.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,5 +26,13 @@ public class MemberService {
                 orElseThrow(() -> new MemberException(MemberErrorCode.NOT_FOUND_MEMBER_ID));
 
         member.saveDeviceToken(deviceToken);
+    }
+
+    @Transactional
+    public void updateMember(Long memberId, MemberUpdateRequest memberUpdateRequest) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new MemberException(MemberErrorCode.NOT_FOUND_MEMBER_ID));
+
+        member.updateMember(memberUpdateRequest);
     }
 }

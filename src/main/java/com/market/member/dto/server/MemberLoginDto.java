@@ -15,6 +15,5 @@ public class MemberLoginDto {
     private final String oauthId;
     private final ProviderType provider;
     private final String name;
-    private final String profileImageUrl;
     private final RolesType roles;
 }
