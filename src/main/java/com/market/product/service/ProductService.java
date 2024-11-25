@@ -14,6 +14,7 @@ import com.market.market.repository.TagRepository;
 import com.market.member.entity.Member;
 import com.market.member.repository.MemberRepository;
 import com.market.product.dto.request.ProductCreateRequest;
+import com.market.product.dto.request.ProductStockUpdateRequest;
 import com.market.product.dto.request.ProductUpdateRequest;
 import com.market.product.dto.response.ProductResponse;
 import com.market.product.entity.Product;
@@ -28,6 +29,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.market.core.code.error.ProductErrorCode.UNABLE_TO_UPDATE_STOCK;
 
 @Service
 @RequiredArgsConstructor
@@ -121,18 +124,23 @@ public class ProductService {
      * 상품을 수정합니다.
      */
     @Transactional
-    public void updateProduct(Long memberId, Long productId, ProductUpdateRequest productUpdateRequest) {
-        Product product = productRepository.findById(productId)
+    public void updateProduct(Long memberId, ProductUpdateRequest productUpdateRequest) {
+        Product product = productRepository.findByProductIdWithPessimisticWrite(productUpdateRequest.getProductId())
                 .orElseThrow(() -> new ProductException(ProductErrorCode.NOT_FOUND_PRODUCT_ID));
 
-        Market market = marketRepository.findMarketByProductId(productId)
+        Market market = marketRepository.findMarketByProductId(productUpdateRequest.getProductId())
                 .orElseThrow(() -> new MarketException(MarketErrorCode.NOT_FOUND_MARKET_ID));
 
         // 가게 소유자가 맞는지 확인
         verifyOwnerOfMarket(memberId, market.getId());
 
+        // 재고가 음수가 되는 것을 방지
+        if (productUpdateRequest.getStock() < 0) {
+            throw new ProductException(UNABLE_TO_UPDATE_STOCK);
+        }
+
         // 기존 product tag 삭제
-        productTagRepository.deleteAllByProductId(productId);
+        productTagRepository.deleteAllByProductId(productUpdateRequest.getProductId());
 
 
         List<String> productTagNames = productUpdateRequest.getProductTags();
@@ -171,6 +179,29 @@ public class ProductService {
 
         // 재고 업데이트 알림 전송
         sendProductUpdatedAlarm(market);
+    }
+
+    /**
+     * 상품의 재고를 수정합니다.
+     */
+    @Transactional
+    public void updateProductStock(Long memberId, ProductStockUpdateRequest productStockUpdateRequest) {
+        Product product = productRepository.findByProductIdWithPessimisticWrite(productStockUpdateRequest.getProductId())
+                .orElseThrow(() -> new ProductException(ProductErrorCode.NOT_FOUND_PRODUCT_ID));
+
+        Market market = marketRepository.findMarketByProductId(productStockUpdateRequest.getProductId())
+                .orElseThrow(() -> new MarketException(MarketErrorCode.NOT_FOUND_MARKET_ID));
+
+        // 가게 소유자가 맞는지 확인
+        verifyOwnerOfMarket(memberId, market.getId());
+
+        // 재고가 음수가 되는 것을 방지
+        if (product.getStock() + productStockUpdateRequest.getCount() < 0) {
+            throw new ProductException(UNABLE_TO_UPDATE_STOCK);
+        }
+
+        product.updateProductStock(productStockUpdateRequest.getCount());
+
     }
 
     /**

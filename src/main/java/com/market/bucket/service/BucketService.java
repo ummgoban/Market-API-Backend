@@ -160,7 +160,7 @@ public class BucketService {
     public void updateBucketProduct(Long memberId, Long productId, Integer count) {
         Bucket bucket = bucketRepository.findByMemberIdAndProductId(memberId, productId).orElseThrow(() -> new BucketException(NOT_FOUND));
 
-        Product product = productRepository.findByProductIdInBucket(productId).orElseThrow(() -> new ProductException(NOT_FOUND_PRODUCT_ID));
+        Product product = productRepository.findByProductIdWithPessimisticWrite(productId).orElseThrow(() -> new ProductException(NOT_FOUND_PRODUCT_ID));
         if (product.getStock() < count) {
             throw new ProductException(STOCK_NOT_ENOUGH);
         }

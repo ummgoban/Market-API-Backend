@@ -136,7 +136,8 @@ public class SecurityConfig {
 
                 // 상품
                 antMatcher(DELETE, "/products/{productId}"), // 상품 삭제
-                antMatcher(PATCH, "/products/{productId}"), // 상품 수정
+                antMatcher(PATCH, "/products"), // 상품 재고 수정
+                antMatcher(PUT, "/products"), // 상품 수정
                 antMatcher(POST, "/products"), // 상품 등록
                 antMatcher(POST, "/products/images"), // S3 Bucket에 상품 사진 업로드
                 antMatcher(DELETE, "/products/images"), // S3 Bucket에 상품 사진 삭제

@@ -54,4 +54,8 @@ public class Product {
         this.discountRate = productUpdateRequest.getDiscountRate();
         this.stock = productUpdateRequest.getStock();
     }
+
+    public void updateProductStock(Integer count) {
+        this.stock += count;
+    }
 }

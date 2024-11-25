@@ -23,5 +23,5 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     @Lock(value = LockModeType.PESSIMISTIC_WRITE)
     @QueryHints({@QueryHint(name = "product lock timeout in bucket", value = "3000")}) // 락 휙득을 위해 3초까지 대기
     @Query("select p from Product p where p.id = :productId")
-    Optional<Product> findByProductIdInBucket(@Param("productId") Long productId);
+    Optional<Product> findByProductIdWithPessimisticWrite(@Param("productId") Long productId);
 }
