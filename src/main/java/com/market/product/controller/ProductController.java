@@ -113,7 +113,7 @@ public class ProductController {
     public ResponseEntity<BfResponse<GlobalSuccessCode>> updateProduct(
             @AuthenticationPrincipal PrincipalDetails principalDetails,
             @RequestBody ProductUpdateRequest productUpdateRequest) {
-        productService.updateProduct(Long.parseLong(principalDetails.getUsername()), productId, productUpdateRequest);
+        productService.updateProduct(Long.parseLong(principalDetails.getUsername()), productUpdateRequest);
         return ResponseEntity.ok(new BfResponse<>(GlobalSuccessCode.SUCCESS));
     }
 

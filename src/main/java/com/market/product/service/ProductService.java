@@ -124,8 +124,8 @@ public class ProductService {
      * 상품을 수정합니다.
      */
     @Transactional
-    public void updateProduct(Long memberId, Long productId, ProductUpdateRequest productUpdateRequest) {
-        Product product = productRepository.findById(productId)
+    public void updateProduct(Long memberId, ProductUpdateRequest productUpdateRequest) {
+        Product product = productRepository.findByProductIdWithPessimisticWrite(productUpdateRequest.getProductId())
                 .orElseThrow(() -> new ProductException(ProductErrorCode.NOT_FOUND_PRODUCT_ID));
 
         Market market = marketRepository.findMarketByProductId(productId)

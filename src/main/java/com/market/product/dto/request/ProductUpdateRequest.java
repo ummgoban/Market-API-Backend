@@ -18,6 +18,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ProductUpdateRequest {
 
+    @Schema(description = "상품 ID", required = true)
+    Long productId;
+
     @Schema(description = "상품 이미지", example = "https://.../ab123...456.png", required = true)
     private String productImage;
 
