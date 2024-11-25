@@ -30,6 +30,7 @@ import static com.market.core.code.error.BucketErrorCode.NOT_FOUND;
 import static com.market.core.code.error.MarketErrorCode.*;
 import static com.market.core.code.error.MemberErrorCode.NOT_FOUND_MEMBER_ID;
 import static com.market.core.code.error.ProductErrorCode.NOT_FOUND_PRODUCT_ID;
+import static com.market.core.code.error.ProductErrorCode.STOCK_NOT_ENOUGH;
 
 @Service
 @RequiredArgsConstructor
@@ -159,6 +160,10 @@ public class BucketService {
     public void updateBucketProduct(Long memberId, Long productId, Integer count) {
         Bucket bucket = bucketRepository.findByMemberIdAndProductId(memberId, productId).orElseThrow(() -> new BucketException(NOT_FOUND));
 
+        Product product = productRepository.findByProductIdInBucket(productId).orElseThrow(() -> new ProductException(NOT_FOUND_PRODUCT_ID));
+        if (product.getStock() < count) {
+            throw new ProductException(STOCK_NOT_ENOUGH);
+        }
         bucket.plusCount(count);
     }
 
