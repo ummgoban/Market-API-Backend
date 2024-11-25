@@ -109,7 +109,7 @@ public class ProductController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "상품 수정 성공", useReturnTypeSchema = true),
     })
-    @PatchMapping("/{productId}")
+    @PutMapping()
     public ResponseEntity<BfResponse<GlobalSuccessCode>> updateProduct(
             @AuthenticationPrincipal PrincipalDetails principalDetails,
             @RequestBody ProductUpdateRequest productUpdateRequest) {
