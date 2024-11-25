@@ -128,7 +128,7 @@ public class ProductService {
         Product product = productRepository.findByProductIdWithPessimisticWrite(productUpdateRequest.getProductId())
                 .orElseThrow(() -> new ProductException(ProductErrorCode.NOT_FOUND_PRODUCT_ID));
 
-        Market market = marketRepository.findMarketByProductId(productId)
+        Market market = marketRepository.findMarketByProductId(productUpdateRequest.getProductId())
                 .orElseThrow(() -> new MarketException(MarketErrorCode.NOT_FOUND_MARKET_ID));
 
         // 가게 소유자가 맞는지 확인
@@ -140,7 +140,7 @@ public class ProductService {
         }
 
         // 기존 product tag 삭제
-        productTagRepository.deleteAllByProductId(productId);
+        productTagRepository.deleteAllByProductId(productUpdateRequest.getProductId());
 
 
         List<String> productTagNames = productUpdateRequest.getProductTags();
