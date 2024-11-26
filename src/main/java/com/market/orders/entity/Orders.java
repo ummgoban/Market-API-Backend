@@ -45,6 +45,9 @@ public class Orders {
     @Column(name = "customer_request")
     private String customerRequest;
 
+    @Column(name = "orders_name")
+    private String ordersName;
+
     public void updateOrdersStatus(OrdersStatus ordersStatus) {
         this.ordersStatus = ordersStatus;
     }

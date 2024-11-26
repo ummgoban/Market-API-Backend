@@ -24,8 +24,11 @@ public class BucketProductDto {
     @Schema(description = "상품 원가")
     private Integer originPrice;
 
-    @Schema(description = "상품 할인가")
+    @Schema(description = "상품 할인가(실 판매가)")
     private Integer discountPrice;
+
+    @Schema(description = "상품 재고")
+    private Integer stock;
 
     @Schema(description = "장바구니 속 상품 갯수")
     private Integer count;
