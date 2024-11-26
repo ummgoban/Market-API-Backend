@@ -21,7 +21,7 @@ import java.util.List;
 public class MemberOrdersResponse {
 
     @Schema(description = "주문 ID")
-    private Long ordersId;
+    private String ordersId;
 
     @Schema(description = "가게 ID")
     private Long marketId;

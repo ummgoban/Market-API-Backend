@@ -33,7 +33,7 @@ public interface OrdersRepository extends JpaRepository<Orders, Long> {
             "op.count) " +
             "from OrdersProduct op inner join Product p on op.product.id = p.id " +
             "where op.orders.id = :ordersId")
-    List<OrdersProductsDto> getOrdersProductsDtoByOrdersId(@Param("ordersId") Long ordersId);
+    List<OrdersProductsDto> getOrdersProductsDtoByOrdersId(@Param("ordersId") String ordersId);
 
     @Query("select o from Orders o join fetch o.member")
     Optional<Orders> getOrdersByOrdersId(@Param("ordersId") Long ordersId);

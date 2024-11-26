@@ -21,7 +21,7 @@ import java.util.List;
 public class OrdersResponse {
 
     @Schema(description = "주문 ID")
-    private Long id;
+    private String id;
 
     @Schema(description = "주문 접수된 시각")
     private LocalDateTime createdAt;
