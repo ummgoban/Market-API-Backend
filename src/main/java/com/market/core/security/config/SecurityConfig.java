@@ -143,6 +143,7 @@ public class SecurityConfig {
                 antMatcher(DELETE, "/products/images"), // S3 Bucket에 상품 사진 삭제
 
                 // 주문
+                antMatcher(POST, "/orders"), // 주문 생성
                 antMatcher(GET, "/orders/{orderId}") // 주문 상세 조회
         );
 
@@ -181,6 +182,7 @@ public class SecurityConfig {
 
                 // 가게
                 antMatcher(GET, "/markets"), // 전체 가게 목록 페이징 조회
+
 
                 // 상품
                 antMatcher(GET, "/products") // 상품 목록 조회

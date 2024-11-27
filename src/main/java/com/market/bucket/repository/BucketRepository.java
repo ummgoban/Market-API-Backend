@@ -2,6 +2,8 @@ package com.market.bucket.repository;
 
 import com.market.bucket.dto.server.BucketProductDto;
 import com.market.bucket.entity.Bucket;
+import jakarta.persistence.LockModeType;
+import jakarta.persistence.QueryHint;
 import org.springframework.data.jpa.repository.*;
 import org.springframework.data.repository.query.Param;
 
@@ -17,12 +19,15 @@ public interface BucketRepository extends JpaRepository<Bucket, Long> {
      * @param memberId bucket, product 테이블을 조인 후, memberId 값으로 필터링
      * @return
      */
+    @Lock(value = LockModeType.PESSIMISTIC_WRITE)
+    @QueryHints({@QueryHint(name = "product lock timeout in bucket", value = "3000")}) // 락 휙득을 위해 3초까지 대기
     @Query("select new com.market.bucket.dto.server.BucketProductDto(" +
             "product.id," +
             "product.name," +
             "product.productImage," +
             "product.originPrice," +
             "product.discountPrice," +
+            "product.stock," +
             "bucket.count) " +
             "from Bucket bucket " +
             "inner join Product product on bucket.product.id = product.id " +

@@ -15,8 +15,7 @@ import java.time.LocalDateTime;
 public class Orders {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
@@ -44,6 +43,9 @@ public class Orders {
 
     @Column(name = "customer_request")
     private String customerRequest;
+
+    @Column(name = "orders_name")
+    private String ordersName;
 
     public void updateOrdersStatus(OrdersStatus ordersStatus) {
         this.ordersStatus = ordersStatus;
