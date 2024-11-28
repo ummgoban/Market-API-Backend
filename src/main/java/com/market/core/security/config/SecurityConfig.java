@@ -144,6 +144,7 @@ public class SecurityConfig {
 
                 // 주문
                 antMatcher(POST, "/orders"), // 주문 생성
+                antMatcher(POST, "/orders/payments"), // 결제 승인
                 antMatcher(GET, "/orders/{orderId}") // 주문 상세 조회
         );
 

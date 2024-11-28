@@ -119,3 +119,7 @@ x:
         id: ${X_NCP_APIGW_API_KEY_ID}
         secret: ${X_NCP_APIGW_API_KEY_SECRET}
 
+toss:
+  payment:
+    secret: ${TOSS_PAYMENT_SECRET}
+    idempotency: ${TOSS_PAYMENT_IDEMPOTENCY}

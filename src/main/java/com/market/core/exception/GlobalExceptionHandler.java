@@ -133,4 +133,14 @@ public class GlobalExceptionHandler {
         BaseErrorCode errorCode = ex.getErrorCode();
         return ResponseEntity.status(errorCode.getStatus()).body(errorCode.getErrorResponse());
     }
+
+    /**
+     * Payment 관련 예외 Handler
+     */
+    @ExceptionHandler(PaymentException.class)
+    protected ResponseEntity<ErrorResponse> handlePaymentException(PaymentException ex) {
+        log.error("PaymentException 발생");
+        BaseErrorCode errorCode = ex.getErrorCode();
+        return ResponseEntity.status(errorCode.getStatus()).body(errorCode.getErrorResponse());
+    }
 }
