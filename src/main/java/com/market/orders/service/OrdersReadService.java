@@ -10,6 +10,7 @@ import com.market.member.entity.Member;
 import com.market.member.repository.MemberRepository;
 import com.market.orders.dto.response.MemberOrdersResponse;
 import com.market.orders.dto.response.OrdersResponse;
+import com.market.orders.dto.server.OrdersPaymentDto;
 import com.market.orders.dto.server.OrdersProductsDto;
 import com.market.orders.entity.Orders;
 import com.market.orders.entity.OrdersStatus;
@@ -65,13 +66,13 @@ public class OrdersReadService {
     }
 
     @Transactional(readOnly = true)
-    public OrdersResponse getOrder(Long orderId) {
-        Orders orders = ordersRepository.getOrdersByOrdersId(orderId).orElseThrow(() -> new OrdersException(NOT_FOUND_ORDERS_ID));
+    public OrdersResponse getOrder(String orderId) {
+        OrdersPaymentDto ordersPaymentDto = ordersRepository.getOrdersPaymentByOrdersId(orderId).orElseThrow(() -> new OrdersException(NOT_FOUND_ORDERS_ID));
 
         // 주문 상품 조회
-        List<OrdersProductsDto> ordersProducts = ordersRepository.getOrdersProductsDtoByOrdersId(orders.getId());
+        List<OrdersProductsDto> ordersProducts = ordersRepository.getOrdersProductsDtoByOrdersId(ordersPaymentDto.getId());
 
-        return OrdersResponse.from(orders, ordersProducts);
+        return OrdersResponse.from(ordersPaymentDto, ordersProducts);
     }
 
     @Transactional(readOnly = true)
