@@ -15,7 +15,9 @@ public enum OrdersStatus {
     ACCEPTED, // 주문 수락
     PICKEDUP, // 픽업 완료
     CANCELED, // 주문 취소
-    PICKEDUP_OR_CANCELED; // 픽업 완료 or 주문 취소 (조회 시, 사용되는 데이터)
+    PICKEDUP_OR_CANCELED, // 픽업 완료 or 주문 취소 (조회 시, 사용되는 데이터)
+
+    NO_SHOW; // 노쇼
 
     public static List<OrdersStatus> getInProgressOrderStatus() {
         return Arrays.asList(OrdersStatus.ORDERED, OrdersStatus.ACCEPTED);
