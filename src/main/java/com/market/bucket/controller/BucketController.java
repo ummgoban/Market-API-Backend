@@ -76,4 +76,16 @@ public class BucketController {
         return ResponseEntity.ok(new BfResponse<>(GlobalSuccessCode.SUCCESS));
     }
 
+    @Operation(summary = "장바구니 상품 삭제", description = "장바구니 상품 삭제 요청입니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "장바구니 상품 삭제 성공")
+    })
+    @DeleteMapping
+    public ResponseEntity<BfResponse<GlobalSuccessCode>> deleteBucketProduct(
+            @AuthenticationPrincipal PrincipalDetails principalDetails,
+            @Parameter(description = "변경할 상품 ID") @RequestParam("productId") Long productId) {
+        bucketService.deleteBucketProduct(Long.parseLong(principalDetails.getUsername()), productId);
+        return ResponseEntity.ok(new BfResponse<>(GlobalSuccessCode.SUCCESS));
+    }
+
 }
