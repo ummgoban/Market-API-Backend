@@ -113,7 +113,7 @@ public class BucketService {
         Member member = memberRepository.findById(memberId).orElseThrow(() -> new MemberException(NOT_FOUND_MEMBER_ID));
 
         // 1. 장바구니에 담고자 하는 상품의 가게와 다른 가게의 기존 장바구니 상품 >> 삭제할 튜플
-        deleteBucketProduct(memberId, marketId);
+        deleteDifferentMarketBucketProduct(memberId, marketId);
 
         // 2-1. 장바구니에 담고자 하는 상품들의 id 값을 추출
         List<Long> productsId = products.stream().map(BucketSaveDto::getId).toList();
@@ -178,5 +178,10 @@ public class BucketService {
         product.updateProductStock(bucket.getCount());
         bucketRepository.deleteByIdIn(List.of(bucket.getId()));
 
+    }
+
+    private void deleteDifferentMarketBucketProduct(Long memberId, Long marketId) {
+        List<Long> deleteBucketId = bucketRepository.findAllIdByMarketIdAndMemberId(memberId, marketId);
+        bucketRepository.deleteByIdIn(deleteBucketId);
     }
 }
