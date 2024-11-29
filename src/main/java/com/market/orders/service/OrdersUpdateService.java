@@ -18,7 +18,7 @@ public class OrdersUpdateService {
     private final OrdersRepository ordersRepository;
 
     @Transactional
-    public void updateOrdersStatus(Long ordersId, OrdersStatus ordersStatus) {
+    public void updateOrdersStatus(String ordersId, OrdersStatus ordersStatus) {
 
         Orders orders = ordersRepository.findById(ordersId).orElseThrow(() -> new OrdersException(NOT_FOUND_ORDERS_ID));
         orders.updateOrdersStatus(ordersStatus);

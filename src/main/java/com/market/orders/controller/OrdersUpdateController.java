@@ -40,7 +40,7 @@ public class OrdersUpdateController {
     public ResponseEntity<BfResponse<GlobalSuccessCode>> updateOrders(
             @Parameter(description = "변경할 주문 상태 값 [ 수락: ACCEPTED, 픽업 완료: PICKEDUP, 거절: CANCELED ]")
             @RequestParam("ordersStatus") @ValidOrdersStatus String ordersStatus,
-            @Parameter(description = "주문 ID") @RequestParam("ordersId") Long ordersId) {
+            @Parameter(description = "주문 ID") @RequestParam("ordersId") String ordersId) {
 
         OrdersStatus status = OrdersStatus.from(ordersStatus);
         ordersUpdateService.updateOrdersStatus(ordersId, status);

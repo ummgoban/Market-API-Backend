@@ -78,6 +78,8 @@ jobs:
             echo "GOOGLE_FIREBASE_PROJECTID=${{ secrets.GOOGLE_FIREBASE_PROJECTID }}" >> ./.env
             echo "X_NCP_APIGW_API_KEY_ID=${{ secrets.X_NCP_APIGW_API_KEY_ID }}" >> ./.env
             echo "X_NCP_APIGW_API_KEY_SECRET=${{ secrets.X_NCP_APIGW_API_KEY_SECRET }}" >> ./.env
+            echo "TOSS_PAYMENT_SECRET=${{ secrets.TOSS_PAYMENT_SECRET }}" >> ./.env
+            echo "TOSS_PAYMENT_IDEMPOTENCY=${{ secrets.TOSS_PAYMENT_IDEMPOTENCY }}" >> ./.env
 
 
       # 권한 부여 후 gradle build

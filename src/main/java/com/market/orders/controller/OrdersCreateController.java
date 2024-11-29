@@ -1,11 +1,15 @@
 package com.market.orders.controller;
 
 
+
+import com.market.core.code.success.GlobalSuccessCode;
 import com.market.core.response.BfResponse;
 import com.market.core.security.principal.PrincipalDetails;
 import com.market.orders.dto.request.OrdersCreateRequestDto;
+import com.market.orders.dto.request.PaymentCreateRequsetDto;
 import com.market.orders.dto.response.OrdersCreateResponseDto;
 import com.market.orders.service.OrdersCreateService;
+import com.market.orders.service.PaymentService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -29,6 +33,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class OrdersCreateController {
 
     private final OrdersCreateService ordersCreateService;
+    private final PaymentService paymentService;
 
     @Operation(
             summary = "주문 생성",
@@ -42,5 +47,23 @@ public class OrdersCreateController {
             @AuthenticationPrincipal PrincipalDetails principalDetails,
             @Valid @RequestBody OrdersCreateRequestDto ordersCreateRequestDto) {
         return ResponseEntity.ok(new BfResponse<>(ordersCreateService.createOrders(Long.parseLong(principalDetails.getUsername()), ordersCreateRequestDto)));
+    }
+
+    @Operation(
+            summary = "결제 승인",
+            description = "결제 승인입니다."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "결제 승인 성공", useReturnTypeSchema = true)
+    })
+    @PostMapping("/payments")
+    public ResponseEntity<BfResponse<GlobalSuccessCode>> createPayments(
+            @AuthenticationPrincipal PrincipalDetails principalDetails,
+            @Valid @RequestBody PaymentCreateRequsetDto dto) {
+
+        paymentService.confirmPayment(Long.parseLong(principalDetails.getUsername()),
+                dto.getPaymentKey(), dto.getOrdersId(), dto.getAmount());
+
+        return ResponseEntity.ok(new BfResponse<>(GlobalSuccessCode.CREATE));
     }
 }

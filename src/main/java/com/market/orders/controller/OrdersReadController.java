@@ -35,7 +35,7 @@ public class OrdersReadController {
     })
     @GetMapping("/{orderId}")
     public ResponseEntity<BfResponse<OrdersResponse>> getMarketOrders(
-            @Parameter(description = "주문번호") @PathVariable("orderId") Long orderId) {
+            @Parameter(description = "주문번호") @PathVariable("orderId") String orderId) {
         return ResponseEntity.ok(new BfResponse<>(ordersReadService.getOrder(orderId)));
     }
 }
