@@ -42,7 +42,7 @@ public class MarketUpdateService {
         market.updatePickUpHours(marketUpdateRequest.getPickupStartAt(), marketUpdateRequest.getPickupEndAt());
 
         // 가게 사진 업데이트
-        updateMarketImages(market, marketUpdateRequest.getImageUrls());
+//        updateMarketImages(market, marketUpdateRequest.getImageUrls());
     }
 
     /**
@@ -52,6 +52,9 @@ public class MarketUpdateService {
         // 기존 사진 List 조회
         List<MarketImage> existingMarketImages = marketImageRepository.findAllByMarketId(market.getId());
 
+        if (!existingMarketImages.isEmpty()) {
+
+        }
         // 기존 사진 URL List 조회
         List<String> existingMarketImageUrls = existingMarketImages.stream()
                 .map(MarketImage::getImageUrl)
