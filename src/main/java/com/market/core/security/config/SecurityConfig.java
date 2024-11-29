@@ -117,8 +117,8 @@ public class SecurityConfig {
                 antMatcher(GET, "/members/orders"), // 회원 주문 내역
                 antMatcher(GET, "/members/markets"), // 가게 목록 조회
                 antMatcher(GET, "/members/markets/likes"), // 회원 가게 찜 목록 조회
-                antMatcher(POST, "/members/device-token"), // 기기 등록 토큰 저장
                 antMatcher(PATCH, "/members"), // 회원 정보 수정
+                antMatcher(GET, "/members/profiles"), // 회원 정보 수정
 
                 // 가게
                 antMatcher(POST, "/markets"), // 가게 등록
@@ -177,13 +177,15 @@ public class SecurityConfig {
                 // AWS Health Check
                 antMatcher(GET, "utils/health"),
 
+                // 회원
+                antMatcher(POST, "/members/device-token"), // 기기 등록 토큰 저장
+
                 // 토큰
                 antMatcher(POST, "/auth/accessToken"), // OAuth AccessToken 발급
                 antMatcher(POST, "/auth/login"), // OAuth 로그인
 
                 // 가게
                 antMatcher(GET, "/markets"), // 전체 가게 목록 페이징 조회
-
 
                 // 상품
                 antMatcher(GET, "/products") // 상품 목록 조회
