@@ -44,15 +44,15 @@ public class MarketOrdersReadController {
     })
     @GetMapping("/orders")
     public ResponseEntity<BfResponse<List<OrdersResponse>>> getMarketOrders(
-            @Parameter(description = "주문 상태 값. [접수 대기 : ORDERED, 주문 수락(픽업 대기) : ACCEPTED, 픽업완료/취소된 주문 : PICKEDUP_OR_CANCELED]")
+            @Parameter(description = "주문 상태 값. [ 접수 대기 : ORDERED, 주문 수락(픽업 대기) : ACCEPTED, 픽업완료/취소된 주문 : PICKEDUP_OR_CANCELED, 노쇼 : NO_SHOW ]")
             @RequestParam("ordersStatus") @ValidOrdersStatus String ordersStatus,
             @Parameter(description = "가게 ID")
             @RequestParam("marketId") Long marketId) {
 
-        // 픽업완료/취소된 주문 조회
+        // 픽업완료/취소, 노쇼된 주문 조회
         if (ordersStatus.equals(OrdersStatus.PICKEDUP_OR_CANCELED.name())) {
             return ResponseEntity.ok(new BfResponse<>(ordersReadService.getMarketOrders(
-                    new ArrayList<>(List.of(OrdersStatus.CANCELED, OrdersStatus.PICKEDUP)), marketId)));
+                    new ArrayList<>(List.of(OrdersStatus.CANCELED, OrdersStatus.PICKEDUP, OrdersStatus.NO_SHOW)), marketId)));
         }
 
         // 접수 대기 or 픽업 대기 주문 조회

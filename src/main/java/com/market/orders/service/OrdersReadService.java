@@ -38,7 +38,7 @@ public class OrdersReadService {
     public List<OrdersResponse> getMarketOrders(List<OrdersStatus> ordersStatus, Long marketId) {
         List<OrdersResponse> response = new ArrayList<>();
 
-        // 가게의 접수 or 픽업 대기 or 픽업완료/취소 주문 목록 조회
+        // 가게의 접수 or 픽업 대기 or 픽업완료/취소/노쇼 주문 목록 조회
         List<Orders> orderedOrders = ordersRepository.getMarketOrdersByMarketIdAndOrdersStatus(marketId, ordersStatus);
 
         orderedOrders.forEach(orders -> {
