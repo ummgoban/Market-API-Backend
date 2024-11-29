@@ -42,7 +42,7 @@ public class MarketUpdateService {
         market.updatePickUpHours(marketUpdateRequest.getPickupStartAt(), marketUpdateRequest.getPickupEndAt());
 
         // 가게 사진 업데이트
-//        updateMarketImages(market, marketUpdateRequest.getImageUrls());
+        updateMarketImages(market, marketUpdateRequest.getImageUrls());
     }
 
     /**
@@ -54,27 +54,35 @@ public class MarketUpdateService {
 
         if (!existingMarketImages.isEmpty()) {
 
-        }
-        // 기존 사진 URL List 조회
-        List<String> existingMarketImageUrls = existingMarketImages.stream()
-                .map(MarketImage::getImageUrl)
-                .toList();
+            // 기존 사진 URL List 조회
+            List<String> existingMarketImageUrls = existingMarketImages.stream()
+                    .map(MarketImage::getImageUrl)
+                    .toList();
+            // DB에 없는 사진 저장
+            for (String imageUrl : imageUrls) {
+                if (!existingMarketImageUrls.contains(imageUrl)) {
+                    MarketImage updateImage = MarketImage.builder()
+                            .market(market)
+                            .imageUrl(imageUrl)
+                            .build();
+                    marketImageRepository.save(updateImage);
+                }
+            }
+            // 새로 추가된 리스트에 없는 이미지는 삭제
+            for (MarketImage existingMarketImage : existingMarketImages) {
+                if (!imageUrls.contains(existingMarketImage.getImageUrl())) {
+                    marketImageRepository.delete(existingMarketImage);
+                }
+            }
 
-        // DB에 없는 사진 저장
-        for (String imageUrl : imageUrls) {
-            if (!existingMarketImageUrls.contains(imageUrl)) {
+            // 기존에 저장된 가게 사진이 없는 경우,
+        } else {
+            for (String imageUrl : imageUrls) {
                 MarketImage updateImage = MarketImage.builder()
                         .market(market)
                         .imageUrl(imageUrl)
                         .build();
                 marketImageRepository.save(updateImage);
-            }
-        }
-
-        // 새로 추가된 리스트에 없는 이미지는 삭제
-        for (MarketImage existingMarketImage : existingMarketImages) {
-            if (!imageUrls.contains(existingMarketImage.getImageUrl())) {
-                marketImageRepository.delete(existingMarketImage);
             }
         }
     }
