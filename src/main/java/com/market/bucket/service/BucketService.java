@@ -167,8 +167,16 @@ public class BucketService {
         bucket.plusCount(count);
     }
 
-    private void deleteBucketProduct(Long memberId, Long marketId) {
-        List<Long> deleteBucketId = bucketRepository.findAllIdByMarketIdAndMemberId(memberId, marketId);
-        bucketRepository.deleteByIdIn(deleteBucketId);
+    @Transactional
+    public void deleteBucketProduct(Long memberId, Long productId) {
+
+        Bucket bucket = bucketRepository.findByMemberIdAndProductId(memberId, productId)
+                .orElseThrow(() -> new BucketException(NOT_FOUND));
+        Product product = productRepository.findByProductIdWithPessimisticWrite(bucket.getProduct().getId())
+                .orElseThrow(() -> new ProductException(NOT_FOUND_PRODUCT_ID));
+
+        product.updateProductStock(bucket.getCount());
+        bucketRepository.deleteByIdIn(List.of(bucket.getId()));
+
     }
 }
