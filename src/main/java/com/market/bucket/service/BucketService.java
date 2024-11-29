@@ -50,7 +50,7 @@ public class BucketService {
      * @param memberId
      * @return
      */
-    @Transactional(readOnly = true)
+    @Transactional
     public BucketProductResponse findBucket(Long memberId) {
 
         // 회원의 장바구니 상품들을 조회
@@ -79,7 +79,7 @@ public class BucketService {
      * @param memberId
      * @return
      */
-    @Transactional(readOnly = true)
+    @Transactional
     public boolean discriminateBucket(Long marketId, Long memberId) {
 
         // 회원의 장바구니 상품들을 조회
