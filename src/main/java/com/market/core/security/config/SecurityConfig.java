@@ -130,6 +130,7 @@ public class SecurityConfig {
                 antMatcher(POST, "/markets/{marketId}/likes"), // 가게 찜 상태 변경하기
 
                 // 장바구니
+                antMatcher(DELETE, "/buckets"), // 장바구니 삭제
                 antMatcher(GET, "/buckets"), // 장바구니 조회
                 antMatcher(GET, "/buckets/markets/{marketId}"), //  장바구니 다른 가게 상품 여부 확인
                 antMatcher(POST, "/buckets/markets/{marketId}"), // 장바구니 상품 추가
