@@ -1,5 +1,6 @@
 package com.market.member.entity;
 
+import com.market.member.dto.request.MemberUpdateRequest;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -31,9 +32,6 @@ public class Member {
     @Column(name = "name")
     private String name; // 사용자 이름
 
-    @Column(name = "profile_image_url")
-    private String profileImageUrl; // 프로필 이미지 URL
-
     @Column(name = "roles")
     @Enumerated(EnumType.STRING)
     private RolesType roles; // 권한
@@ -49,4 +47,8 @@ public class Member {
         this.deviceTokenCreatedAt = LocalDateTime.now();
     }
 
+    // 회원 가입 시 정보 업데이트
+    public void updateMember(MemberUpdateRequest memberUpdateRequest) {
+        this.name = memberUpdateRequest.getName();
+    }
 }

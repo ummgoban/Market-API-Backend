@@ -2,7 +2,7 @@ package com.market.orders.controller;
 
 
 import com.market.core.response.BfResponse;
-import com.market.orders.dto.response.MarketOrdersResponse;
+import com.market.orders.dto.response.OrdersResponse;
 import com.market.orders.service.OrdersReadService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -34,8 +34,8 @@ public class OrdersReadController {
             @ApiResponse(responseCode = "200", description = "주문 상세 목록 조회 성공", useReturnTypeSchema = true)
     })
     @GetMapping("/{orderId}")
-    public ResponseEntity<BfResponse<MarketOrdersResponse>> getMarketOrders(
-            @Parameter(description = "주문번호") @PathVariable("orderId") Long orderId) {
+    public ResponseEntity<BfResponse<OrdersResponse>> getMarketOrders(
+            @Parameter(description = "주문번호") @PathVariable("orderId") String orderId) {
         return ResponseEntity.ok(new BfResponse<>(ordersReadService.getOrder(orderId)));
     }
 }

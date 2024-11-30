@@ -36,6 +36,8 @@ out/
 ### VS Code ###
 .vscode/
 
-
 ### 루트 경로의 env 파일
 /.env
+
+### Firebase FCM secret key ###
+src/main/resources/fcm-secret.json

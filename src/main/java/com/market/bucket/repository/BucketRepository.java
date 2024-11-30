@@ -2,12 +2,13 @@ package com.market.bucket.repository;
 
 import com.market.bucket.dto.server.BucketProductDto;
 import com.market.bucket.entity.Bucket;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
+import jakarta.persistence.LockModeType;
+import jakarta.persistence.QueryHint;
+import org.springframework.data.jpa.repository.*;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * 장바구니 도메인의 Repository 입니다.
@@ -18,12 +19,15 @@ public interface BucketRepository extends JpaRepository<Bucket, Long> {
      * @param memberId bucket, product 테이블을 조인 후, memberId 값으로 필터링
      * @return
      */
+    @Lock(value = LockModeType.PESSIMISTIC_WRITE)
+    @QueryHints({@QueryHint(name = "product lock timeout in bucket", value = "3000")}) // 락 휙득을 위해 3초까지 대기
     @Query("select new com.market.bucket.dto.server.BucketProductDto(" +
             "product.id," +
             "product.name," +
             "product.productImage," +
             "product.originPrice," +
             "product.discountPrice," +
+            "product.stock," +
             "bucket.count) " +
             "from Bucket bucket " +
             "inner join Product product on bucket.product.id = product.id " +
@@ -36,8 +40,9 @@ public interface BucketRepository extends JpaRepository<Bucket, Long> {
      * @param productId
      * @return
      */
-    @Query("select b from Bucket b where b.product.id in :products")
-    List<Bucket> findByProductIdIn(@Param("products") List<Long> productId);
+    @Query("select b from Bucket b where b.member.id = :memberId and b.product.id in :products")
+    List<Bucket> findByMemberIdAndProductIdIn(@Param("memberId") Long memberId,
+                                              @Param("products") List<Long> productId);
 
     /**
      * 회원의 장바구니 정보를 조회
@@ -64,9 +69,18 @@ public interface BucketRepository extends JpaRepository<Bucket, Long> {
 
     /**
      * list id 에 해당하는 pk 값을 가진, bucket 튜플을 삭제
+     *
      * @param idList
      */
     @Modifying
     @Query("delete from Bucket bucket where bucket.id in :idList")
     void deleteByIdIn(@Param("idList") List<Long> idList);
+
+    /**
+     * 고객 ID, 상품 ID로 버킷 조회
+     * @param memberId
+     * @param productId
+     * @return
+     */
+    Optional<Bucket> findByMemberIdAndProductId(Long memberId, Long productId);
 }

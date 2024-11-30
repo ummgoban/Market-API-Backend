@@ -6,6 +6,7 @@ import com.market.core.s3.dto.response.ImageUrlResponse;
 import com.market.core.s3.service.ImageUrlService;
 import com.market.core.security.principal.PrincipalDetails;
 import com.market.product.dto.request.ProductCreateRequest;
+import com.market.product.dto.request.ProductStockUpdateRequest;
 import com.market.product.dto.request.ProductUpdateRequest;
 import com.market.product.dto.response.ProductResponse;
 import com.market.product.service.ProductService;
@@ -61,7 +62,7 @@ public class ProductController {
             @ApiResponse(responseCode = "200", description = "S3 상품 사진 삭제 성공",
                     content = @Content(examples = @ExampleObject(value = "{ \"code\": 200, \"message\": \"정상 처리되었습니다.\" }")))
     })
-    @DeleteMapping( "/images")
+    @DeleteMapping("/images")
     public ResponseEntity<BfResponse<GlobalSuccessCode>> deleteProductImage(
             @Parameter(description = "사진 URL입니다.", example = "https://.../ecc84...203.png")
             @RequestParam("imageUrl") String imageUrl
@@ -80,7 +81,7 @@ public class ProductController {
     @PostMapping()
     public ResponseEntity<BfResponse<GlobalSuccessCode>> createProduct(
             @AuthenticationPrincipal PrincipalDetails principalDetails,
-            @RequestParam Long marketId,
+            @Parameter(description = "마켓 ID") @RequestParam("marketId") Long marketId,
             @RequestBody ProductCreateRequest productCreateRequest) {
         productService.createProduct(Long.parseLong(principalDetails.getUsername()), marketId, productCreateRequest);
         return ResponseEntity.ok(new BfResponse<>(GlobalSuccessCode.SUCCESS));
@@ -96,7 +97,7 @@ public class ProductController {
     })
     @GetMapping()
     public ResponseEntity<BfResponse<List<ProductResponse>>> createProduct(
-            @RequestParam Long marketId) {
+            @Parameter(description = "마켓 ID") @RequestParam Long marketId) {
         List<ProductResponse> productResponses = productService.getProducts(marketId);
         return ResponseEntity.ok(new BfResponse<>(productResponses));
     }
@@ -108,12 +109,27 @@ public class ProductController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "상품 수정 성공", useReturnTypeSchema = true),
     })
-    @PatchMapping("/{productId}")
+    @PutMapping()
     public ResponseEntity<BfResponse<GlobalSuccessCode>> updateProduct(
             @AuthenticationPrincipal PrincipalDetails principalDetails,
-            @PathVariable Long productId,
             @RequestBody ProductUpdateRequest productUpdateRequest) {
-        productService.updateProduct(Long.parseLong(principalDetails.getUsername()), productId, productUpdateRequest);
+        productService.updateProduct(Long.parseLong(principalDetails.getUsername()), productUpdateRequest);
+        return ResponseEntity.ok(new BfResponse<>(GlobalSuccessCode.SUCCESS));
+    }
+
+
+    @Operation(
+            summary = "상품 재고 수정",
+            description = "가게 사장님이 상품의 재고를 수정합니다."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "상품 재고 수정 성공", useReturnTypeSchema = true),
+    })
+    @PatchMapping()
+    public ResponseEntity<BfResponse<GlobalSuccessCode>> updateProductStock(
+            @AuthenticationPrincipal PrincipalDetails principalDetails,
+            @RequestBody ProductStockUpdateRequest productStockUpdateRequest) {
+        productService.updateProductStock(Long.parseLong(principalDetails.getUsername()), productStockUpdateRequest);
         return ResponseEntity.ok(new BfResponse<>(GlobalSuccessCode.SUCCESS));
     }
 

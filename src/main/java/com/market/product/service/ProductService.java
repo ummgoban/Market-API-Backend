@@ -7,16 +7,21 @@ import com.market.core.exception.MarketException;
 import com.market.core.exception.MemberException;
 import com.market.core.exception.ProductException;
 import com.market.market.entity.Market;
+import com.market.market.entity.Tag;
 import com.market.market.repository.MarketLikeRepository;
 import com.market.market.repository.MarketRepository;
+import com.market.market.repository.TagRepository;
 import com.market.member.entity.Member;
 import com.market.member.repository.MemberRepository;
 import com.market.product.dto.request.ProductCreateRequest;
+import com.market.product.dto.request.ProductStockUpdateRequest;
 import com.market.product.dto.request.ProductUpdateRequest;
 import com.market.product.dto.response.ProductResponse;
 import com.market.product.entity.Product;
 import com.market.product.entity.ProductStatus;
+import com.market.product.entity.ProductTag;
 import com.market.product.repository.ProductRepository;
+import com.market.product.repository.ProductTagRepository;
 import com.market.utils.fcm.FCMUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -24,6 +29,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.market.core.code.error.ProductErrorCode.UNABLE_TO_UPDATE_STOCK;
 
 @Service
 @RequiredArgsConstructor
@@ -33,6 +40,8 @@ public class ProductService {
     private final MarketRepository marketRepository;
     private final MemberRepository memberRepository;
     private final MarketLikeRepository marketLikeRepository;
+    private final TagRepository tagRepository;
+    private final ProductTagRepository productTagRepository;
 
     private final FCMUtil fcmUtil;
 
@@ -59,6 +68,34 @@ public class ProductService {
                 .stock(productCreateRequest.getStock())
                 .build();
 
+        List<Tag> marketTags = tagRepository.findAllByMarketId(marketId);
+
+        for (String name : productCreateRequest.getProductTags()) {
+
+            Tag tag;
+            boolean exist = marketTags.stream().anyMatch(marketTag -> marketTag.getName().equals(name));
+            // 기존 가게에 없던 tag인 경우,
+            if (!exist) {
+
+                tag = Tag.builder()
+                        .market(market)
+                        .name(name)
+                        .build();
+
+                tagRepository.save(tag);
+            } else {
+                tag = marketTags.stream()
+                        .filter(marketTag -> marketTag.getName().equals(name))
+                        .findFirst()
+                        .orElseThrow(() -> new IllegalArgumentException("상품 등록 INTERNAL SERVER ERROR"));
+            }
+
+            productTagRepository.save(ProductTag.builder()
+                    .product(product)
+                    .tag(tag)
+                    .build());
+        }
+
         productRepository.save(product);
 
         // 새로운 메뉴 업데이트 알림 전송
@@ -74,16 +111,12 @@ public class ProductService {
         List<Product> productList = productRepository.findAllByMarketId(marketId);
 
         return productList.stream()
-                .map(product -> ProductResponse.builder()
-                        .id(product.getId())
-                        .image(product.getProductImage())
-                        .name(product.getName())
-                        .originPrice(product.getOriginPrice())
-                        .discountPrice(product.getDiscountPrice())
-                        .discountRate(product.getDiscountRate())
-                        .productStatus(product.getProductStatus())
-                        .stock(product.getStock())
-                        .build())
+                .map(product -> {
+
+                    List<Tag> tags = tagRepository.findAllByProductId(product.getId());
+                    return ProductResponse.from(product, tags);
+
+                })
                 .collect(Collectors.toList());
     }
 
@@ -91,20 +124,84 @@ public class ProductService {
      * 상품을 수정합니다.
      */
     @Transactional
-    public void updateProduct(Long memberId, Long productId, ProductUpdateRequest productUpdateRequest) {
-        Product product = productRepository.findById(productId)
+    public void updateProduct(Long memberId, ProductUpdateRequest productUpdateRequest) {
+        Product product = productRepository.findByProductIdWithPessimisticWrite(productUpdateRequest.getProductId())
                 .orElseThrow(() -> new ProductException(ProductErrorCode.NOT_FOUND_PRODUCT_ID));
 
-        Market market = marketRepository.findMarketByProductId(productId)
+        Market market = marketRepository.findMarketByProductId(productUpdateRequest.getProductId())
                 .orElseThrow(() -> new MarketException(MarketErrorCode.NOT_FOUND_MARKET_ID));
 
         // 가게 소유자가 맞는지 확인
         verifyOwnerOfMarket(memberId, market.getId());
 
+        // 재고가 음수가 되는 것을 방지
+        if (productUpdateRequest.getStock() < 0) {
+            throw new ProductException(UNABLE_TO_UPDATE_STOCK);
+        }
+
+        // 기존 product tag 삭제
+        productTagRepository.deleteAllByProductId(productUpdateRequest.getProductId());
+
+
+        List<String> productTagNames = productUpdateRequest.getProductTags();
+        List<Tag> marketTags = tagRepository.findAllByMarketId(product.getMarket().getId());
+
+
+        for (String name : productTagNames) {
+            boolean exist = marketTags.stream().anyMatch(productTag -> productTag.getName().equals(name));
+            // 기존 market에 있던 tag인 경우,
+            if (exist) {
+                Tag tag = marketTags.stream()
+                        .filter(marketTag -> marketTag.getName().equals(name))
+                        .findFirst()
+                        .orElseThrow(() -> new IllegalArgumentException("상품 수정 INTERNAL SERVER ERROR"));
+
+                productTagRepository.save(ProductTag.builder()
+                        .product(product)
+                        .tag(tag)
+                        .build());
+            } else {
+                // 기존 market에 없던 tag인 경우,
+                Tag tag = Tag.builder()
+                        .market(market)
+                        .name(name)
+                        .build();
+
+                tagRepository.save(tag);
+                productTagRepository.save(ProductTag.builder()
+                        .product(product)
+                        .tag(tag)
+                        .build());
+            }
+        }
+
         product.updateProduct(productUpdateRequest);
 
         // 재고 업데이트 알림 전송
         sendProductUpdatedAlarm(market);
+    }
+
+    /**
+     * 상품의 재고를 수정합니다.
+     */
+    @Transactional
+    public void updateProductStock(Long memberId, ProductStockUpdateRequest productStockUpdateRequest) {
+        Product product = productRepository.findByProductIdWithPessimisticWrite(productStockUpdateRequest.getProductId())
+                .orElseThrow(() -> new ProductException(ProductErrorCode.NOT_FOUND_PRODUCT_ID));
+
+        Market market = marketRepository.findMarketByProductId(productStockUpdateRequest.getProductId())
+                .orElseThrow(() -> new MarketException(MarketErrorCode.NOT_FOUND_MARKET_ID));
+
+        // 가게 소유자가 맞는지 확인
+        verifyOwnerOfMarket(memberId, market.getId());
+
+        // 재고가 음수가 되는 것을 방지
+        if (product.getStock() + productStockUpdateRequest.getCount() < 0) {
+            throw new ProductException(UNABLE_TO_UPDATE_STOCK);
+        }
+
+        product.updateProductStock(productStockUpdateRequest.getCount());
+
     }
 
     /**
@@ -118,6 +215,7 @@ public class ProductService {
         // 가게 소유자가 맞는지 확인
         verifyOwnerOfMarket(memberId, product.getMarket().getId());
 
+        productTagRepository.deleteAllByProductId(product.getId());
         productRepository.delete(product);
     }
 

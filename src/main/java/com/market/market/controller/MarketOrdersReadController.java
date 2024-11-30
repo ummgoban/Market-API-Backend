@@ -3,7 +3,7 @@ package com.market.market.controller;
 
 import com.market.core.response.BfResponse;
 import com.market.orders.annotation.ValidOrdersStatus;
-import com.market.orders.dto.response.MarketOrdersResponse;
+import com.market.orders.dto.response.OrdersResponse;
 import com.market.orders.entity.OrdersStatus;
 import com.market.orders.service.OrdersReadService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -43,16 +43,16 @@ public class MarketOrdersReadController {
             @ApiResponse(responseCode = "200", description = "가게의 주문 목록 조회 성공", useReturnTypeSchema = true)
     })
     @GetMapping("/orders")
-    public ResponseEntity<BfResponse<List<MarketOrdersResponse>>> getMarketOrders(
-            @Parameter(description = "주문 상태 값. [접수 대기 : ORDERED, 주문 수락(픽업 대기) : ACCEPTED, 픽업완료/취소된 주문 : PICKUPED_OR_CANCELED]")
+    public ResponseEntity<BfResponse<List<OrdersResponse>>> getMarketOrders(
+            @Parameter(description = "주문 상태 값. [접수 대기 : ORDERED, 주문 수락(픽업 대기) : ACCEPTED, 픽업완료/취소/노쇼된 주문 : PICKEDUP_OR_CANCELED]")
             @RequestParam("ordersStatus") @ValidOrdersStatus String ordersStatus,
             @Parameter(description = "가게 ID")
             @RequestParam("marketId") Long marketId) {
 
         // 픽업완료/취소된 주문 조회
-        if (ordersStatus.equals(OrdersStatus.PICKUPED_OR_CANCELED.name())) {
+        if (ordersStatus.equals(OrdersStatus.PICKEDUP_OR_CANCELED.name())) {
             return ResponseEntity.ok(new BfResponse<>(ordersReadService.getMarketOrders(
-                    new ArrayList<>(List.of(OrdersStatus.CANCELED, OrdersStatus.PICKUPED)), marketId)));
+                    new ArrayList<>(List.of(OrdersStatus.CANCELED, OrdersStatus.PICKEDUP, OrdersStatus.NO_SHOW)), marketId)));
         }
 
         // 접수 대기 or 픽업 대기 주문 조회

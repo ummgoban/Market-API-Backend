@@ -103,4 +103,44 @@ public class GlobalExceptionHandler {
         BaseErrorCode errorCode = ex.getErrorCode();
         return ResponseEntity.status(errorCode.getStatus()).body(errorCode.getErrorResponse());
     }
+
+    /**
+     * Product 관련 예외 Handler
+     */
+    @ExceptionHandler(ProductException.class)
+    protected ResponseEntity<ErrorResponse> handleProductException(ProductException ex) {
+        log.error("ProductException 발생");
+        BaseErrorCode errorCode = ex.getErrorCode();
+        return ResponseEntity.status(errorCode.getStatus()).body(errorCode.getErrorResponse());
+    }
+
+    /**
+     * Bucket 관련 예외 Handler
+     */
+    @ExceptionHandler(BucketException.class)
+    protected ResponseEntity<ErrorResponse> handleBucketException(BucketException ex) {
+        log.error("BucketException 발생");
+        BaseErrorCode errorCode = ex.getErrorCode();
+        return ResponseEntity.status(errorCode.getStatus()).body(errorCode.getErrorResponse());
+    }
+
+    /**
+     * Orders 관련 예외 Handler
+     */
+    @ExceptionHandler(OrdersException.class)
+    protected ResponseEntity<ErrorResponse> handleOrdersException(OrdersException ex) {
+        log.error("OrdersException 발생");
+        BaseErrorCode errorCode = ex.getErrorCode();
+        return ResponseEntity.status(errorCode.getStatus()).body(errorCode.getErrorResponse());
+    }
+
+    /**
+     * Payment 관련 예외 Handler
+     */
+    @ExceptionHandler(PaymentException.class)
+    protected ResponseEntity<ErrorResponse> handlePaymentException(PaymentException ex) {
+        log.error("PaymentException 발생");
+        BaseErrorCode errorCode = ex.getErrorCode();
+        return ResponseEntity.status(errorCode.getStatus()).body(errorCode.getErrorResponse());
+    }
 }

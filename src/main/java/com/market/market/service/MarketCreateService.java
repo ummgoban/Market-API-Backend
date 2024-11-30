@@ -8,7 +8,9 @@ import com.market.market.dto.request.MarketRegisterRequest;
 import com.market.market.dto.response.RegisterMarketResponse;
 import com.market.market.dto.server.NcpGeocodingInfoDto;
 import com.market.market.entity.Market;
+import com.market.market.entity.Tag;
 import com.market.market.repository.MarketRepository;
+import com.market.market.repository.TagRepository;
 import com.market.member.entity.Member;
 import com.market.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +27,9 @@ public class MarketCreateService {
     private final MemberRepository memberRepository;
     private final MarketRepository marketRepository;
     private final GeocodingService geocodingService;
+    private final TagRepository tagRepository;
+
+    private final static String DEFAULT_TAG_NAME = "기본 메뉴";
 
     /**
      * 가게 등록
@@ -53,6 +58,11 @@ public class MarketCreateService {
                 .latitude(Double.parseDouble(latitudeAndLongitude.getAddresses().get(0).getY()))
                 .longitude(Double.parseDouble(latitudeAndLongitude.getAddresses().get(0).getX()))
                 .build();
+
+        tagRepository.save(Tag.builder()
+                .market(market)
+                .name(DEFAULT_TAG_NAME)
+                .build());
 
         return RegisterMarketResponse.builder()
                 .marketId(marketRepository.save(market).getId())

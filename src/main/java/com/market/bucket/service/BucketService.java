@@ -5,6 +5,7 @@ import com.market.bucket.dto.server.BucketProductDto;
 import com.market.bucket.dto.server.BucketSaveDto;
 import com.market.bucket.entity.Bucket;
 import com.market.bucket.repository.BucketRepository;
+import com.market.core.exception.BucketException;
 import com.market.core.exception.MarketException;
 import com.market.core.exception.MemberException;
 import com.market.core.exception.ProductException;
@@ -25,9 +26,11 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static com.market.core.code.error.BucketErrorCode.NOT_FOUND;
 import static com.market.core.code.error.MarketErrorCode.*;
 import static com.market.core.code.error.MemberErrorCode.NOT_FOUND_MEMBER_ID;
 import static com.market.core.code.error.ProductErrorCode.NOT_FOUND_PRODUCT_ID;
+import static com.market.core.code.error.ProductErrorCode.STOCK_NOT_ENOUGH;
 
 @Service
 @RequiredArgsConstructor
@@ -47,7 +50,7 @@ public class BucketService {
      * @param memberId
      * @return
      */
-    @Transactional(readOnly = true)
+    @Transactional
     public BucketProductResponse findBucket(Long memberId) {
 
         // 회원의 장바구니 상품들을 조회
@@ -76,7 +79,7 @@ public class BucketService {
      * @param memberId
      * @return
      */
-    @Transactional(readOnly = true)
+    @Transactional
     public boolean discriminateBucket(Long marketId, Long memberId) {
 
         // 회원의 장바구니 상품들을 조회
@@ -110,12 +113,12 @@ public class BucketService {
         Member member = memberRepository.findById(memberId).orElseThrow(() -> new MemberException(NOT_FOUND_MEMBER_ID));
 
         // 1. 장바구니에 담고자 하는 상품의 가게와 다른 가게의 기존 장바구니 상품 >> 삭제할 튜플
-        deleteBucketProduct(memberId, marketId);
+        deleteDifferentMarketBucketProduct(memberId, marketId);
 
         // 2-1. 장바구니에 담고자 하는 상품들의 id 값을 추출
         List<Long> productsId = products.stream().map(BucketSaveDto::getId).toList();
         // 2-2. 상품 id 값들의 장바구니 튜플을 조회
-        List<Bucket> buckets = bucketRepository.findByProductIdIn(productsId);
+        List<Bucket> buckets = bucketRepository.findByMemberIdAndProductIdIn(memberId, productsId);
 
         // 2-3. 기존 장바구니 상품과 동일한 상품이 존재하는 경우, 단순 갯수를 추가한다
         if (!buckets.isEmpty()) {
@@ -153,7 +156,31 @@ public class BucketService {
         }
     }
 
-    private void deleteBucketProduct(Long memberId, Long marketId) {
+    @Transactional
+    public void updateBucketProduct(Long memberId, Long productId, Integer count) {
+        Bucket bucket = bucketRepository.findByMemberIdAndProductId(memberId, productId).orElseThrow(() -> new BucketException(NOT_FOUND));
+
+        Product product = productRepository.findByProductIdWithPessimisticWrite(productId).orElseThrow(() -> new ProductException(NOT_FOUND_PRODUCT_ID));
+        if (product.getStock() < count) {
+            throw new ProductException(STOCK_NOT_ENOUGH);
+        }
+        bucket.plusCount(count);
+    }
+
+    @Transactional
+    public void deleteBucketProduct(Long memberId, Long productId) {
+
+        Bucket bucket = bucketRepository.findByMemberIdAndProductId(memberId, productId)
+                .orElseThrow(() -> new BucketException(NOT_FOUND));
+        Product product = productRepository.findByProductIdWithPessimisticWrite(bucket.getProduct().getId())
+                .orElseThrow(() -> new ProductException(NOT_FOUND_PRODUCT_ID));
+
+        product.updateProductStock(bucket.getCount());
+        bucketRepository.deleteByIdIn(List.of(bucket.getId()));
+
+    }
+
+    private void deleteDifferentMarketBucketProduct(Long memberId, Long marketId) {
         List<Long> deleteBucketId = bucketRepository.findAllIdByMarketIdAndMemberId(memberId, marketId);
         bucketRepository.deleteByIdIn(deleteBucketId);
     }
