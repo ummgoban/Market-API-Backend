@@ -1,5 +1,6 @@
 package com.market.orders.service;
 
+import com.market.bucket.repository.BucketRepository;
 import com.market.core.code.error.PaymentErrorCode;
 import com.market.core.exception.MemberException;
 import com.market.core.exception.OrdersException;
@@ -25,7 +26,6 @@ import static com.market.core.code.error.MemberErrorCode.NOT_FOUND_MEMBER_ID;
 import static com.market.core.code.error.OrdersErrorCode.NOT_FOUND_ORDERS_ID;
 import static com.market.core.code.error.PaymentErrorCode.INVALID_ORDERS_ID_AND_AMOUNT;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PaymentService {
@@ -33,6 +33,7 @@ public class PaymentService {
     private final MemberRepository memberRepository;
     private final OrdersRepository ordersRepository;
     private final PaymentRepository paymentRepository;
+    private final BucketRepository bucketRepository;
 
     private final TossPaymentService tossPaymentService;
 
@@ -41,14 +42,6 @@ public class PaymentService {
 
         Member member = memberRepository.findById(memberId).orElseThrow(() -> new MemberException(NOT_FOUND_MEMBER_ID));
         Orders orders = ordersRepository.findById(ordersId).orElseThrow(() -> new OrdersException(NOT_FOUND_ORDERS_ID));
-
-        log.info("paymentKey = " + paymentKey);
-
-        log.info("수신한 ordersId = " + ordersId);
-        log.info("기존 저장된 ordersId = " + orders.getId());
-
-        log.info("수신한 금액 = " + amount);
-        log.info("기존 저장된 주문 금액 = " + orders.getOrdersPrice());
 
         if (!Objects.equals(orders.getOrdersPrice(), amount)) {
             throw new PaymentException(INVALID_ORDERS_ID_AND_AMOUNT);
@@ -66,6 +59,9 @@ public class PaymentService {
                 .build());
 
         orders.updateOrdersStatus(OrdersStatus.ORDERED);
+
+        // 회원의 장바구니 비우기
+        bucketRepository.deleteByMemberId(member.getId());
     }
 
 }

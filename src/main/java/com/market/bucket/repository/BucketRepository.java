@@ -45,14 +45,6 @@ public interface BucketRepository extends JpaRepository<Bucket, Long> {
                                               @Param("products") List<Long> productId);
 
     /**
-     * 회원의 장바구니 정보를 조회
-     *
-     * @param memberId
-     * @return
-     */
-    List<Bucket> findAllByMemberId(Long memberId);
-
-    /**
      * 회원의 장바구니 상품 중, marketId와 다른 가게의 상품의 장바구니 튜플 조회
      *
      * @param memberId
@@ -78,9 +70,18 @@ public interface BucketRepository extends JpaRepository<Bucket, Long> {
 
     /**
      * 고객 ID, 상품 ID로 버킷 조회
+     *
      * @param memberId
      * @param productId
      * @return
      */
     Optional<Bucket> findByMemberIdAndProductId(Long memberId, Long productId);
+
+    /**
+     * 회원의 장바구니 상품들을 모두 삭제
+     * @param memberId
+     */
+    @Modifying
+    @Query("delete from Bucket bucket where bucket.member.id = :memberId")
+    void deleteByMemberId(@Param("memberId") Long memberId);
 }
