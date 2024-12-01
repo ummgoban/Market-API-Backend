@@ -60,7 +60,7 @@ public class PaymentService {
                 .id(paymentKey)
                 .orders(orders)
                 .member(member)
-                .approvedAt(LocalDateTime.parse(paymentInfoResponseDto.getApprovedAt()))
+                .approvedAt(LocalDateTime.parse(paymentInfoResponseDto.getApprovedAt().substring(0, 19)))
                 .totalAmount(paymentInfoResponseDto.getTotalAmount())
                 .method(PaymentMethod.getFromString(paymentInfoResponseDto.getMethod()))
                 .build());
