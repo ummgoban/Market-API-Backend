@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 import static com.market.core.code.error.MemberErrorCode.NOT_FOUND_MEMBER_ID;
 import static com.market.core.code.error.OrdersErrorCode.NOT_FOUND_ORDERS_ID;
@@ -47,7 +48,7 @@ public class PaymentService {
         log.info("수신한 금액 = " + amount);
         log.info("기존 저장된 주문 금액 = " + orders.getOrdersPrice());
 
-        if (orders.getOrdersPrice() != amount) {
+        if (!Objects.equals(orders.getOrdersPrice(), amount)) {
             throw new PaymentException(INVALID_ORDERS_ID_AND_AMOUNT);
         }
         // 토스에 결제 승인 요청
