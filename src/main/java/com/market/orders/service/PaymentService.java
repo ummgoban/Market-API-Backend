@@ -42,6 +42,8 @@ public class PaymentService {
         Member member = memberRepository.findById(memberId).orElseThrow(() -> new MemberException(NOT_FOUND_MEMBER_ID));
         Orders orders = ordersRepository.findById(ordersId).orElseThrow(() -> new OrdersException(NOT_FOUND_ORDERS_ID));
 
+        log.info("paymentKey = " + paymentKey);
+
         log.info("수신한 ordersId = " + ordersId);
         log.info("기존 저장된 ordersId = " + orders.getId());
 
