@@ -37,7 +37,7 @@ public class TossPaymentService {
                 .baseUrl(PAYMENT_CONFIRM_URL)
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, "application/json")
                 .defaultHeader(HttpHeaders.AUTHORIZATION, "Basic " + encodeTossSecret(tossPaymentSecret))
-                .defaultHeader("Idempotency-Key", tossPaymentIdempotency)
+//                .defaultHeader("Idempotency-Key", tossPaymentIdempotency)
                 .build();
 
         PaymentInfoResponseDto paymentInfoResponseDto = webClient.post()
