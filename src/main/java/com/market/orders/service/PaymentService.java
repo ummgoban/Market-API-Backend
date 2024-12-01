@@ -1,7 +1,9 @@
 package com.market.orders.service;
 
+import com.market.core.code.error.PaymentErrorCode;
 import com.market.core.exception.MemberException;
 import com.market.core.exception.OrdersException;
+import com.market.core.exception.PaymentException;
 import com.market.member.entity.Member;
 import com.market.member.repository.MemberRepository;
 import com.market.orders.dto.server.PaymentInfoResponseDto;
@@ -19,6 +21,7 @@ import java.time.LocalDateTime;
 
 import static com.market.core.code.error.MemberErrorCode.NOT_FOUND_MEMBER_ID;
 import static com.market.core.code.error.OrdersErrorCode.NOT_FOUND_ORDERS_ID;
+import static com.market.core.code.error.PaymentErrorCode.INVALID_ORDERS_ID_AND_AMOUNT;
 
 @Service
 @RequiredArgsConstructor
@@ -33,11 +36,14 @@ public class PaymentService {
     @Transactional
     public void confirmPayment(Long memberId, String paymentKey, String ordersId, Integer amount) {
 
-        // 토스에 결제 승인 요청
-        PaymentInfoResponseDto paymentInfoResponseDto = tossPaymentService.confirmPayment(paymentKey, ordersId, amount);
-
         Member member = memberRepository.findById(memberId).orElseThrow(() -> new MemberException(NOT_FOUND_MEMBER_ID));
         Orders orders = ordersRepository.findById(ordersId).orElseThrow(() -> new OrdersException(NOT_FOUND_ORDERS_ID));
+
+        if (orders.getOrdersPrice() != amount) {
+            throw new PaymentException(INVALID_ORDERS_ID_AND_AMOUNT);
+        }
+        // 토스에 결제 승인 요청
+        PaymentInfoResponseDto paymentInfoResponseDto = tossPaymentService.confirmPayment(paymentKey, ordersId, amount);
 
         paymentRepository.save(Payment.builder()
                 .id(paymentKey)
@@ -50,4 +56,5 @@ public class PaymentService {
 
         orders.updateOrdersStatus(OrdersStatus.ORDERED);
     }
+
 }

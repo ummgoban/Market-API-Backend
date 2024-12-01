@@ -40,6 +40,7 @@ public enum PaymentErrorCode implements BaseErrorCode {
     REJECT_ACCOUNT_PAYMENT(400, "잔액부족으로 결제에 실패했습니다.", HttpStatus.BAD_REQUEST),
     REJECT_CARD_PAYMENT(400, "한도초과 혹은 잔액부족으로 결제에 실패했습니다.", HttpStatus.BAD_REQUEST),
     INVALID_PASSWORD(400, "결제 비밀번호가 일치하지 않습니다.", HttpStatus.BAD_REQUEST),
+    INVALID_ORDERS_ID_AND_AMOUNT(400, "기존 생성된 주문 가격과 결제 시, 요청한 주문 가격이 불일치합니다.", HttpStatus.BAD_REQUEST),
 
 
     UNAUTHORIZED_KEY(401, "인증되지 않은 시크릿 키 혹은 클라이언트 키 입니다.", HttpStatus.UNAUTHORIZED),
@@ -67,7 +68,7 @@ public enum PaymentErrorCode implements BaseErrorCode {
     INCORRECT_BASIC_AUTH_FORMAT(500, "잘못된 요청입니다. ':' 를 포함해 인코딩해주세요.", HttpStatus.INTERNAL_SERVER_ERROR),
     UNKNOWN_PAYMENT_ERROR(500, "결제에 실패했어요. 같은 문제가 반복된다면 은행이나 카드사로 문의해주세요.", HttpStatus.INTERNAL_SERVER_ERROR),
 
-    Payment_Method_NOT_FOUND(500,"일치하는 결제 방법이 없습니다.",HttpStatus.INTERNAL_SERVER_ERROR);
+    Payment_Method_NOT_FOUND(500, "일치하는 결제 방법이 없습니다.", HttpStatus.INTERNAL_SERVER_ERROR);
 
     private final int errorCode;
     private final String errorMessage;
