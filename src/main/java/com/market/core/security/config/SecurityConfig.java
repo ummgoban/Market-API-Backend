@@ -118,6 +118,8 @@ public class SecurityConfig {
                 antMatcher(GET, "/members/markets"), // 가게 목록 조회
                 antMatcher(GET, "/members/markets/likes"), // 회원 가게 찜 목록 조회
                 antMatcher(PATCH, "/members"), // 회원 정보 수정
+                antMatcher(POST, "/members/device-token"), // 기기 등록 토큰 저장
+                antMatcher(DELETE, "/members/device-token"), // 기기 등록 토큰 삭제
                 antMatcher(GET, "/members/profiles"), // 회원 정보 수정
 
                 // 가게
@@ -131,6 +133,7 @@ public class SecurityConfig {
 
                 // 장바구니
                 antMatcher(DELETE, "/buckets"), // 장바구니 삭제
+                antMatcher(PATCH, "/buckets"), // 장바구니 재고 수정
                 antMatcher(GET, "/buckets"), // 장바구니 조회
                 antMatcher(GET, "/buckets/markets/{marketId}"), //  장바구니 다른 가게 상품 여부 확인
                 antMatcher(POST, "/buckets/markets/{marketId}"), // 장바구니 상품 추가
@@ -177,9 +180,6 @@ public class SecurityConfig {
 
                 // AWS Health Check
                 antMatcher(GET, "utils/health"),
-
-                // 회원
-                antMatcher(POST, "/members/device-token"), // 기기 등록 토큰 저장
 
                 // 토큰
                 antMatcher(POST, "/auth/accessToken"), // OAuth AccessToken 발급
