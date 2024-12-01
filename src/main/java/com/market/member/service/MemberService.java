@@ -30,6 +30,15 @@ public class MemberService {
     }
 
     @Transactional
+    public void deleteDeviceToken(Long memberId) {
+
+        Member member = memberRepository.findById(memberId).
+                orElseThrow(() -> new MemberException(NOT_FOUND_MEMBER_ID));
+
+        member.deleteDeviceToken();
+    }
+
+    @Transactional
     public void updateMember(Long memberId, MemberUpdateRequest memberUpdateRequest) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberException(NOT_FOUND_MEMBER_ID));

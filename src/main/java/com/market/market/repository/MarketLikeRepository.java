@@ -17,6 +17,6 @@ public interface MarketLikeRepository extends JpaRepository<MarketLike, Long> {
 
     boolean existsByMemberAndMarket(Member member, Market market);
 
-    @Query("select distinct m.deviceToken from MarketLike ml inner join Member m on ml.member.id = m.id where ml.market.id = :marketId")
+    @Query("select distinct m.deviceToken from MarketLike ml inner join Member m on ml.member.id = m.id where ( ml.market.id = :marketId and m.deviceToken is not null )")
     List<String> findMemberDeviceTokens(@Param("marketId") Long marketId);
 }

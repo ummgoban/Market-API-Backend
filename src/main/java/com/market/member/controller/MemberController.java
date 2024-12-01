@@ -48,6 +48,21 @@ public class MemberController {
     }
 
     @Operation(
+            summary = "회원 기기 등록 토큰 삭제",
+            description = "회원 기기 등록 토큰 삭제입니다."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "회원 기기 등록 토큰 삭제 성공")
+    })
+    @DeleteMapping("/device-token")
+    public ResponseEntity<BfResponse<Void>> deleteDeviceToken(@AuthenticationPrincipal PrincipalDetails principalDetails) {
+
+        memberService.deleteDeviceToken(Long.parseLong(principalDetails.getUsername()));
+
+        return ResponseEntity.ok(new BfResponse<>(GlobalSuccessCode.SUCCESS));
+    }
+
+    @Operation(
             summary = "회원 정보 수정",
             description = "회원 정보를 수정합니다."
     )
