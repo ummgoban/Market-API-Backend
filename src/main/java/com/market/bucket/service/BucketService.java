@@ -128,7 +128,11 @@ public class BucketService {
                         .filter(bucketSaveDto -> Objects.equals(bucketSaveDto.getId(), bucket.getProduct().getId()))
                         .findAny()
                         .orElse(null);
-                // 기존 장바구니 상품의 갯수를 수정
+                // 재고 유효성 검증 및 기존 장바구니 상품의 갯수를 수정
+                Product product = productRepository.findById(bucket.getProduct().getId()).orElseThrow(() -> new ProductException(NOT_FOUND_PRODUCT_ID));
+                if (product.getStock() < dto.getCount()) {
+                    throw new BucketException(NOT_FOUND);
+                }
                 bucket.plusCount(dto.getCount());
             }
         }

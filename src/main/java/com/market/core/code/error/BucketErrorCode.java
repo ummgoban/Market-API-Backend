@@ -11,7 +11,8 @@ import org.springframework.http.HttpStatus;
 @Getter
 public enum BucketErrorCode implements BaseErrorCode {
 
-    NOT_FOUND(404, "존재하지 않는 버킷입니다.", HttpStatus.NOT_FOUND);
+    NOT_FOUND(404, "존재하지 않는 버킷입니다.", HttpStatus.NOT_FOUND),
+    NOT_ENOUGH_STOCK(400, "상품 재고가 부족합니다.", HttpStatus.BAD_REQUEST);
 
     private final int errorCode;
     private final String errorMessage;
