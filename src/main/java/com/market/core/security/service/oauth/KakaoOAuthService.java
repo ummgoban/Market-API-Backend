@@ -90,6 +90,7 @@ public class KakaoOAuthService implements OAuthService {
                 .oauthId(String.valueOf(userinfo.getOauthId()))
                 .provider(ProviderType.KAKAO)
                 .name(userinfo.getKakaoAccount().getProfile().getName())
+                .profileImageUrl(userinfo.getKakaoAccount().getProfile().getProfileImageUrl())
                 .roles(oAuthLoginRequest.getRoles())
                 .build();
     }
