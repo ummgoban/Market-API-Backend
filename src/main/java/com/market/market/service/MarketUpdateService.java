@@ -51,7 +51,7 @@ public class MarketUpdateService {
     private void updateMarketImages(Market market, List<String> imageUrls) {
 
         // 수정 요청이 모든 이미지 삭제인 경우,
-        if (imageUrls.isEmpty()) {
+        if (imageUrls == null || imageUrls.isEmpty()) {
             marketImageRepository.deleteByMarketId(market.getId());
             return;
         }
