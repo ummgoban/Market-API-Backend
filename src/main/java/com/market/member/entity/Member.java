@@ -38,9 +38,6 @@ public class Member {
     @Enumerated(EnumType.STRING)
     private RolesType roles; // 권한
 
-    @Column(name = "profile_image_url")
-    private String profileImageUrl; // 프로필 이미지 URL
-
     @Column(name = "device_token")
     private String deviceToken;
 

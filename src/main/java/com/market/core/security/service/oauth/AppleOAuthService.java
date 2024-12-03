@@ -39,12 +39,10 @@ public class AppleOAuthService implements OAuthService {
     public MemberLoginDto getUserInfo(OAuthLoginRequest oAuthLoginRequest) {
         JWTClaimsSet claims = verifyAndParseIdToken(oAuthLoginRequest.getAccessToken());
         String oauthId = claims.getSubject();
-        String randomName = RandomNameGeneratorUtil.generateRandomName();
 
         return MemberLoginDto.builder()
                 .oauthId(oauthId)
                 .provider(ProviderType.APPLE)
-                .name(randomName)
                 .roles(oAuthLoginRequest.getRoles())
                 .build();
     }
