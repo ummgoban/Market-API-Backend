@@ -49,6 +49,13 @@ public class MarketUpdateService {
      * 가게 사진을 업데이트합니다.
      */
     private void updateMarketImages(Market market, List<String> imageUrls) {
+
+        // 수정 요청이 모든 이미지 삭제인 경우,
+        if (imageUrls.isEmpty()) {
+            marketImageRepository.deleteByMarketId(market.getId());
+            return;
+        }
+
         // 기존 사진 List 조회
         List<MarketImage> existingMarketImages = marketImageRepository.findAllByMarketId(market.getId());
 
