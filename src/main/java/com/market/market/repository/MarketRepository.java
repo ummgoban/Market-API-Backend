@@ -19,7 +19,10 @@ public interface MarketRepository extends JpaRepository<Market, Long>, MarketPag
     boolean existsByBusinessNumber(String businessNumber);
 
     List<Market> findAllByMemberId(Long memberId);
-  
+
     @Query("select m from Product p inner join Market m on p.market.id = m.id where p.id = :productId")
     Optional<Market> findMarketByProductId(@Param("productId") Long productId);
+
+    @Query("select m from Market m inner join Orders o on m.id = o.market.id where o.id = :ordersId")
+    Optional<Market> findMarketByOrdersId(@Param("ordersId") String ordersId);
 }
