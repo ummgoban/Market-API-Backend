@@ -12,11 +12,10 @@ import com.market.member.entity.Member;
 import com.market.member.repository.MemberRepository;
 import com.market.orders.dto.request.OrdersCreateRequestDto;
 import com.market.orders.dto.response.OrdersCreateResponseDto;
-import com.market.orders.entity.Orders;
-import com.market.orders.entity.OrdersProduct;
-import com.market.orders.entity.OrdersStatus;
+import com.market.orders.entity.*;
 import com.market.orders.repository.OrdersProductRepository;
 import com.market.orders.repository.OrdersRepository;
+import com.market.orders.repository.PaymentRepository;
 import com.market.product.entity.Product;
 import com.market.product.repository.ProductRepository;
 import com.market.utils.random.OrdersIdUtils;
@@ -44,6 +43,7 @@ public class OrdersCreateService {
     private final ProductRepository productRepository;
     private final OrdersProductRepository ordersProductRepository;
     private final OrdersRepository ordersRepository;
+    private final PaymentRepository paymentRepository;
 
     private final OrdersIdUtils ordersIdUtils;
 
@@ -83,12 +83,20 @@ public class OrdersCreateService {
                 .pickupReservedAt(ordersCreateRequestDto.getPickupReservedAt())
                 .ordersPrice(totalPrice)
                 .doneAt(null)
-                .ordersStatus(OrdersStatus.IN_PROGRESS)
+//                .ordersStatus(OrdersStatus.IN_PROGRESS)
+                .ordersStatus(OrdersStatus.ACCEPTED)
                 .customerRequest(ordersCreateRequestDto.getCustomerRequest())
                 .ordersName(ordersName)
                 .build();
 
         ordersRepository.save(orders);
+        paymentRepository.save(Payment.builder()
+                .orders(orders)
+                .member(member)
+                .approvedAt(LocalDateTime.now())
+                .totalAmount(totalPrice)
+                .method(PaymentMethod.PICKUP)
+                .build());
 
         // 주문 상품 생성
         for (BucketProductDto bucketProductDto : bucketProducts) {
