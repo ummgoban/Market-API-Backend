@@ -90,7 +90,12 @@ public class OrdersCreateService {
                 .build();
 
         ordersRepository.save(orders);
+
+        /**
+         * 토스 페이먼츠 연동 후, 삭제할 부분
+         */
         paymentRepository.save(Payment.builder()
+                .id(ordersIdUtils.generateOrdersId())
                 .orders(orders)
                 .member(member)
                 .approvedAt(LocalDateTime.now())
