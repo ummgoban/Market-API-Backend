@@ -109,12 +109,22 @@ public class OrdersCreateService {
             Product product = productRepository.findById(bucketProductDto.getId())
                     .orElseThrow(() -> new ProductException(NOT_FOUND_PRODUCT_ID));
 
+            /**
+             * 토스 페이먼츠 연동 후, 삭제할 부분
+             */
+            product.updateProductStock(-bucketProductDto.getCount());
+
             ordersProductRepository.save(OrdersProduct.builder()
                     .orders(orders)
                     .product(product)
                     .count(bucketProductDto.getCount())
                     .build());
         }
+
+        /**
+         * 토스 페이먼츠 연동 후, 삭제할 부분
+         */
+        bucketRepository.deleteByMemberId(memberId);
 
         return OrdersCreateResponseDto.builder()
                 .ordersId(orders.getId())
