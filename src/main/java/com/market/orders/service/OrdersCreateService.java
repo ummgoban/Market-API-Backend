@@ -84,7 +84,7 @@ public class OrdersCreateService {
                 .ordersPrice(totalPrice)
                 .doneAt(null)
 //                .ordersStatus(OrdersStatus.IN_PROGRESS)
-                .ordersStatus(OrdersStatus.ACCEPTED)
+                .ordersStatus(OrdersStatus.ORDERED)
                 .customerRequest(ordersCreateRequestDto.getCustomerRequest())
                 .ordersName(ordersName)
                 .build();
