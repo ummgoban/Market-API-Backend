@@ -18,6 +18,7 @@ import com.market.orders.repository.OrdersRepository;
 import com.market.orders.repository.PaymentRepository;
 import com.market.product.entity.Product;
 import com.market.product.repository.ProductRepository;
+import com.market.utils.fcm.FCMUtil;
 import com.market.utils.random.OrdersIdUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -46,6 +47,7 @@ public class OrdersCreateService {
     private final PaymentRepository paymentRepository;
 
     private final OrdersIdUtils ordersIdUtils;
+    private final FCMUtil fcmUtil;
 
     @Transactional
     public OrdersCreateResponseDto createOrders(Long memberId, OrdersCreateRequestDto ordersCreateRequestDto) {
@@ -125,6 +127,9 @@ public class OrdersCreateService {
          * 토스 페이먼츠 연동 후, 삭제할 부분
          */
         bucketRepository.deleteByMemberId(memberId);
+
+        // 사장님께 알림 보내기
+        fcmUtil.sendOrdersCreatedAlarms(List.of(market.getMember().getDeviceToken()));
 
         return OrdersCreateResponseDto.builder()
                 .ordersId(orders.getId())
