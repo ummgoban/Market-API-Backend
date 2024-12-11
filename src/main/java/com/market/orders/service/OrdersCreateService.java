@@ -2,6 +2,7 @@ package com.market.orders.service;
 
 import com.market.bucket.dto.server.BucketProductDto;
 import com.market.bucket.repository.BucketRepository;
+import com.market.core.code.error.MemberErrorCode;
 import com.market.core.exception.MarketException;
 import com.market.core.exception.MemberException;
 import com.market.core.exception.OrdersException;
@@ -131,9 +132,14 @@ public class OrdersCreateService {
         bucketRepository.deleteByMemberId(memberId);
 
         // 사장님께 알림 보내기
+        Member master = memberRepository.findMemberByMarketId(market.getId())
+                .orElseThrow(() -> new MemberException(NOT_FOUND_MEMBER_ID));
 
-        String token = market.getMember().getDeviceToken();
+        String token = master.getDeviceToken();
+        Long id = master.getId();
+
         log.info("토근 값 ===== {}", token);
+        log.info("아이디 값 ===== {}", id);
 
         fcmUtil.sendOrdersCreatedAlarms(List.of(token));
 
