@@ -21,6 +21,7 @@ import com.market.product.repository.ProductRepository;
 import com.market.utils.fcm.FCMUtil;
 import com.market.utils.random.OrdersIdUtils;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,6 +35,7 @@ import static com.market.core.code.error.OrdersErrorCode.ORDERS_CREATE_METHOD_NO
 import static com.market.core.code.error.ProductErrorCode.NOT_FOUND_PRODUCT_ID;
 
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class OrdersCreateService {
@@ -129,7 +131,11 @@ public class OrdersCreateService {
         bucketRepository.deleteByMemberId(memberId);
 
         // 사장님께 알림 보내기
-        fcmUtil.sendOrdersCreatedAlarms(List.of(market.getMember().getDeviceToken()));
+
+        String token = market.getMember().getDeviceToken();
+        log.info("토근 값 ===== {}", token);
+
+        fcmUtil.sendOrdersCreatedAlarms(List.of(token));
 
         return OrdersCreateResponseDto.builder()
                 .ordersId(orders.getId())
