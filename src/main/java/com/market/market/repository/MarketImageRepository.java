@@ -2,6 +2,7 @@ package com.market.market.repository;
 
 import com.market.market.entity.MarketImage;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -14,4 +15,8 @@ public interface MarketImageRepository extends JpaRepository<MarketImage, Long> 
 
     @Query("select m from MarketImage m where m.market.id = :id")
     List<MarketImage> findAllByMarketId(@Param("id") Long marketId);
+
+    @Modifying
+    @Query("delete from MarketImage m where m.id = :marketId")
+    void deleteByMarketId(@Param("marketId") Long marketId);
 }

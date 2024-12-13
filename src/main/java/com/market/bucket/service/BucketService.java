@@ -26,6 +26,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static com.market.core.code.error.BucketErrorCode.NOT_ENOUGH_STOCK;
 import static com.market.core.code.error.BucketErrorCode.NOT_FOUND;
 import static com.market.core.code.error.MarketErrorCode.*;
 import static com.market.core.code.error.MemberErrorCode.NOT_FOUND_MEMBER_ID;
@@ -128,7 +129,12 @@ public class BucketService {
                         .filter(bucketSaveDto -> Objects.equals(bucketSaveDto.getId(), bucket.getProduct().getId()))
                         .findAny()
                         .orElse(null);
-                // 기존 장바구니 상품의 갯수를 수정
+                // 재고 유효성 검증 및 기존 장바구니 상품의 갯수를 수정
+                Product product = productRepository.findById(bucket.getProduct().getId()).orElseThrow(() -> new ProductException(NOT_FOUND_PRODUCT_ID));
+
+                if (product.getStock() < dto.getCount() + bucket.getCount()) {
+                    throw new BucketException(NOT_ENOUGH_STOCK);
+                }
                 bucket.plusCount(dto.getCount());
             }
         }

@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
 import java.time.LocalDateTime;
 
 
@@ -19,7 +20,8 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class Member {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "oauth_id")
@@ -45,6 +47,10 @@ public class Member {
     public void saveDeviceToken(String deviceToken) {
         this.deviceToken = deviceToken;
         this.deviceTokenCreatedAt = LocalDateTime.now();
+    }
+
+    public void deleteDeviceToken() {
+        this.deviceToken = null;
     }
 
     // 회원 가입 시 정보 업데이트

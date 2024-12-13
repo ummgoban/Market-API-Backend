@@ -40,6 +40,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(JwtException.class)
     protected ResponseEntity<ErrorResponse> handleMemberException(JwtException ex) {
         log.error("JwtException 발생");
+        log.error("errCode = " + ex.getErrorCode() + " errorMessage = " + ex.getMessage());
         BaseErrorCode errorCode = ex.getErrorCode();
         return ResponseEntity.status(errorCode.getStatus()).body(errorCode.getErrorResponse());
     }
@@ -50,6 +51,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(OAuthException.class)
     protected ResponseEntity<ErrorResponse> handleMemberException(OAuthException ex) {
         log.error("JwtException 발생");
+        log.error("errCode = " + ex.getErrorCode() + " errorMessage = " + ex.getMessage());
         BaseErrorCode errorCode = ex.getErrorCode();
         return ResponseEntity.status(errorCode.getStatus()).body(errorCode.getErrorResponse());
     }
@@ -60,6 +62,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(S3Exception.class)
     protected ResponseEntity<ErrorResponse> handleS3Exception(S3Exception ex) {
         log.error("S3Exception 발생");
+        log.error("errCode = " + ex.getErrorCode() + " errorMessage = " + ex.getMessage());
         BaseErrorCode errorCode = ex.getErrorCode();
         return ResponseEntity.status(errorCode.getStatus()).body(errorCode.getErrorResponse());
     }
@@ -70,6 +73,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MemberException.class)
     protected ResponseEntity<ErrorResponse> handleMemberException(MemberException ex) {
         log.error("MemberException 발생");
+        log.error("errCode = " + ex.getErrorCode() + " errorMessage = " + ex.getMessage());
         BaseErrorCode errorCode = ex.getErrorCode();
         return ResponseEntity.status(errorCode.getStatus()).body(errorCode.getErrorResponse());
     }
@@ -80,6 +84,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MarketException.class)
     protected ResponseEntity<ErrorResponse> handleMarketException(MarketException ex) {
         log.error("MarketException 발생");
+        log.error("errCode = " + ex.getErrorCode() + " errorMessage = " + ex.getMessage());
         BaseErrorCode errorCode = ex.getErrorCode();
         return ResponseEntity.status(errorCode.getStatus()).body(errorCode.getErrorResponse());
     }
@@ -90,6 +95,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MarketLikeException.class)
     protected ResponseEntity<ErrorResponse> handleMarketLikeException(MarketLikeException ex) {
         log.error("MarketLikeException 발생");
+        log.error("errCode = " + ex.getErrorCode() + " errorMessage = " + ex.getMessage());
         BaseErrorCode errorCode = ex.getErrorCode();
         return ResponseEntity.status(errorCode.getStatus()).body(errorCode.getErrorResponse());
     }
@@ -100,6 +106,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(GeocodingException.class)
     protected ResponseEntity<ErrorResponse> handleGeocodingException(GeocodingException ex) {
         log.error("GeocodingException 발생");
+        log.error("errCode = " + ex.getErrorCode() + " errorMessage = " + ex.getMessage());
         BaseErrorCode errorCode = ex.getErrorCode();
         return ResponseEntity.status(errorCode.getStatus()).body(errorCode.getErrorResponse());
     }
@@ -110,6 +117,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ProductException.class)
     protected ResponseEntity<ErrorResponse> handleProductException(ProductException ex) {
         log.error("ProductException 발생");
+        log.error("errCode = " + ex.getErrorCode() + " errorMessage = " + ex.getMessage());
         BaseErrorCode errorCode = ex.getErrorCode();
         return ResponseEntity.status(errorCode.getStatus()).body(errorCode.getErrorResponse());
     }
@@ -120,6 +128,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(BucketException.class)
     protected ResponseEntity<ErrorResponse> handleBucketException(BucketException ex) {
         log.error("BucketException 발생");
+        log.error("errCode = " + ex.getErrorCode() + " errorMessage = " + ex.getMessage());
         BaseErrorCode errorCode = ex.getErrorCode();
         return ResponseEntity.status(errorCode.getStatus()).body(errorCode.getErrorResponse());
     }
@@ -130,6 +139,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(OrdersException.class)
     protected ResponseEntity<ErrorResponse> handleOrdersException(OrdersException ex) {
         log.error("OrdersException 발생");
+        log.error("errCode = " + ex.getErrorCode() + " errorMessage = " + ex.getMessage());
         BaseErrorCode errorCode = ex.getErrorCode();
         return ResponseEntity.status(errorCode.getStatus()).body(errorCode.getErrorResponse());
     }
@@ -140,6 +150,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(PaymentException.class)
     protected ResponseEntity<ErrorResponse> handlePaymentException(PaymentException ex) {
         log.error("PaymentException 발생");
+        log.error("errCode = " + ex.getErrorCode() + " errorMessage = " + ex.getMessage());
         BaseErrorCode errorCode = ex.getErrorCode();
         return ResponseEntity.status(errorCode.getStatus()).body(errorCode.getErrorResponse());
     }

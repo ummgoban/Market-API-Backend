@@ -67,12 +67,15 @@ public class OrdersReadService {
 
     @Transactional(readOnly = true)
     public OrdersResponse getOrder(String orderId) {
+
         OrdersPaymentDto ordersPaymentDto = ordersRepository.getOrdersPaymentByOrdersId(orderId).orElseThrow(() -> new OrdersException(NOT_FOUND_ORDERS_ID));
+
+        Market market = marketRepository.findMarketByOrdersId(orderId).orElseThrow(() -> new MarketException(NOT_FOUND_MARKET_ID));
 
         // 주문 상품 조회
         List<OrdersProductsDto> ordersProducts = ordersRepository.getOrdersProductsDtoByOrdersId(ordersPaymentDto.getId());
 
-        return OrdersResponse.from(ordersPaymentDto, ordersProducts);
+        return OrdersResponse.from(ordersPaymentDto, ordersProducts, market);
     }
 
     @Transactional(readOnly = true)

@@ -9,6 +9,8 @@ import static com.market.core.code.error.PaymentErrorCode.Payment_Method_NOT_FOU
 @Getter
 public enum PaymentMethod {
 
+    PICKUP("픽업"),
+
     CARD("카드"), // 카드
     VIRTUAL_ACCOUNT("가상계좌"), // 가상 계좌
     MOBILE_PHONE("휴대폰"), // 모바일 휴대폰

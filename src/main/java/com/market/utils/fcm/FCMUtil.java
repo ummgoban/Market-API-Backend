@@ -20,7 +20,8 @@ public class FCMUtil {
     private static final String PRODUCT_CREATED_ALARM_BODY = "가게의 새로운 메뉴가 등록되었어요.";
     private static final String PRODUCT_UPDATED_ALARM_TITLE = "찜 가게 메뉴 재고 변경";
     private static final String PRODUCT_UPDATED_ALARM_BODY = "가게의 메뉴 재고가 변경되었어요.";
-
+    private static final String ORDERS_CREATED_ALARM_TITLE = "주문 접수";
+    private static final String ORDERS_CREATED_ALARM_BODY = "주문이 접수되었어요.";
 
     private final FCMAsyncUtil fcmAsyncUtil;
 
@@ -56,6 +57,27 @@ public class FCMUtil {
                     .setNotification(Notification.builder()
                             .setTitle(PRODUCT_UPDATED_ALARM_TITLE)
                             .setBody(marketName + PRODUCT_UPDATED_ALARM_BODY)
+                            .build())
+                    .addAllTokens(tokens)
+                    .build();
+
+            fcmAsyncUtil.sendReservationRemindMessages(multicastMessage);
+        } catch (FirebaseMessagingException ex) {
+            logErrorMessage(ex);
+        }
+    }
+
+    /**
+     * 주문이 들어오면 알림을 보낸다.
+     */
+    public void sendOrdersCreatedAlarms(List<String> tokens) {
+
+        try {
+
+            MulticastMessage multicastMessage = MulticastMessage.builder()
+                    .setNotification(Notification.builder()
+                            .setTitle(ORDERS_CREATED_ALARM_TITLE)
+                            .setBody(ORDERS_CREATED_ALARM_BODY)
                             .build())
                     .addAllTokens(tokens)
                     .build();

@@ -2,6 +2,7 @@ package com.market.orders.service;
 
 import com.market.bucket.dto.server.BucketProductDto;
 import com.market.bucket.repository.BucketRepository;
+import com.market.core.code.error.MemberErrorCode;
 import com.market.core.exception.MarketException;
 import com.market.core.exception.MemberException;
 import com.market.core.exception.OrdersException;
@@ -12,15 +13,16 @@ import com.market.member.entity.Member;
 import com.market.member.repository.MemberRepository;
 import com.market.orders.dto.request.OrdersCreateRequestDto;
 import com.market.orders.dto.response.OrdersCreateResponseDto;
-import com.market.orders.entity.Orders;
-import com.market.orders.entity.OrdersProduct;
-import com.market.orders.entity.OrdersStatus;
+import com.market.orders.entity.*;
 import com.market.orders.repository.OrdersProductRepository;
 import com.market.orders.repository.OrdersRepository;
+import com.market.orders.repository.PaymentRepository;
 import com.market.product.entity.Product;
 import com.market.product.repository.ProductRepository;
+import com.market.utils.fcm.FCMUtil;
 import com.market.utils.random.OrdersIdUtils;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,6 +36,7 @@ import static com.market.core.code.error.OrdersErrorCode.ORDERS_CREATE_METHOD_NO
 import static com.market.core.code.error.ProductErrorCode.NOT_FOUND_PRODUCT_ID;
 
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class OrdersCreateService {
@@ -44,8 +47,10 @@ public class OrdersCreateService {
     private final ProductRepository productRepository;
     private final OrdersProductRepository ordersProductRepository;
     private final OrdersRepository ordersRepository;
+    private final PaymentRepository paymentRepository;
 
     private final OrdersIdUtils ordersIdUtils;
+    private final FCMUtil fcmUtil;
 
     @Transactional
     public OrdersCreateResponseDto createOrders(Long memberId, OrdersCreateRequestDto ordersCreateRequestDto) {
@@ -83,12 +88,25 @@ public class OrdersCreateService {
                 .pickupReservedAt(ordersCreateRequestDto.getPickupReservedAt())
                 .ordersPrice(totalPrice)
                 .doneAt(null)
-                .ordersStatus(OrdersStatus.IN_PROGRESS)
+//                .ordersStatus(OrdersStatus.IN_PROGRESS)
+                .ordersStatus(OrdersStatus.ORDERED)
                 .customerRequest(ordersCreateRequestDto.getCustomerRequest())
                 .ordersName(ordersName)
                 .build();
 
         ordersRepository.save(orders);
+
+        /**
+         * 토스 페이먼츠 연동 후, 삭제할 부분
+         */
+        paymentRepository.save(Payment.builder()
+                .id(ordersIdUtils.generateOrdersId())
+                .orders(orders)
+                .member(member)
+                .approvedAt(LocalDateTime.now())
+                .totalAmount(totalPrice)
+                .method(PaymentMethod.PICKUP)
+                .build());
 
         // 주문 상품 생성
         for (BucketProductDto bucketProductDto : bucketProducts) {
@@ -96,12 +114,34 @@ public class OrdersCreateService {
             Product product = productRepository.findById(bucketProductDto.getId())
                     .orElseThrow(() -> new ProductException(NOT_FOUND_PRODUCT_ID));
 
+            /**
+             * 토스 페이먼츠 연동 후, 삭제할 부분
+             */
+            product.updateProductStock(-bucketProductDto.getCount());
+
             ordersProductRepository.save(OrdersProduct.builder()
                     .orders(orders)
                     .product(product)
                     .count(bucketProductDto.getCount())
                     .build());
         }
+
+        /**
+         * 토스 페이먼츠 연동 후, 삭제할 부분
+         */
+        bucketRepository.deleteByMemberId(memberId);
+
+        // 사장님께 알림 보내기
+        Member master = memberRepository.findMemberByMarketId(market.getId())
+                .orElseThrow(() -> new MemberException(NOT_FOUND_MEMBER_ID));
+
+        String token = master.getDeviceToken();
+        Long id = master.getId();
+
+        log.info("토근 값 ===== {}", token);
+        log.info("아이디 값 ===== {}", id);
+
+        fcmUtil.sendOrdersCreatedAlarms(List.of(token));
 
         return OrdersCreateResponseDto.builder()
                 .ordersId(orders.getId())

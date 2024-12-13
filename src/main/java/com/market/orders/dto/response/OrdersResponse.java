@@ -1,9 +1,9 @@
 package com.market.orders.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.market.market.entity.Market;
 import com.market.orders.dto.server.OrdersPaymentDto;
 import com.market.orders.dto.server.OrdersProductsDto;
-import com.market.orders.entity.Orders;
 import com.market.orders.entity.OrdersStatus;
 import com.market.orders.entity.PaymentMethod;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -58,10 +58,19 @@ public class OrdersResponse {
     @Schema(description = "결제수단")
     private PaymentMethod method;
 
+    @Schema(description = "가게 ID")
+    private Long marketId;
+
+    @Schema(description = "가게 이름")
+    private String marketName;
+
+    @Schema(description = "가게 주소")
+    private String address;
+
     @Schema(description = "접수된 주문의 상품 정보들")
     private List<OrdersProductsDto> products;
 
-    public static OrdersResponse from(OrdersPaymentDto ordersPaymentDto, List<OrdersProductsDto> ordersProducts) {
+    public static OrdersResponse from(OrdersPaymentDto ordersPaymentDto, List<OrdersProductsDto> ordersProducts, Market market) {
         return OrdersResponse.builder()
                 .id(ordersPaymentDto.getId())
                 .createdAt(ordersPaymentDto.getCreatedAt())
@@ -74,6 +83,9 @@ public class OrdersResponse {
                 .approvedAt(ordersPaymentDto.getApprovedAt())
                 .totalAmount(ordersPaymentDto.getTotalAmount())
                 .method(ordersPaymentDto.getMethod())
+                .marketId(market.getId())
+                .marketName(market.getMarketName())
+                .address(market.getAddress() + market.getSpecificAddress())
                 .products(ordersProducts)
                 .build();
     }
